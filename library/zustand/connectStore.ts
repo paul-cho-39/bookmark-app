@@ -1,16 +1,18 @@
 import { create } from 'zustand';
+import { ConnectorStoreProps } from './types/@types';
 
 const initialState = {
-   data: {
-      // for refresh for react query
-      hasMutated: false,
-   },
    inputs: {
       email: '',
       query: '',
    },
-   headers: {
-      isDataAvailable: false,
+   data: {
+      library: {
+         hasMutated: false, // refresh for react query
+      },
+      notes: {
+         isDataAvailable: false,
+      },
    },
    modal: {
       edit: {
@@ -27,6 +29,8 @@ const initialState = {
    },
 };
 
-const useConnectStore = create(() => ({
+const useConnectStore = create(<ConnectorStoreProps>() => ({
    connectedObjs: initialState,
 }));
+
+export default useConnectStore;

@@ -6,13 +6,19 @@ export interface PersistStoreProps {
    userPreference: UserPreference;
 }
 
-export interface StoreProps {
-   email: string;
-   query: string;
-   hasMutated: boolean;
-   isDataAvailable: boolean;
-   tempPage: number | null;
-   currentPage: number | null;
+export interface ConnectorStoreProps {
+   inputs: {
+      email: string;
+      query: string;
+   };
+   data: {
+      library: {
+         hasMutated: boolean;
+      };
+      notes: {
+         isDataAvailable: boolean;
+      };
+   };
    modal: {
       edit: {
          isChangeBookVisible: boolean;
@@ -26,25 +32,10 @@ export interface StoreProps {
          isUploadNotesVisible: boolean;
       };
    };
-   notes: {
-      id: string | null;
-      index: {
-         [key: number]: {
-            logIndex: number;
-            tags?: string[]; // use past tags so when creating this keep this in mind
-            title?: string;
-            noteText?: string;
-            note?: string[];
-            page?: null | number;
-            isPrivate: boolean;
-            dates: {
-               start: string | null;
-               end: string | null;
-               lastEdited: string | null;
-            };
-         };
-      };
-   };
+}
+
+export interface StoreProps {
+   notes: NoteProps;
    timer: {
       hours: number;
       minutes: number;
@@ -54,11 +45,11 @@ export interface StoreProps {
       startTime: Date | null;
       endTime: Date | null;
    };
+   tempPage: number | null;
+   currentPage: number | null;
    isPaused: boolean;
    intervalId: null | NodeJS.Timer;
 }
-
-export type TimerType = StoreProps['timer'];
 
 // type EnforceNotificationRelation<T extends boolean> = T extends false ? false : boolean;
 export interface UserPreference {
@@ -89,8 +80,39 @@ export interface UserPreference {
    };
 }
 
+interface DeltaOperation {
+   insert?: string | Object;
+   delete?: number;
+   retain?: number;
+   attributes?: {
+      [key: string]: string;
+   };
+}
+
+interface Delta {
+   ops: DeltaOperation[];
+}
+
+interface NoteProps {
+   id: string | null;
+   [key: number]: {
+      logIndex: number;
+      tags?: string[]; // use past tags so when creating this keep this in mind
+      title?: string;
+      note?: Delta;
+      page?: null | number;
+      isPrivate: boolean;
+      dates: {
+         start: string | null;
+         end: string | null;
+         lastEdited: string | null;
+      };
+   };
+}
+
+export type TimerType = StoreProps['timer'];
 export type NoteType = StoreProps['notes'];
-export type NoteIndexType = NoteType['index'];
+export type NoteIndexType = NoteType[number];
 
 // body for th
 export interface BodyTimer {
