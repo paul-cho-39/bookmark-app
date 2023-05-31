@@ -38,7 +38,11 @@ const TimerStack = () => {
                headerShown: true,
                headerTitleAlign: 'center',
                headerRight: ({ ...rest }) => (
-                  <TimerHeaderIcons navigation={navigation} params={route.params.params} />
+                  <TimerHeaderIcons
+                     colors={colors}
+                     navigation={navigation}
+                     params={route.params.params}
+                  />
                ),
             })}
          />

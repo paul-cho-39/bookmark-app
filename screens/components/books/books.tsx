@@ -43,7 +43,6 @@ const Books = ({ book }: BookProps) => {
    const { data: userLibrary } = useQuery<QueryData>(
       queryKeys.userLibrary(uid as string),
       () => getFetch(getUrl.library.file.getBooks.allBooks(uid as string)),
-      // () => getFetch(`/library/books/${uid}`),
       {
          onSuccess: () => setHasMutated(false),
          onError: (err) => console.log(err), // logging error

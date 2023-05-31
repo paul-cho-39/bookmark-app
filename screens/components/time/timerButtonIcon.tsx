@@ -1,7 +1,7 @@
 import { View, StyleSheet, TouchableOpacityProps } from 'react-native';
 import IconButton from '../../../components/buttons/icons/iconButton';
 import { Entypo, AntDesign, FontAwesome5 } from '@expo/vector-icons';
-import { setStopModalVisible } from '../../../library/zustand/logic/connector-logic/modalLogic';
+import { setStopModalVisible } from '../../../library/zustand/logic/connector-logic/';
 
 export interface SaveTimeButtonProps {
    isPaused: boolean;
@@ -53,14 +53,3 @@ const styles = StyleSheet.create({
 });
 
 export default SaveTimeButton;
-
-// save requires:
-// endTime
-// logIndex
-// page
-// feedback(?)
-
-// notes(?) / comments(?) should add it with plus sign?
-
-// should work globally(?)
-// when the goes back for instance(?)

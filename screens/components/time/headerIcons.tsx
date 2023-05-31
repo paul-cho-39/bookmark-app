@@ -7,16 +7,19 @@ import IconButton from '../../../components/buttons/icons/iconButton';
 import Entypo from '@expo/vector-icons/Entypo';
 import { BaseUserLogProps } from '../../../library/@types/timerData';
 import { useEffect, useState } from 'react';
-import useBoundedStore from '../../../library/zustand/store';
+import useConnectStore from '../../../library/zustand/connectStore';
+import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 
 interface TimerHeaderIconsProps {
    navigation: MainTimerNavigationProp['navigation'];
    params: BaseUserLogProps;
+   colors: MD3Colors;
 }
 
-const TimerHeaderIcons = ({ navigation, params }: TimerHeaderIconsProps) => {
+const TimerHeaderIcons = ({ navigation, params, colors }: TimerHeaderIconsProps) => {
    // this will be connected ./screen/timer/index
-   const isDataAvailable = useBoundedStore((state) => state.isDataAvailable);
+
+   const isDataAvailable = useConnectStore((state) => state.data.notes.isDataAvailable);
    const { timerMenuSettings } = settings;
 
    const handleNoteSettings = () => {
@@ -48,7 +51,7 @@ const TimerHeaderIcons = ({ navigation, params }: TimerHeaderIconsProps) => {
          <IconButton
             onPress={handleNoteSettings}
             style={styles.iconContainer}
-            renderIcon={() => <Entypo name='plus' color={'white'} size={22} />}
+            renderIcon={() => <Entypo name='plus' color={colors.onSurface} size={22} />}
          />
          <HeaderMenuIcon
             iconStyle={[styles.iconContainer]}

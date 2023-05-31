@@ -28,7 +28,7 @@ const HeaderMenuIcon = ({
    const [_menuSize, setMenuSize] = useState({ width: 0, height: 0 });
    const opacity = useRef(new Animated.Value(0)).current;
    const layoutRef = useRef<TouchableOpacity | null>(null);
-   const getColor = !color ? colors.onBackground : color;
+   const getColor = !color ? colors.onSurface : color;
 
    // if animation needed to be changed
    // use a hook for animation effect that returns a different animation

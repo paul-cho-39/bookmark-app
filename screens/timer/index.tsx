@@ -63,7 +63,7 @@ const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
          // this when the data is ready
          // this will be connected to ./components/time/headerIcons
          setIsDataAvailable(true);
-         if (!noteObj[data.log.index.low]) {
+         if (!noteObj[data?.log.index.low]) {
             console.log('has not been initiated');
             setInitiateNote(id, data?.log.index.low); // initiate id & logIndex
          }
@@ -75,12 +75,12 @@ const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
       });
    }, [navigation, data]);
 
-   const handleStopButton = () => {
-      // open the modal here(?);
+   // const handleStopButton = () => {
+   //    // open the modal here(?);
 
-      if (timer && timerWithDate.startTime) {
-      }
-   };
+   //    if (timer && timerWithDate.startTime) {
+   //    }
+   // };
 
    return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
