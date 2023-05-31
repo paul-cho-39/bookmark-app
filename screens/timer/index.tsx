@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import useBoundedStore, { setIsDataAvailable } from '../../library/zustand/store';
+import useBoundedStore from '../../library/zustand/store';
 import { MainTimerNavigationProp, TimerScreenRouteProps } from '../../library/@types/navigation';
 
 import DisplayTime from '../components/time/displayTime';
@@ -22,6 +22,7 @@ import { pauseTimer, resumeTimer } from '../../library/zustand/logic/bounded-log
 import { useEffect, useState } from 'react';
 import { setInitiateNote } from '../../library/zustand/logic/bounded-logic/noteLogic';
 import useTimeStart from '../../library/hooks/useTimeStart';
+import { setIsDataAvailable } from '../../library/zustand/logic/connector-logic';
 
 const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
    const { colors } = useTheme();
@@ -31,7 +32,7 @@ const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
       state.timer,
       state.timerWithDate,
       state.isPaused,
-      state.notes.index,
+      state.notes,
    ]);
    const { startTime, endTime } = timerWithDate;
    const [rating, setRating] = useState(0);

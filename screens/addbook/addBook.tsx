@@ -12,11 +12,11 @@ import {
 } from '../components/books';
 import { useQueryImage, useMutateLibraries } from '../../library/hooks';
 
-import { setHasMutated } from '../../library/zustand/store';
 import { Library } from '../../library/@types/googleBooks';
 import { AddBookScreenProps } from '../../library/@types/navigation';
 import RadioButtons from '../../components/buttons/radioButton';
 import { useTheme } from 'react-native-paper';
+import { setHasMutated } from '../../library/zustand/logic/connector-logic';
 
 const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    const { colors } = useTheme();

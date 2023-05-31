@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { ConnectorStoreProps } from './types/@types';
+import { immer } from 'zustand/middleware/immer';
 
-const initialState = {
+const initialState: ConnectorStoreProps = {
    inputs: {
       email: '',
       query: '',
@@ -29,8 +30,6 @@ const initialState = {
    },
 };
 
-const useConnectStore = create(<ConnectorStoreProps>() => ({
-   connectedObjs: initialState,
-}));
+const useConnectStore = create(immer(() => initialState));
 
 export default useConnectStore;

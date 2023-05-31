@@ -1,8 +1,8 @@
 import { Appbar } from 'react-native-paper';
 import ControlledTextInput from './controlledInput';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { resetQuery } from '../../../library/zustand/store';
 import { useNavigation } from '@react-navigation/native';
+import { resetQuery } from '../../../library/zustand/logic/connector-logic';
 
 // typescript if searchShown is true
 interface SearchBarProps {

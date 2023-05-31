@@ -1,10 +1,11 @@
 import { TextInput, useTheme } from 'react-native-paper';
 import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput as NativeInput, View } from 'react-native';
-import useBoundedStore, { setQuery, resetQuery } from '../../../library/zustand/store';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SearchProps } from '../../../library/@types/navigation';
+import useConnectStore from '../../../library/zustand/connectStore';
+import { resetQuery, setQuery } from '../../../library/zustand/logic/connector-logic';
 
 // TODO: should put useFocus for icons here?
 
@@ -16,7 +17,7 @@ interface TextInputProps {
 const ControlledTextInput = ({ displayCloseIcon, disabled = false }: TextInputProps) => {
    const { colors } = useTheme();
 
-   const query = useBoundedStore((state) => state.query);
+   const query = useConnectStore((state) => state.inputs.query);
    const [shouldFocus, setShouldFocus] = useState(false);
    const navigation = useNavigation<SearchProps['navigation']>();
    const route = useRoute();

@@ -1,6 +1,5 @@
 import { FlatList, View } from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
-import useBoundedStore, { resetQuery } from '../../library/zustand/store';
 import useInfiniteFetcher from '../../library/hooks/queryHooks/useInfiniteFetcher';
 import createUniqueDataSets from '../../library/helper/createUniqueData';
 import { Items } from '../../library/@types/googleBooks';
@@ -8,6 +7,8 @@ import Books from '../components/books/books';
 import styles from './styles';
 import { Divider, useTheme, ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import useConnectStore from '../../library/zustand/connectStore';
+import { resetQuery } from '../../library/zustand/logic/connector-logic';
 
 const SearchScreen = ({}) => {
    const [search, setSearch] = useState('');
@@ -16,7 +17,7 @@ const SearchScreen = ({}) => {
    const navigation = useNavigation();
    const [isLoading, setIsLoading] = useState(false); // react query isLoading not working so manually creating this
    const [isFooterLoading, setIsFooterLoading] = useState(false);
-   const query = useBoundedStore((state) => state.query);
+   const query = useConnectStore((state) => state.inputs.query);
 
    const { data, isFetching, isError, hasNextPage, fetchNextPage } = useInfiniteFetcher({ search });
 

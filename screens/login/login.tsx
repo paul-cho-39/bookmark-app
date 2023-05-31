@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { emailResolver } from '../../library/resolvers/authenticate';
 
 import { LoginProps } from '../../library/@types/navigation';
-import useBoundedStore, { setEmail } from '../../library/zustand/store';
 
 // TODO: bundle this together
 import Inputs from '../../components/forms/inputs';
@@ -14,10 +13,13 @@ import CustomDivider from '../../components/divider';
 import ProviderButton from '../components/auth/provider';
 import ButtonNavigate from '../../components/buttons/navigateButton';
 
+import useConnectStore from '../../library/zustand/connectStore';
+import { setEmail } from '../../library/zustand/logic/connector-logic';
+
 const MainLoginScreen = ({ navigation }: LoginProps) => {
    const [labelColor, setLabelColor] = useState('transparent');
    const theme = useTheme();
-   const email = useBoundedStore((state) => state.email);
+   const email = useConnectStore((state) => state.inputs.email);
 
    const {
       control,

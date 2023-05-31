@@ -16,9 +16,10 @@ import {
 import { BookInfo } from './index';
 import ChevronButton from '../../../components/buttons/dropdownButton';
 import { useMutateLibraryWithBody } from '../../../library/hooks/queryHooks/useMutateLibrary';
-import useBoundedStore, { setHasMutated } from '../../../library/zustand/store';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { getFetch, queryKeys, getUrl } from '../../../library/helper/react-query';
+import useConnectStore from '../../../library/zustand/connectStore';
+import { setHasMutated } from '../../../library/zustand/logic/connector-logic';
 
 const DisplayBookIdIcon = lazy(() => import('./../books/displayBookIdIcon'));
 
@@ -36,7 +37,7 @@ const Books = ({ book }: BookProps) => {
    const bookInfo = getBasicBookInfo(book);
 
    const url = `/library/authenticate/${uid}/${bookInfo.id}/reading`;
-   const hasMutated = useBoundedStore((state) => state.hasMutated);
+   const hasMutated = useConnectStore((state) => state.data.library.hasMutated);
    const queryClient = useQueryClient();
 
    const { data: userLibrary } = useQuery<QueryData>(

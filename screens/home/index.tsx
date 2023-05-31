@@ -6,13 +6,15 @@ import queryKeys from '../../library/helper/react-query/queryKeys';
 import { CurrentBook } from '../../library/@types/googleBooks';
 import MainBookCover from '../components/books/mainBook';
 import { useTheme } from 'react-native-paper';
-import useBoundedStore, { setHasMutated } from '../../library/zustand/store';
 import { getFetch, getUrl } from '../../library/helper/react-query';
+
+import useConnectStore from '../../library/zustand/connectStore';
+import { setHasMutated } from '../../library/zustand/logic/connector-logic';
 
 const HomeScreen = ({}) => {
    const uid = getUser() as string;
    const { colors } = useTheme();
-   const [hasMutated] = useBoundedStore((state) => [state.hasMutated]);
+   const hasMutated = useConnectStore((state) => state.data.library.hasMutated);
    // change the queryKeys based
    const { data: userLibrary, isError } = useQuery<CurrentBook>(
       queryKeys.recording(uid),

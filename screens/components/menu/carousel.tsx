@@ -12,8 +12,8 @@ import { CONTAINER_HEIGHT, getMiddleValue, MODAL_WIDTH, getUser } from '../../..
 import ChevronArrowButton from '../../../components/buttons/icons/chevronArrowButton';
 import BookInfoInsideModal from '../books/bookInfoModal';
 import { useMutation } from '@tanstack/react-query';
-import { setHasMutated } from '../../../library/zustand/store';
 import { getUrl, postFetch } from '../../../library/helper/react-query';
+import { setHasMutated } from '../../../library/zustand/logic/connector-logic';
 
 interface BookCarouselProps {
    data: CurrentBookData[];

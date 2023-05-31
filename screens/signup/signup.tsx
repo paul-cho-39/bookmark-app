@@ -12,10 +12,11 @@ import auth from '@react-native-firebase/auth';
 import useSendToken from '../../library/hooks/queryHooks/useSendToken';
 import { signupResolver } from '../../library/resolvers/authenticate';
 import useBoundedStore from '../../library/zustand/store';
+import useConnectStore from '../../library/zustand/connectStore';
 
 const SignupScreen = ({ navigation }: SignUpProps) => {
    const [isHidden, setIsHidden] = useState(true);
-   const email = useBoundedStore((state) => state.email);
+   const email = useConnectStore((state) => state.inputs.email);
    const bodySample = { idToken: 'testingToken' };
    const { sendToken, isLoading, isError } = useSendToken('/user/signup');
 

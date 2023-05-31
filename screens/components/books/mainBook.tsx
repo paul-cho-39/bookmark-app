@@ -7,10 +7,10 @@ import { useMutateLibrary } from '../../../library/hooks/queryHooks/useMutateLib
 import BookInfo from './bookInfo';
 import { Button, Text } from 'react-native-paper';
 import SurfaceButtons from '../menu/surfaceButtons';
-import { setHasMutated } from '../../../library/zustand/store';
 import queryKeys from '../../../library/helper/react-query/queryKeys';
 import getUrl from '../../../library/helper/react-query/getUrl';
 import useSettingsStore from '../../../library/zustand/settingsStore';
+import { setHasMutated } from '../../../library/zustand/logic/connector-logic';
 
 interface MainBookCoverProps {
    currentBooks: CurrentBookData[];
