@@ -7,7 +7,7 @@ import {
    MainNavigatorTimerNavgiationProp,
 } from '../../../library/@types/navigation';
 import { PrimaryBookInfoType } from '../../../library/@types/googleBooks';
-import { setBookVisibility } from '../../../library/zustand/logic/modalLogic';
+import { setBookVisibility } from '../../../library/zustand/logic/connector-logic/';
 
 interface SurfaceButtonProps {
    uid: string;

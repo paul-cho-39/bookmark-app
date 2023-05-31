@@ -15,8 +15,8 @@ import BookCarousel from './carousel';
 import { Calendar } from './calendar';
 import Config from '../../../library/config';
 import React from 'react';
-import useBoundedStore from '../../../library/zustand/store';
-import { setBookVisibility } from '../../../library/zustand/logic/modalLogic';
+import { setBookVisibility } from '../../../library/zustand/logic/connector-logic/';
+import useConnectStore from '../../../library/zustand/connectStore';
 
 interface MainMenuProps {
    removeBook: () => void;
@@ -28,7 +28,7 @@ const MainMenu = ({ removeBook, currentBooks }: MainMenuProps) => {
    const [deleteVisible, setDeletevisible] = useState(false);
 
    // this will be connected to <SurfaceButtons /> component
-   const editvisible = useBoundedStore((state) => state.modal.edit.isChangeBookVisible);
+   const editvisible = useConnectStore((state) => state.modal.edit.isChangeBookVisible);
 
    return (
       // use map to apply this and create an object from this

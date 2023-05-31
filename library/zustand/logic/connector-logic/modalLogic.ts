@@ -1,12 +1,13 @@
-import { StoreProps } from '../types/@types';
-import useBoundedStore from '../store';
-import { pauseTimer, resumeTimer } from './bounded-logic/timerLogic';
+import { ConnectorStoreProps } from '../../types/@types';
+import useConnectStore from '../../connectStore';
+import { pauseTimer, resumeTimer } from '../bounded-logic/timerLogic';
+import useBoundedStore from '../../store';
 
 // NOTE:
 // for modals it seems like there should not be any deeper trees so having a single function
 // that can change values make sense
 
-type ParentModalType = StoreProps['modal'];
+type ParentModalType = ConnectorStoreProps['modal'];
 type ChildModalType<T extends keyof ParentModalType> = {
    [K in keyof ParentModalType[T]]: ParentModalType[T][K] extends boolean ? K : never;
 }[keyof ParentModalType[T]];
@@ -17,7 +18,7 @@ const _setModalVisibility = <T extends keyof ParentModalType, K extends ChildMod
    value?: boolean
 ) => {
    if (typeof value !== 'undefined') {
-      useBoundedStore.setState((state) => {
+      useConnectStore.setState((state) => {
          return {
             ...state,
             modal: {
@@ -30,7 +31,7 @@ const _setModalVisibility = <T extends keyof ParentModalType, K extends ChildMod
          };
       });
    } else {
-      useBoundedStore.setState((state) => {
+      useConnectStore.setState((state) => {
          return {
             ...state,
             modal: {
@@ -54,19 +55,4 @@ const _setNoteVisibility = (property: keyof ParentModalType['note'], value: bool
    _setModalVisibility('note', property, value);
 };
 
-// specific case
-const setBookVisibility = (value: boolean) => {
-   _setModalVisibility('edit', 'isChangeBookVisible', value);
-};
-
-const setStopModalVisible = (value: boolean) => {
-   if (value) {
-      pauseTimer();
-   }
-   if (!value) {
-      resumeTimer();
-   }
-   _setModalVisibility('timer', 'isStopTimeVisible', value);
-};
-
-export { setBookVisibility, setStopModalVisible };
+export { _setModalVisibility };

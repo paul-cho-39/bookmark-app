@@ -1,6 +1,8 @@
 import useConnectStore from '../../connectStore';
 import { produce, Draft } from 'immer';
 import { ConnectorStoreProps } from '../../types/@types';
+import { _setModalVisibility } from './modalLogic';
+import { pauseTimer, resumeTimer } from '../bounded-logic/timerLogic';
 
 const setIsDataAvailable = (value: boolean) => {
    useConnectStore.setState(
@@ -42,4 +44,26 @@ const resetQuery = () => {
    );
 };
 
-export { setIsDataAvailable, setHasMutated, setQuery, resetQuery, setEmail };
+const setBookVisibility = (value: boolean) => {
+   _setModalVisibility('edit', 'isChangeBookVisible', value);
+};
+
+const setStopModalVisible = (value: boolean) => {
+   if (value) {
+      pauseTimer();
+   }
+   if (!value) {
+      resumeTimer();
+   }
+   _setModalVisibility('timer', 'isStopTimeVisible', value);
+};
+
+export {
+   setIsDataAvailable,
+   setHasMutated,
+   setQuery,
+   resetQuery,
+   setEmail,
+   setBookVisibility,
+   setStopModalVisible,
+};

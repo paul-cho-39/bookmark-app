@@ -1,10 +1,8 @@
 import { current, produce } from 'immer';
 import useBoundedStore from '../../store';
 import { NoteIndexType, StoreProps } from '../../types/@types';
-import useSettingsStore from '../../settingsStore';
 import getUsersLocalTime from '../../../helper/timer/getUsersLocalTime';
 import { _getInitialNoteData, _isNoteIdNull } from './helperLogic';
-import { UseBoundStore } from 'zustand';
 
 // first initiated in the Timer screen where the note will have logIndex
 // and bookId as the note
@@ -14,7 +12,7 @@ function setInitiateNote(id: string, logIndex: number) {
    useBoundedStore.setState(
       produce((state: StoreProps) => {
          state.notes.id = id;
-         state.notes.index[logIndex] = indexObj;
+         state.notes[logIndex] = indexObj;
       })
    );
 }
@@ -24,18 +22,15 @@ function setNotePage(page: number, logIndex: number) {
    updatePage(page);
 }
 
-// higher order function for returning logIndex
-function setNoteObjWithIndex<K extends keyof NoteIndexType[number]>(
-   logIndex: keyof NoteIndexType,
-   keys: K
-) {
+// higher order function for returning object with a certain logIndex
+function setNoteObjWithIndex<K extends keyof NoteIndexType>(logIndex: number, keys: K) {
    const isNull = _isNoteIdNull();
-   return (noteObj: NoteIndexType[number][K]) => {
+   return (noteObj: NoteIndexType[K]) => {
       useBoundedStore.setState(
          produce((state: StoreProps) => {
             if (!isNull) {
                // if (!state.notes.personal.index[logIndex]) {
-               state.notes.index[logIndex][keys] = noteObj;
+               state.notes[logIndex][keys] = noteObj;
                // }
             }
          })

@@ -9,14 +9,13 @@ import {
 import TimeContent from './timeContent';
 import ContentWrapper from './infoContentWrapper';
 import ModalLayout from './modalLayout';
-import { useTheme } from 'react-native-paper';
 import TouchableSaveButton from '../../../../components/buttons/touchableCustomButton';
-import { setStopModalVisible } from '../../../../library/zustand/logic/modalLogic';
+import { setStopModalVisible } from '../../../../library/zustand/logic/connector-logic/';
 import useLocalTime from '../../../../library/hooks/useGetLocalTime';
 import FiveStars, { FivestarProps } from '../../../../components/buttons/fiveStars';
-import Checked from '../../../../components/checkbox';
 import { useState } from 'react';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
+import useConnectStore from '../../../../library/zustand/connectStore';
 
 interface SaveModalProps extends FivestarProps {
    colors: MD3Colors;
@@ -24,12 +23,13 @@ interface SaveModalProps extends FivestarProps {
 }
 
 const SaveModal = ({ containerStyle, colors, ...rest }: SaveModalProps) => {
-   const [isStopModalVisible, currentPage, startTime, timer] = useBoundedStore((state) => [
-      state.modal.timer.isStopTimeVisible,
+   const [currentPage, startTime, timer] = useBoundedStore((state) => [
       state.currentPage,
       state.timerWithDate.startTime,
       state.timer,
    ]);
+   const isStopModalVisible = useConnectStore((state) => state.modal.timer.isStopTimeVisible);
+
    const current = useLocalTime();
    const [isChecked, setIsChecked] = useState(false);
 

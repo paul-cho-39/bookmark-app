@@ -18,7 +18,7 @@ const Notes = ({ navigation, route }: NotesNavigationProp) => {
    const { logIndex } = route.params.params;
 
    //    testing here
-   const [id, noteObj] = useBoundedStore((state) => [state.notes.id, state.notes.index]);
+   const [id, noteObj] = useBoundedStore((state) => [state.notes.id, state.notes]);
    // useEffect(() => {
    //    console.log('is note private?:', noteObj[logIndex].isPrivate);
    // }, [noteObj[logIndex].isPrivate]);

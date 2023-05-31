@@ -1,7 +1,7 @@
 import { View, StyleSheet, TouchableOpacityProps } from 'react-native';
 import IconButton from '../../../components/buttons/icons/iconButton';
 import { Entypo, AntDesign, FontAwesome5 } from '@expo/vector-icons';
-import { setStopModalVisible } from '../../../library/zustand/logic/modalLogic';
+import { setStopModalVisible } from '../../../library/zustand/logic/connector-logic/modalLogic';
 
 export interface SaveTimeButtonProps {
    isPaused: boolean;
