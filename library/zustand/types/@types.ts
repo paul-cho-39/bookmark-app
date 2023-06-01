@@ -3,7 +3,6 @@ import { BodyType } from '../logic/bounded-logic/timerLogic';
 export interface PersistStoreProps {
    _hasHydrated: boolean;
    setHasHydrated: (state: boolean) => void;
-   userPreference: UserPreference;
 }
 
 export interface ConnectorStoreProps {
@@ -80,6 +79,8 @@ export interface UserPreference {
    };
 }
 
+export interface UserInfo {}
+
 interface DeltaOperation {
    insert?: string | Object;
    delete?: number;
@@ -99,7 +100,7 @@ interface NoteProps {
       logIndex: number;
       tags?: string[]; // use past tags so when creating this keep this in mind
       title?: string;
-      note?: Delta;
+      note?: Delta | [];
       page?: null | number;
       isPrivate: boolean;
       dates: {
@@ -114,7 +115,6 @@ export type TimerType = StoreProps['timer'];
 export type NoteType = StoreProps['notes'];
 export type NoteIndexType = NoteType[number];
 
-// body for th
 export interface BodyTimer {
    dates: Record<string, Date | null>;
 }

@@ -3,9 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import storage from './types/asyncStorage';
 import { PersistStoreProps, TimerType, UserPreference } from './types/@types';
 
+interface UserPreferenceProps extends PersistStoreProps {
+   userPreference: UserPreference;
+}
+
 // think harder about the preference and how later
-// if something is added or deleted if it wont break down
-// the app
+// if something is added or deleted if it wont break down app
 const initialState: UserPreference = {
    userGeneralSettings: {
       display: {
@@ -35,7 +38,7 @@ const initialState: UserPreference = {
       },
    },
 };
-const useSettingsStore = create<PersistStoreProps>()(
+const useSettingsStore = create<UserPreferenceProps>()(
    persist(
       (set) => ({
          _hasHydrated: false,

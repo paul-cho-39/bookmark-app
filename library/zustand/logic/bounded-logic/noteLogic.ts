@@ -38,14 +38,4 @@ function setNoteObjWithIndex<K extends keyof NoteIndexType>(logIndex: number, ke
    };
 }
 
-function _initiatePrivateNotePage(logIndex: number) {
-   const currentPage = useBoundedStore.getState().currentPage;
-   const isNull = _isNoteIdNull();
-   const updatePage = setNoteObjWithIndex(logIndex, 'page');
-   if (currentPage && !isNull) {
-      // wont be updated if the page is set later
-      updatePage(currentPage);
-   }
-}
-
 export { setInitiateNote, setNoteObjWithIndex, setNotePage };
