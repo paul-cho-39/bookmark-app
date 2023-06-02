@@ -11,6 +11,8 @@ import { getFetch, getUrl } from '../../library/helper/react-query';
 import useConnectStore from '../../library/zustand/connectStore';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
 
+import Realm from 'realm';
+
 const HomeScreen = ({}) => {
    const uid = getUser() as string;
    const { colors } = useTheme();

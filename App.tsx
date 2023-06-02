@@ -14,6 +14,8 @@ import { useCallback, useEffect } from 'react';
 import { setUserTimeZone } from './library/zustand/logic/timer-store-logic';
 
 import * as Localization from 'expo-localization';
+import { createRealmContext } from '@realm/react';
+import { RealmConfig } from './library/realm/schema';
 
 const queryClient = new QueryClient({
    defaultOptions: {
@@ -30,6 +32,8 @@ export default function App() {
    const colorScheme = Appearance.getColorScheme();
    const isDarkPreferred = colorScheme === 'dark';
    const getTheme = !isDarkPreferred ? LightTheme : DarkTheme;
+
+   const { RealmProvider } = createRealmContext(RealmConfig);
 
    // since this is async have to set this here
    const [hasHydrated, timeZone] = useSettingsStore((state) => [
@@ -56,32 +60,34 @@ export default function App() {
    }
 
    return (
-      <QueryClientProvider client={queryClient}>
-         <NavigationContainer
-            theme={{
-               colors: {
-                  background: colors.surface,
-                  border: colors.onSurface,
-                  card: colors.surface,
-                  notification: colors.error,
-                  primary: colors.primary,
-                  text: colors.onSurface,
-               },
-               dark: isDarkPreferred,
-            }}
-         >
-            <PaperProvider theme={getTheme}>
-               <StatusBar
-                  style={isDarkPreferred ? 'dark' : 'light'}
-                  backgroundColor={
-                     isDarkPreferred ? LightTheme.colors.surface : DarkTheme.colors.surface
-                  }
-               />
-               <SafeAreaProvider>
-                  <MainNavigation />
-               </SafeAreaProvider>
-            </PaperProvider>
-         </NavigationContainer>
-      </QueryClientProvider>
+      <RealmProvider>
+         <QueryClientProvider client={queryClient}>
+            <NavigationContainer
+               theme={{
+                  colors: {
+                     background: colors.surface,
+                     border: colors.onSurface,
+                     card: colors.surface,
+                     notification: colors.error,
+                     primary: colors.primary,
+                     text: colors.onSurface,
+                  },
+                  dark: isDarkPreferred,
+               }}
+            >
+               <PaperProvider theme={getTheme}>
+                  <StatusBar
+                     style={isDarkPreferred ? 'dark' : 'light'}
+                     backgroundColor={
+                        isDarkPreferred ? LightTheme.colors.surface : DarkTheme.colors.surface
+                     }
+                  />
+                  <SafeAreaProvider>
+                     <MainNavigation />
+                  </SafeAreaProvider>
+               </PaperProvider>
+            </NavigationContainer>
+         </QueryClientProvider>
+      </RealmProvider>
    );
 }

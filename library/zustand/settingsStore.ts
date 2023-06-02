@@ -7,7 +7,7 @@ interface UserPreferenceProps extends PersistStoreProps {
    userPreference: UserPreference;
 }
 
-// think harder about the preference and how later
+// preference: a) language preference,
 // if something is added or deleted if it wont break down app
 const initialState: UserPreference = {
    userGeneralSettings: {

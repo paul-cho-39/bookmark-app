@@ -1,7 +1,7 @@
 import { Appbar, Menu, IconButton, Divider } from 'react-native-paper';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import BackButton from '../../../../components/buttons/backButton';
 import { width as WIDTH } from '../../../../library/helper';
 
@@ -12,7 +12,11 @@ import { width as WIDTH } from '../../../../library/helper';
 const PRIMARY_ICON_SIZE = 28;
 const SECONDARY_ICON_SIZE = 20;
 
-const NoteAppbar = () => {
+interface NoteAppbarProps {
+   logIndex: number;
+}
+
+const NoteAppbar = ({}) => {
    const [visible, setVisible] = useState(false);
 
    const openMenu = () => setVisible(true);
