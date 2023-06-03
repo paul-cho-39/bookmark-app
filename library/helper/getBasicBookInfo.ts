@@ -11,6 +11,10 @@ export default function getBasicBookInfo(book: Items<Record<string, string>>) {
    const authors = bookInfo.authors;
    const page = bookInfo.pageCount;
 
+   const language = bookInfo.language;
+   const publisher = bookInfo.publisher;
+   const publishedDate = bookInfo.publishedDate;
+
    const basicBookInfo = {
       id: id,
       thumbnail: thumbnail,
@@ -18,6 +22,9 @@ export default function getBasicBookInfo(book: Items<Record<string, string>>) {
       subtitle: subtitle,
       authors: authors,
       page: page,
+      language: language,
+      publisher: publisher,
+      publishedDate: publishedDate,
    };
 
    return basicBookInfo;

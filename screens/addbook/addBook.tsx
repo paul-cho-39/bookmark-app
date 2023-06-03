@@ -17,6 +17,8 @@ import { AddBookScreenProps } from '../../library/@types/navigation';
 import RadioButtons from '../../components/buttons/radioButton';
 import { useTheme } from 'react-native-paper';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
+import RealmContext from '../../library/realm';
+import { RealmBook, RealmLibrary } from '../../library/realm/schema';
 
 const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    const { colors } = useTheme();
@@ -25,10 +27,27 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    const { image, isError, isLoading } = useQueryImage(id);
    const queryClient = useQueryClient();
 
+   // realm context(?);
+   const { useRealm, useQuery: useRealmQuery } = RealmContext;
+   const realm = useRealm();
+   const book = useRealmQuery(RealmBook);
+   const Library = useRealmQuery(RealmLibrary);
+
+   console.log(
+      'Book object is',
+      book.find((b) => b.bookInfo)
+   );
+   console.log('LIBRARY object is', Library);
+
    const mutationStore = useMutateLibraries(uid, id, setHasMutated, queryClient);
 
    const [value, setValue] = useState('0');
    const [isRereading, setIsRereading] = useState(false);
+
+   // if user is rereading the finished book
+   const finishedMutation = isRereading
+      ? mutationStore.addToReReading.mutate
+      : mutationStore.addToFinished.mutate;
 
    const body = { currentlyReading: library.reading };
    const data: Store[] = [
@@ -40,9 +59,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
       {
          name: 'Read already',
          type: 'finished',
-         mutate: isRereading
-            ? mutationStore.addToReReading.mutate
-            : mutationStore.addToFinished.mutate,
+         mutate: finishedMutation,
       },
       {
          name: 'Read now',
@@ -52,10 +69,20 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    ];
 
    const [select, setSelect] = useState(data[0].name);
-
    const changeRadioSelection = (store: Store) => {
       setSelect(store.type);
    };
+
+   useEffect(() => {
+      // default: should it be "finished" or "current"
+      setSelect('reading');
+   }, []);
+
+   useEffect(() => {
+      if (isRereading) {
+         setSelect('finished');
+      }
+   }, [isRereading, select]);
 
    const addWithInfo = () => {
       const body = { currentPage: value };
@@ -68,11 +95,6 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
       }
       return;
    };
-
-   useEffect(() => {
-      // default: should it be "finished" or "current"
-      setSelect('reading');
-   }, []);
 
    return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -100,6 +122,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
                      onButtonChange={() => changeRadioSelection(item)}
                      select={select}
                      type={item.type}
+                     disabled={isRereading}
                   />
                </View>
             ))}
@@ -107,7 +130,9 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
                navigation={navigation}
                store={data}
                select={select}
+               bookInfo={bookInfo}
                addToLibrary={addWithInfo}
+               realm={realm}
             />
             <RemoveBookButton
                library={library}

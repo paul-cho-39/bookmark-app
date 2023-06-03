@@ -1,4 +1,4 @@
-export interface RealTimer extends Realm.Dictionary {
+export interface RealmTimer extends Realm.Dictionary {
    hours: number;
    minute: number;
    seconds: number;
@@ -7,10 +7,10 @@ export interface RealTimer extends Realm.Dictionary {
 export interface RealmBookInfo extends Realm.Dictionary {
    title: string;
    subtitle?: string;
-   authors?: Realm.List<string>;
-   overallRating?: string | number;
-   language?: string;
-   publisher?: string;
-   publishedDate?: string;
-   pageCount?: number;
+   //    authors?: Realm.List<string>;
+   //    page?: number;
+   //    //    averageRating: string;
+   //    language?: string;
+   //    publisher?: string;
+   //    publishedDate?: string;
 }

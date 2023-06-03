@@ -74,6 +74,7 @@ export interface Library {
    reading: string[] | undefined;
    want: string[] | undefined;
    finished: string[] | undefined;
+   reReading: string[] | undefined;
 }
 
 export type BasicBookInfo = ReturnType<typeof getBasicBookInfo>;

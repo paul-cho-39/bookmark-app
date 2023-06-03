@@ -14,7 +14,8 @@ import { useCallback, useEffect } from 'react';
 import { setUserTimeZone } from './library/zustand/logic/timer-store-logic';
 
 import * as Localization from 'expo-localization';
-import { createRealmContext } from '@realm/react';
+import RealmContext from './library/realm/';
+import Realm from 'realm';
 import { RealmConfig } from './library/realm/schema';
 
 const queryClient = new QueryClient({
@@ -33,8 +34,11 @@ export default function App() {
    const isDarkPreferred = colorScheme === 'dark';
    const getTheme = !isDarkPreferred ? LightTheme : DarkTheme;
 
-   const { RealmProvider } = createRealmContext(RealmConfig);
-
+   // useEffect(() => {
+   //    console.log('deleted');
+   //    Realm.deleteFile(RealmConfig);
+   // }, []);
+   const { RealmProvider } = RealmContext;
    // since this is async have to set this here
    const [hasHydrated, timeZone] = useSettingsStore((state) => [
       state._hasHydrated,

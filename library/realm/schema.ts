@@ -1,47 +1,63 @@
 import Realm from 'realm';
-import { RealmTimer, RealmBookInfo } from './dictionary';
+// import { RealmTimer, RealmBookInfo } from './dictionary';
+import { createRealmContext } from '@realm/react';
 // location (since it will likely change(?))
 // should location differ for each time user reads the book?
 
 // should this information be encrypted(?);
 // NOTE: should the get more complex and requires real-time data
 // to interact with another user GraphQL may be a better fit
+export interface RealmTimer extends Realm.Dictionary {
+   hours: number;
+   minute: number;
+   seconds: number;
+}
 
-// class RealmLibrary extends Realm.Object<RealmLibrary> {
-//    name!: string;
-//    library!: Realm.List<RealmBook>;
-//    static schema = {
-//       name: 'Library',
-//       properties: {
-//          name: 'string',
-//          library: { type: 'list', objectType: 'Book' },
-//       },
-//    };
-// }
+interface RealmAuthors extends Realm.Dictionary {
+   author: string;
+}
 
-class RealmBook extends Realm.Object<RealmBook> {
+export interface RealmBookInfo extends Realm.Dictionary {
+   title: string;
+   subtitle?: string | undefined;
+   authors?: string;
+   page?: number | undefined;
+   language?: string | undefined;
+   publisher?: string | undefined;
+   publishedDate?: string | undefined;
+}
+
+export class RealmLibrary extends Realm.Object<RealmLibrary, 'name'> {
+   name!: string;
+   books!: Realm.List<RealmBook>;
+   static schema = {
+      name: 'Library',
+      properties: {
+         name: 'string',
+         books: 'Book[]',
+      },
+   };
+}
+
+export class RealmBook extends Realm.Object<RealmBook, 'id'> {
    id!: string;
-   //    library!: Realm.Set<string>;
-   //    bookInfo?: RealmBookInfo; // dict
+   bookInfo!: RealmBookInfo; // dict
+
    //    logs?: Realm.List<RealmLogs>; //  O-t-M
    //    notes?: Realm.List<RealmNotes>; // O-t-M
    static schema = {
       name: 'Book',
       properties: {
          id: 'string',
+         bookInfo: '{}',
          //  library: {
          //     type: 'string',
          //  },
-         //  bookInfo: '{}',
          //  logs: 'Logs[]',
          //  notes: 'Notes[]?',
       },
-      //   primaryKey: 'id',
+      primaryKey: 'id',
    };
-
-   constructor(realm: Realm, id: string) {
-      super(realm, { id: id || '_SYNC_DISABLED_' });
-   }
 }
 
 // class RealmLogs extends Realm.Object<RealmLogs> {
@@ -114,10 +130,26 @@ class RealmBook extends Realm.Object<RealmBook> {
 //    schema: [RealmLibrary, RealmBook, RealmLogs, RealmNotes],
 // };
 
-export const RealmConfig: Realm.Configuration = {
-   schema: [RealmBook],
-   //    inMemory: true,
-};
-
 // provide saved notes for users(?);
 // following users(?)
+const SCHEMA_VERSION = 2;
+
+export const RealmConfig: Realm.Configuration = {
+   schema: [RealmBook, RealmLibrary],
+   schemaVersion: SCHEMA_VERSION,
+   //    onMigration: (oldRealm: Realm, newRealm: Realm) => {
+   //     // only apply this change if upgrading schemaVersion
+   //     if (oldRealm.schemaVersion < SCHEMA_VERSION) {
+   //       const oldObjects: Realm.Results<RealmLibrary> =
+   //         oldRealm.objects(RealmLibrary);
+   //       const newObjects: Realm.Results<Person> = newRealm.objects(Person);
+   //       // loop through all objects and set the fullName property in the
+   //       // new schema
+   //       for (const objectIndex in oldObjects) {
+   //         const oldObject = oldObjects[objectIndex];
+   //         const newObject = newObjects[objectIndex];
+   //         newObject.fullName = `${oldObject.firstName} ${oldObject.lastName}`;
+   //       }
+   //     }
+   //   },
+};
