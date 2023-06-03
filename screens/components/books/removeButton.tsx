@@ -1,5 +1,7 @@
 import { Button, Text } from 'react-native-paper';
 import { useState } from 'react';
+import { Realm } from '@realm/react';
+
 import CustomModal from '../../../components/modal';
 import { isBookInLibrary, isBookInLibraryList } from '../../../library/helper/checkBookLibrary';
 import { Library } from '../../../library/@types/googleBooks';
@@ -11,9 +13,10 @@ interface RemoveBookProps {
    id: string;
    mutate: () => void;
    navigation?: AddBookNavigationProp['navigation'];
+   realm: Realm;
 }
 
-const RemoveBookButton = ({ library, id, navigation, mutate }: RemoveBookProps) => {
+const RemoveBookButton = ({ library, id, navigation, mutate, realm }: RemoveBookProps) => {
    const isBookInFinished = isBookInLibraryList(library, 'finished', id);
    const isBookInReading = isBookInLibraryList(library, 'reading', id);
 
@@ -33,6 +36,10 @@ const RemoveBookButton = ({ library, id, navigation, mutate }: RemoveBookProps) 
          setTimeout(() => {
             navigation.navigate('Search');
          }, 1000);
+   };
+
+   const _removeRealmObj = () => {
+      realm.write(() => {});
    };
 
    return (

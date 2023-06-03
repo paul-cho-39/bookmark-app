@@ -34,15 +34,13 @@ const UpdateBookButton = ({
       if (selectedName && selectedName?.mutate) {
          // rereading and type here
          if (selectedName.type === 'reading') {
-            // i dont unserstand this code(?)
-            // test this out;
+            // i dont unserstand this code(?) test this out;
             selectedName?.mutate();
          }
 
          selectedName.mutate();
          _createRealmObj(selectedName.type, bookInfo);
       }
-
       // if the mutate contains body, mutate is null
       addToLibrary;
 
@@ -51,32 +49,39 @@ const UpdateBookButton = ({
       }, 1000);
    };
 
+   // if the book is already in realm library with a different name then
+   // set the library.libraryType =
    const _createRealmObj = (type: Store['type'], data: BasicBookInfo) => {
-      const { id, thumbnail: _, ...info } = data;
+      const { id, ..._ } = data;
+
       try {
          realm.write(() => {
             let library = realm.objects<RealmLibrary>('Library').filtered(`name = "${type}" `)[0];
-            const newBook = realm.create<RealmBook>('Book', {
-               id: id,
-               bookInfo: {
-                  title: data.title,
-                  subtitle: data?.subtitle,
-                  authors: data?.authors.toString(),
-                  page: data?.page,
-                  language: data?.language,
-                  publisher: data?.publisher,
-                  publishedDate: data?.publishedDate,
-               },
-            });
+
             if (!library) {
                const getLibraryType = type === 'reading' ? 'PRIMARY' : type;
                library = realm.create<RealmLibrary>('Library', {
                   name: getLibraryType,
-                  books: [newBook],
+                  books: [],
                });
-               // newLibrary.books.push(newBook);
             }
 
+            const existingBook = library.books.find((book) => book.id === id);
+            if (existingBook) return;
+
+            // TODO: create a library for finished and rereading
+            const oldLibrary = realm
+               .objects<RealmLibrary>('Library')
+               .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
+
+            if (oldLibrary) {
+               if (oldLibrary.name.includes('finished') && type === 'reading') {
+               }
+               const oldBook = oldLibrary.books.find((book) => book.id === id);
+               realm.delete(oldBook);
+            }
+
+            const newBook = _createBook(realm, id, data);
             library.books.push(newBook);
          });
       } catch (err) {
@@ -88,3 +93,19 @@ const UpdateBookButton = ({
 };
 
 export default UpdateBookButton;
+
+const _createBook = (realm: Realm, id: string, data: BasicBookInfo) => {
+   const newBook = realm.create<RealmBook>('Book', {
+      id: id,
+      bookInfo: {
+         title: data.title,
+         subtitle: data?.subtitle,
+         authors: data?.authors.toString(),
+         page: data?.page,
+         language: data?.language,
+         publisher: data?.publisher,
+         publishedDate: data?.publishedDate,
+      },
+   });
+   return newBook;
+};

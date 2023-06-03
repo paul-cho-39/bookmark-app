@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import Checked, { CheckedProps } from '../../../components/checkbox';
-import PageSlider, { PageInputter } from '../../../components/pageSlider';
+import PageInput, { PageInputter } from '../../../components/pageSlider';
 import getPageString from '../../../library/helper/getPageString';
 
 interface ExtraInfoProps {
@@ -14,24 +14,8 @@ interface ExtraInfoProps {
 
 const ExtraInfo = ({ value, setValue, isRereading, setIsRereading, page }: ExtraInfoProps) => {
    const [checkedStarted, setCheckedStarted] = useState(false);
-   const [sliderValue, setSliderValue] = useState(0);
 
    const { parsedValue, text } = getPageString(value, page);
-
-   // // synching with whenever slider value or input value changes
-   // useEffect(() => {
-   //    if (checkedStarted && !Number.isNaN(parsedValue)) {
-   //       setSliderValue(parsedValue);
-   //    }
-
-   //    return () => setSliderValue(0);
-   // }, [value]);
-
-   // useEffect(() => {
-   //    const valueString = Math.round(sliderValue).toString();
-   //    setValue(valueString);
-   // }, [sliderValue]);
-
    useEffect(() => {
       if (!checkedStarted && parsedValue > 0) {
          setValue('0');
@@ -59,11 +43,8 @@ const ExtraInfo = ({ value, setValue, isRereading, setIsRereading, page }: Extra
             <Checked checked={isRereading} setChecked={setIsRereading} title='Read in the past' />
             <Checked checked={checkedStarted} setChecked={setCheckedStarted} title='In progress' />
          </View>
-         <PageSlider
+         <PageInput
             text={text}
-            value={sliderValue}
-            setValue={(newValue) => setSliderValue(newValue)}
-            maxValue={page as number}
             show={checkedStarted}
             textValue={value}
             onTextChange={(newValue) => setValue(newValue)}

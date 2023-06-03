@@ -13,18 +13,15 @@ export interface RealmTimer extends Realm.Dictionary {
    seconds: number;
 }
 
-interface RealmAuthors extends Realm.Dictionary {
-   author: string;
-}
-
 export interface RealmBookInfo extends Realm.Dictionary {
    title: string;
-   subtitle?: string | undefined;
+   subtitle?: string;
    authors?: string;
-   page?: number | undefined;
-   language?: string | undefined;
-   publisher?: string | undefined;
-   publishedDate?: string | undefined;
+   page?: number;
+   language?: string;
+   publisher?: string;
+   publishedDate?: string;
+   numberOfRead?: number;
 }
 
 export class RealmLibrary extends Realm.Object<RealmLibrary, 'name'> {
@@ -132,7 +129,7 @@ export class RealmBook extends Realm.Object<RealmBook, 'id'> {
 
 // provide saved notes for users(?);
 // following users(?)
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 1;
 
 export const RealmConfig: Realm.Configuration = {
    schema: [RealmBook, RealmLibrary],
