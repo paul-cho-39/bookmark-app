@@ -18,7 +18,7 @@ import RadioButtons from '../../components/buttons/radioButton';
 import { useTheme } from 'react-native-paper';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
 import RealmContext from '../../library/realm';
-import { RealmBook, RealmLibrary } from '../../library/realm/schema';
+import { RealmLibrary } from '../../library/realm/schema';
 
 const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    const { colors } = useTheme();
@@ -30,7 +30,9 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    // realm context(?);
    const { useRealm, useQuery: useRealmQuery } = RealmContext;
    const realm = useRealm();
-   const book = useRealmQuery(RealmBook);
+
+   // EXPERIMENTAL PURPOSES FOR TESTING LIBRARY BUT USE JEST LATER
+   // const book = useRealmQuery(RealmBook);
    const Library = useRealmQuery(RealmLibrary);
 
    console.log(
@@ -52,46 +54,37 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
       // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
    );
 
-   // const filteredId = Library.filtered(`books.id = "${id}" `);
-   // console.log(
-   //    'libraries:',
-   //    filteredId[0].books.find((book) => book.id === id)
-   // );
-
-   // console.log(
-   //    'WANT',
-   //    Library.filtered(`name = "want" `)[0].books.find((book) => book.id === id),
-   //    'READING NOW',
-   //    Library.filtered(`name = "reading" `)[0].books.find((book) => book.id === id),
-   //    'FINISHED',
-   //    Library.filtered(`name = "finished" `)[0].books.find((book) => book.id === id)
-   // );
-
    const mutationStore = useMutateLibraries(uid, id, setHasMutated, queryClient);
 
+   // if any of isReading or value is true or more than zero, respectively, the type will
+   // be 'reading' and radio buttons will be disabled
    const [value, setValue] = useState('0');
    const [isRereading, setIsRereading] = useState(false);
 
-   // if user is rereading the finished book
-   const finishedMutation = isRereading
-      ? mutationStore.addToReReading.mutate
-      : mutationStore.addToFinished.mutate;
+   const DISABLED = isRereading || parseInt(value) > 0;
+   const body = {
+      currentlyReading: library.reading,
+      isRereading: isRereading,
+   };
 
-   const body = { currentlyReading: library.reading };
    const data: Store[] = [
       {
          name: 'Read later',
          type: 'want',
+         value: null,
          mutate: mutationStore.addToWant.mutate,
       },
       {
          name: 'Read already',
          type: 'finished',
-         mutate: finishedMutation,
+         value: null,
+         mutate: mutationStore.addToFinished.mutate,
       },
+      // how about reReading AND pageRead?
       {
          name: 'Read now',
          type: 'reading',
+         value: value,
          mutate: () => mutationStore.addToCurrent.mutate(body),
       },
    ];
@@ -100,7 +93,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
 
    useEffect(() => {
       const isNotDefault = select !== 'reading';
-      if (isRereading && isNotDefault) {
+      if (isNotDefault && DISABLED) {
          setSelect('reading');
       }
       if (isNotDefault) {
@@ -109,15 +102,11 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    }, [isRereading]);
 
    const addWithInfo = () => {
-      const body = { currentPage: value };
-      if (select === 'reading') {
-         mutationStore.addToCurrentWithPage.mutate(body);
-
-         setTimeout(() => {
-            navigation.navigate('Search');
-         }, 1000);
-      }
-      return;
+      const bodyWithPage = {
+         ...body,
+         currentPage: value,
+      };
+      mutationStore.addToCurrentWithPage.mutate(bodyWithPage);
    };
 
    return (
@@ -146,7 +135,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
                      onButtonChange={() => setSelect(item.type)}
                      select={select}
                      type={item.type}
-                     disabled={isRereading}
+                     disabled={DISABLED}
                   />
                </View>
             ))}

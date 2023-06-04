@@ -1,9 +1,10 @@
 import { Button, Text } from 'react-native-paper';
 import { AddBookNavigationProp } from '../../../library/@types/navigation';
 import { BasicBookInfo, Library } from '../../../library/@types/googleBooks';
-import createLibrary from '../../../library/realm/transaction/create';
 import { Realm } from '@realm/react';
 import { RealmBook, RealmLibrary } from '../../../library/realm/schema';
+
+import RealmBookCreator from '../../../library/realm/transaction/create';
 
 interface ButtonProps {
    store: Store[];
@@ -13,14 +14,25 @@ interface ButtonProps {
    bookInfo: BasicBookInfo;
    realm: Realm;
    toDatePage?: number;
-   addToLibrary?: (store: any) => void;
+   addToLibrary: () => void;
 }
 
-export interface Store {
+type ReadingStore = {
    name: string;
-   type: keyof Library;
-   mutate: () => void | ((body: Record<string, string>) => void) | null;
-}
+   type: 'reading';
+   value: string;
+   mutate: (isRereading: boolean) => void;
+};
+
+type OtherStore = {
+   name: string;
+   type: 'want' | 'finished';
+   value: null;
+   mutate: () => void;
+};
+
+type SelectedType = Store | undefined;
+export type Store = ReadingStore | OtherStore;
 
 const UpdateBookButton = ({
    store,
@@ -32,61 +44,48 @@ const UpdateBookButton = ({
    realm,
    addToLibrary,
 }: ButtonProps) => {
-   const selectedName = store.find((data) => data.type === select);
-   console.log('pages:', toDatePage);
-   const onPress = () => {
-      if (selectedName && selectedName?.mutate) {
-         // rereading and type here
-         if (selectedName.type === 'reading') {
-            // i dont unserstand this code(?) test this out;
-            selectedName?.mutate();
-         }
+   const selected = store.find((data) => data.type === select);
 
-         selectedName.mutate();
-         _createRealmObj(selectedName.type, bookInfo);
-      }
-      // if the mutate contains body, mutate is null
-      addToLibrary;
+   const onPress = () => {
+      if (!selected) return;
+
+      const action = storeMap[selected.type] || storeMap.default;
+      action(selected);
+
+      selected && _createRealmObj(selected.type, bookInfo);
 
       setTimeout(() => {
          navigation.navigate('Search');
       }, 1000);
    };
 
+   const storeMap: Record<string, (selected: SelectedType) => void> = {
+      reading: (selected: SelectedType) => {
+         const page = parseInt(selected?.value || '0');
+         page <= 0 ? selected?.mutate(isRereading) : addToLibrary();
+      },
+      default: (selected: SelectedType) => {
+         if ((selected as OtherStore)?.mutate) {
+            (selected as OtherStore).mutate();
+         }
+      },
+   };
+   // for local database; this will not send data to the server since it will require
+   // google book api to get access. The local database is for later use case, in which calls for
+   // data consistency between local database and server
    const _createRealmObj = (type: Store['type'], data: BasicBookInfo) => {
       const { id, ..._ } = data;
 
       try {
          realm.write(() => {
-            let library = realm.objects<RealmLibrary>('Library').filtered(`name = "${type}" `)[0];
-            if (!library) {
-               // initiating 'reading' if no reading library then the first is assigned as primary
-               library = realm.create<RealmLibrary>('Library', {
-                  name: type,
-                  books: [],
-               });
-            }
-            const isPrimary = _getIsPrimary(type, library);
-            const existingBook = _checkExistingLib(library, id, toDatePage);
-
-            // const existingBook = library.books.filtered(`id = "${id}"`)[0];
-            // // TODO: pages for exisitng book for server side too
-            // if (existingBook && !toDatePage) return;
-            // if (existingBook && toDatePage) {
-            //    existingBook.pageStart = toDatePage;
-            // }
-
-            const shouldProcessOldLib = _handleBookInDifferentLib(
-               realm,
-               id,
-               type,
-               isRereading,
-               isPrimary
-            );
+            const init = new RealmBookCreator(realm);
+            const library = init.getOrCreateLibrary(type);
+            const isPrimary = init.isBookPrimary(type, library);
+            const existingBook = init.getExistingBook(library, id, toDatePage);
+            const shouldProcessOldLib = init.handleBookInOtherLib(id, type, isRereading, isPrimary);
 
             if (shouldProcessOldLib || existingBook) return;
-
-            const newBook = _createBook(realm, id, data, isPrimary, isRereading, toDatePage);
+            const newBook = init.createNewBook(id, data, isPrimary, isRereading, toDatePage);
             library.books.push(newBook);
          });
       } catch (err) {
@@ -98,82 +97,3 @@ const UpdateBookButton = ({
 };
 
 export default UpdateBookButton;
-
-const _createBook = (
-   realm: Realm,
-   id: string,
-   data: BasicBookInfo,
-   isPrimary: boolean,
-   isRereading: boolean,
-   toDatePage?: number
-) => {
-   const newBook = realm.create<RealmBook>('Book', {
-      id: id,
-      bookInfo: {
-         title: data.title,
-         subtitle: data?.subtitle,
-         authors: data?.authors.toString(),
-         page: data?.page,
-         language: data?.language,
-         publisher: data?.publisher,
-         publishedDate: data?.publishedDate,
-      },
-      isPrimary: isPrimary,
-      pageStart: !toDatePage ? 0 : toDatePage,
-      numberOfRead: !isRereading ? 0 : 1,
-   });
-   return newBook;
-};
-
-const _checkExistingLib = (
-   library: RealmLibrary & Realm.Object<unknown, never>,
-   id: string,
-   toDatePage?: number
-) => {
-   const existingBook = library.books.filtered(`id = "${id}"`)[0];
-   // TODO: pages for exisitng book for server side too
-   if (existingBook && !toDatePage) return true;
-   if (existingBook && toDatePage) {
-      existingBook.pageStart = toDatePage;
-      return true;
-   }
-   return false;
-};
-
-const _getIsPrimary = (
-   type: Store['type'],
-   library: RealmLibrary & Realm.Object<unknown, never>
-) => {
-   let isPrimary = false;
-   if (type === 'reading' && library && library.books.length < 1) {
-      isPrimary = true;
-   }
-
-   return isPrimary;
-};
-
-const _handleBookInDifferentLib = (
-   realm: Realm,
-   id: string,
-   type: Store['type'],
-   isPrimary: boolean,
-   isRereading: boolean
-) => {
-   const oldLibrary = realm
-      .objects<RealmLibrary>('Library')
-      .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
-
-   if (oldLibrary) {
-      const oldBook = oldLibrary.books.find((book) => book.id === id);
-      if (oldBook && oldLibrary.name.includes('finished') && type === 'reading' && isRereading) {
-         oldBook.currentlyReading = true;
-         oldBook.numberOfRead! += 1;
-         oldBook.isPrimary = isPrimary;
-         return true;
-      }
-      if (oldBook) {
-         realm.delete(oldBook);
-      }
-   }
-   return false;
-};
