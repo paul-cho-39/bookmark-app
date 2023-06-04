@@ -34,10 +34,38 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    const Library = useRealmQuery(RealmLibrary);
 
    console.log(
-      'Book object is',
-      book.find((b) => b.bookInfo)
+      '--------LIBRARY READING BOOKS---------',
+      Library[0].name,
+      Library[0].books
+      // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
    );
-   console.log('LIBRARY object is', Library);
+   console.log(
+      '--------LIBRARY WANT BOOKS-------',
+      Library[1].name,
+      Library[1].books
+      // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
+   );
+   console.log(
+      '--------LIBRARY WANT BOOKS-------',
+      Library[2].name,
+      Library[2].books
+      // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
+   );
+
+   // const filteredId = Library.filtered(`books.id = "${id}" `);
+   // console.log(
+   //    'libraries:',
+   //    filteredId[0].books.find((book) => book.id === id)
+   // );
+
+   // console.log(
+   //    'WANT',
+   //    Library.filtered(`name = "want" `)[0].books.find((book) => book.id === id),
+   //    'READING NOW',
+   //    Library.filtered(`name = "reading" `)[0].books.find((book) => book.id === id),
+   //    'FINISHED',
+   //    Library.filtered(`name = "finished" `)[0].books.find((book) => book.id === id)
+   // );
 
    const mutationStore = useMutateLibraries(uid, id, setHasMutated, queryClient);
 
@@ -69,20 +97,16 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    ];
 
    const [select, setSelect] = useState(data[0].name);
-   const changeRadioSelection = (store: Store) => {
-      setSelect(store.type);
-   };
 
    useEffect(() => {
-      // default: should it be "finished" or "current"
-      setSelect('reading');
-   }, []);
-
-   useEffect(() => {
-      if (isRereading) {
-         setSelect('finished');
+      const isNotDefault = select !== 'reading';
+      if (isRereading && isNotDefault) {
+         setSelect('reading');
       }
-   }, [isRereading, select]);
+      if (isNotDefault) {
+         setSelect('reading');
+      }
+   }, [isRereading]);
 
    const addWithInfo = () => {
       const body = { currentPage: value };
@@ -119,7 +143,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
                   <Text>({library?.[item.type as keyof Library]?.length})</Text>
                   <RadioButtons
                      name={item.name}
-                     onButtonChange={() => changeRadioSelection(item)}
+                     onButtonChange={() => setSelect(item.type)}
                      select={select}
                      type={item.type}
                      disabled={isRereading}
@@ -130,6 +154,8 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
                navigation={navigation}
                store={data}
                select={select}
+               isRereading={isRereading}
+               toDatePage={parseInt(value)}
                bookInfo={bookInfo}
                addToLibrary={addWithInfo}
                realm={realm}
@@ -139,6 +165,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
                id={id}
                navigation={navigation}
                mutate={mutationStore.removeBook.mutate}
+               realm={realm}
             />
          </View>
       </View>

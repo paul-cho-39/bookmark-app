@@ -8,9 +8,11 @@ import { RealmBook, RealmLibrary } from '../../../library/realm/schema';
 interface ButtonProps {
    store: Store[];
    select: string;
+   isRereading: boolean;
    navigation: AddBookNavigationProp['navigation'];
    bookInfo: BasicBookInfo;
    realm: Realm;
+   toDatePage?: number;
    addToLibrary?: (store: any) => void;
 }
 
@@ -23,13 +25,15 @@ export interface Store {
 const UpdateBookButton = ({
    store,
    select,
+   toDatePage,
+   isRereading,
    navigation,
    bookInfo,
    realm,
    addToLibrary,
 }: ButtonProps) => {
    const selectedName = store.find((data) => data.type === select);
-
+   console.log('pages:', toDatePage);
    const onPress = () => {
       if (selectedName && selectedName?.mutate) {
          // rereading and type here
@@ -49,39 +53,40 @@ const UpdateBookButton = ({
       }, 1000);
    };
 
-   // if the book is already in realm library with a different name then
-   // set the library.libraryType =
    const _createRealmObj = (type: Store['type'], data: BasicBookInfo) => {
       const { id, ..._ } = data;
 
       try {
          realm.write(() => {
             let library = realm.objects<RealmLibrary>('Library').filtered(`name = "${type}" `)[0];
-
             if (!library) {
-               const getLibraryType = type === 'reading' ? 'PRIMARY' : type;
+               // initiating 'reading' if no reading library then the first is assigned as primary
                library = realm.create<RealmLibrary>('Library', {
-                  name: getLibraryType,
+                  name: type,
                   books: [],
                });
             }
+            const isPrimary = _getIsPrimary(type, library);
+            const existingBook = _checkExistingLib(library, id, toDatePage);
 
-            const existingBook = library.books.find((book) => book.id === id);
-            if (existingBook) return;
+            // const existingBook = library.books.filtered(`id = "${id}"`)[0];
+            // // TODO: pages for exisitng book for server side too
+            // if (existingBook && !toDatePage) return;
+            // if (existingBook && toDatePage) {
+            //    existingBook.pageStart = toDatePage;
+            // }
 
-            // TODO: create a library for finished and rereading
-            const oldLibrary = realm
-               .objects<RealmLibrary>('Library')
-               .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
+            const shouldProcessOldLib = _handleBookInDifferentLib(
+               realm,
+               id,
+               type,
+               isRereading,
+               isPrimary
+            );
 
-            if (oldLibrary) {
-               if (oldLibrary.name.includes('finished') && type === 'reading') {
-               }
-               const oldBook = oldLibrary.books.find((book) => book.id === id);
-               realm.delete(oldBook);
-            }
+            if (shouldProcessOldLib || existingBook) return;
 
-            const newBook = _createBook(realm, id, data);
+            const newBook = _createBook(realm, id, data, isPrimary, isRereading, toDatePage);
             library.books.push(newBook);
          });
       } catch (err) {
@@ -94,7 +99,14 @@ const UpdateBookButton = ({
 
 export default UpdateBookButton;
 
-const _createBook = (realm: Realm, id: string, data: BasicBookInfo) => {
+const _createBook = (
+   realm: Realm,
+   id: string,
+   data: BasicBookInfo,
+   isPrimary: boolean,
+   isRereading: boolean,
+   toDatePage?: number
+) => {
    const newBook = realm.create<RealmBook>('Book', {
       id: id,
       bookInfo: {
@@ -106,6 +118,62 @@ const _createBook = (realm: Realm, id: string, data: BasicBookInfo) => {
          publisher: data?.publisher,
          publishedDate: data?.publishedDate,
       },
+      isPrimary: isPrimary,
+      pageStart: !toDatePage ? 0 : toDatePage,
+      numberOfRead: !isRereading ? 0 : 1,
    });
    return newBook;
+};
+
+const _checkExistingLib = (
+   library: RealmLibrary & Realm.Object<unknown, never>,
+   id: string,
+   toDatePage?: number
+) => {
+   const existingBook = library.books.filtered(`id = "${id}"`)[0];
+   // TODO: pages for exisitng book for server side too
+   if (existingBook && !toDatePage) return true;
+   if (existingBook && toDatePage) {
+      existingBook.pageStart = toDatePage;
+      return true;
+   }
+   return false;
+};
+
+const _getIsPrimary = (
+   type: Store['type'],
+   library: RealmLibrary & Realm.Object<unknown, never>
+) => {
+   let isPrimary = false;
+   if (type === 'reading' && library && library.books.length < 1) {
+      isPrimary = true;
+   }
+
+   return isPrimary;
+};
+
+const _handleBookInDifferentLib = (
+   realm: Realm,
+   id: string,
+   type: Store['type'],
+   isPrimary: boolean,
+   isRereading: boolean
+) => {
+   const oldLibrary = realm
+      .objects<RealmLibrary>('Library')
+      .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
+
+   if (oldLibrary) {
+      const oldBook = oldLibrary.books.find((book) => book.id === id);
+      if (oldBook && oldLibrary.name.includes('finished') && type === 'reading' && isRereading) {
+         oldBook.currentlyReading = true;
+         oldBook.numberOfRead! += 1;
+         oldBook.isPrimary = isPrimary;
+         return true;
+      }
+      if (oldBook) {
+         realm.delete(oldBook);
+      }
+   }
+   return false;
 };

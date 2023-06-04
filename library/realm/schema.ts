@@ -21,7 +21,6 @@ export interface RealmBookInfo extends Realm.Dictionary {
    language?: string;
    publisher?: string;
    publishedDate?: string;
-   numberOfRead?: number;
 }
 
 export class RealmLibrary extends Realm.Object<RealmLibrary, 'name'> {
@@ -39,21 +38,25 @@ export class RealmLibrary extends Realm.Object<RealmLibrary, 'name'> {
 export class RealmBook extends Realm.Object<RealmBook, 'id'> {
    id!: string;
    bookInfo!: RealmBookInfo; // dict
+   isPrimary!: boolean;
+   currentlyReading?: boolean;
+   numberOfRead?: number;
+   pageStart?: number;
 
    //    logs?: Realm.List<RealmLogs>; //  O-t-M
    //    notes?: Realm.List<RealmNotes>; // O-t-M
    static schema = {
       name: 'Book',
       properties: {
-         id: 'string',
+         id: { type: 'string', indexed: true },
          bookInfo: '{}',
-         //  library: {
-         //     type: 'string',
-         //  },
+         isPrimary: { type: 'bool', default: false },
+         currentlyReading: { type: 'bool', default: false },
+         numberOfRead: { type: 'int', default: 0 },
+         pageStart: { type: 'int', default: 0 },
          //  logs: 'Logs[]',
          //  notes: 'Notes[]?',
       },
-      primaryKey: 'id',
    };
 }
 
@@ -129,7 +132,7 @@ export class RealmBook extends Realm.Object<RealmBook, 'id'> {
 
 // provide saved notes for users(?);
 // following users(?)
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 3;
 
 export const RealmConfig: Realm.Configuration = {
    schema: [RealmBook, RealmLibrary],

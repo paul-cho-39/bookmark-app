@@ -7,6 +7,7 @@ import { isBookInLibrary, isBookInLibraryList } from '../../../library/helper/ch
 import { Library } from '../../../library/@types/googleBooks';
 import { AddBookNavigationProp } from '../../../library/@types/navigation';
 import RemoveButtonInsideModal from '../menu/removeButtonModal';
+import { RealmLibrary } from '../../../library/realm/schema';
 
 interface RemoveBookProps {
    library: Library;
@@ -32,14 +33,31 @@ const RemoveBookButton = ({ library, id, navigation, mutate, realm }: RemoveBook
 
    const removeBook = () => {
       mutate();
+      _removeRealmObj(id);
+
       navigation &&
          setTimeout(() => {
             navigation.navigate('Search');
          }, 1000);
    };
 
-   const _removeRealmObj = () => {
-      realm.write(() => {});
+   // THIS IS NOT RECOMMENDED. SOFT DELETE FOR BOOKS CONTAINING MORE DATA
+   // TODO: if the book has been read and the book has logs then soft delete
+   // OR have it hard delete here and soft delete at the server
+   const _removeRealmObj = (id: string) => {
+      try {
+         realm.write(() => {
+            const libraries = realm
+               .objects<RealmLibrary>('Library')
+               .filtered(`books.id = "${id}" `);
+            libraries.forEach((lib) => {
+               const toDelete = lib.books.find((book) => (book.id = id));
+               realm.delete(toDelete);
+            });
+         });
+      } catch (err) {
+         console.error('Failed to delete the books in library', err);
+      }
    };
 
    return (
