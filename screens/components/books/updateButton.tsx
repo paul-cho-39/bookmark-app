@@ -85,10 +85,12 @@ const UpdateBookButton = ({
             const existingBook = init.getExistingBook(library, id, toDatePage);
             const oldBook = init.handleBookInOtherLib(id, type, isRereading, isPrimary);
 
-            if (!oldBook || existingBook) return;
+            if (oldBook === true || existingBook) return;
 
-            const newBook = init.createNewBook(id, data, isPrimary, isRereading, toDatePage);
-            init.addBookToLibrary(oldBook, library, newBook);
+            const newBookParams = { id, data, isPrimary, isRereading, toDatePage };
+            // either creates from cloned oldBook or creates a new book and added to the library
+            // TDOO: create an object for logs
+            init.addBookToLibrary(library, oldBook, newBookParams);
          });
       } catch (err) {
          console.error(`Failed to write transaction in library for ${type}: `, err);

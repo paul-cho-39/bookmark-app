@@ -1,7 +1,16 @@
 import { Realm } from '@realm/react';
 import { BasicBookInfo, Library } from '../../@types/googleBooks';
-import { RealmBook, RealmLibrary } from '../schema';
+import { RealmBook, RealmLibrary, RealmLogs } from '../schema';
 import { Store } from '../../../screens/components/books';
+
+interface NewBookParams {
+   id: string;
+   data: Partial<BasicBookInfo>;
+   isPrimary: boolean;
+   isRereading: boolean;
+   toDatePage?: number;
+   logs?: RealmLogs;
+}
 
 export default class RealmBookCreator {
    private realm: Realm;
@@ -18,19 +27,13 @@ export default class RealmBookCreator {
       return library;
    }
 
-   createNewBook(
-      id: string,
-      data: BasicBookInfo,
-      isPrimary: boolean,
-      isRereading: boolean,
-      toDatePage?: number
-   ): RealmBook {
+   createNewBook({ id, data, isPrimary, isRereading, toDatePage }: NewBookParams): RealmBook {
       const newBook = this.realm.create<RealmBook>('Book', {
          id,
          bookInfo: {
             title: data.title,
             subtitle: data?.subtitle,
-            authors: data?.authors.toString(),
+            authors: data?.authors?.toString(),
             page: data?.page,
             language: data?.language,
             publisher: data?.publisher,
@@ -64,19 +67,25 @@ export default class RealmBookCreator {
             oldBook.currentlyReading = true;
             oldBook.numberOfRead! += 1;
             oldBook.isPrimary = isPrimary;
-            return false;
+            return true;
          }
          if (oldBook) {
             return oldBook;
          }
       }
-      return null;
+      return false;
    }
-   addBookToLibrary(oldBook: RealmBook, library: RealmLibrary, newBook: RealmBook) {
+   addBookToLibrary(
+      library: RealmLibrary,
+      oldBook: RealmBook | false,
+      newBookParams: NewBookParams
+   ) {
       if (oldBook) {
-         library.books.push(oldBook);
+         const newBook = this.createNewBook(this.normalizeOldBook(oldBook));
+         library.books.push(newBook);
          this.realm.delete(oldBook);
       } else {
+         const newBook = this.createNewBook(newBookParams);
          library.books.push(newBook);
       }
    }
@@ -84,5 +93,32 @@ export default class RealmBookCreator {
       return this.realm
          .objects<RealmLibrary>('Library')
          .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
+   }
+   private getOldBook(id: string, type: Store['type']) {
+      const oldLibrary = this.getOldLibrary(id, type);
+      if (oldLibrary) {
+         const oldBook = oldLibrary.books.find((book) => book.id === id);
+         return oldBook;
+      }
+   }
+   // CONSIDER: have this in another class
+   // so it will normalize ALL realm objects so it will be easier to manipulate
+   private normalizeOldBook(oldBook: RealmBook): NewBookParams {
+      return {
+         id: oldBook.id,
+         data: {
+            title: oldBook.bookInfo.title,
+            subtitle: oldBook.bookInfo.subtitle,
+            authors: oldBook.bookInfo.authors ? oldBook.bookInfo.authors.split(',') : [],
+            page: oldBook.bookInfo.page,
+            language: oldBook.bookInfo.language,
+            publisher: oldBook.bookInfo.publisher,
+            publishedDate: oldBook.bookInfo.publishedDate,
+         },
+         isPrimary: oldBook.isPrimary,
+         isRereading: !!oldBook.currentlyReading,
+         toDatePage: oldBook.pageStart,
+         // add logs here once it is completed and likely have to use it from another class(?);
+      };
    }
 }

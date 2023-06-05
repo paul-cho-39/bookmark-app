@@ -3,43 +3,57 @@ import { RealmLibrary, RealmLogs, RealmBook } from '../schema';
 
 export default class TimerLogs {
    private realm: Realm;
+   private id: string;
 
-   constructor(realm: Realm) {
+   constructor(realm: Realm, id: string) {
       this.realm = realm;
+      this.id = id;
    }
+
+   private get currentBook() {
+      return this.realm.objects<RealmBook>('Book').filtered(`id = "${this.id}" `)[0];
+   }
+   private get bookLogs() {
+      return this.realm.objects<RealmLogs>('Logs').filtered(`id = "${this.id}" `);
+   }
+   //    TODO: whenever deleting the logs apply linked delete alogrithm
    // depending on the data create a new one here
-   createNewLog(id: string, options?: Record<string, unknown>) {
-      const currentBook = this.getBookById(id);
-      const latestLogIndex = this.getLatestLogIndex(currentBook.id);
+   createNewLog(options?: Record<string, unknown>) {
+      const latestLogIndex = this.getLatestLogIndex();
 
       const newLogIndex = latestLogIndex + 1;
       this.realm.create<RealmLogs>('Logs', {
-         id: id,
+         id: this.id,
          logIndex: newLogIndex,
          ...options,
       });
    }
-   getLogByIndex(logIndex: number, id: string) {
-      return this.realm
-         .objects<RealmLogs>('Logs')
-         .filtered(`logIndex = "${logIndex}" AND id = "${id}" `)[0];
+   deleteLog(logIndex: number) {
+      const logToDelete = this.getLogByIndex(logIndex);
+      if (logToDelete) {
+         this.reIndex(logIndex, 'DELETE');
+         //  delete the log after
+         this.realm.delete(logToDelete);
+      }
    }
-   getLatestLogIndex(id: string) {
-      const logs = this.getAllLogsById(id);
+   reIndex(logIndex: number, type: 'INSERT' | 'DELETE') {
+      const logsToReindex = this.getFiltered<RealmLogs>(
+         'Logs',
+         `id = "${this.id}" AND logIndex > ${logIndex}`
+      );
+      logsToReindex.forEach((log) => {
+         type === 'DELETE' ? (log.logIndex -= 1) : (log.logIndex += 1);
+      });
+   }
+   private getLogByIndex(logIndex: number) {
+      return this.getFiltered<RealmLogs>('Logs', `logIndex = "${logIndex}"`)[0];
+   }
+   private getLatestLogIndex() {
+      const logs = this.bookLogs;
       if (logs.length === 0) return 0;
       return Math.max(...logs.map((log) => log.logIndex));
    }
-   private getCurrentlyReadingBook(id: string) {
-      const library = this.realm
-         .objects<RealmLibrary>('Library')
-         .filtered(`name = "reading" OR name = "finished" `)[0];
-      const currentBook = library.books.find((book) => book.id === id);
-      return currentBook;
-   }
-   private getBookById(id: string) {
-      return this.realm.objects<RealmBook>('Book').filtered(`id = "${id}" `)[0];
-   }
-   private getAllLogsById(id: string) {
-      return this.realm.objects<RealmLogs>('Logs').filtered(`id = "${id}" `);
+   private getFiltered<T extends RealmLogs | RealmBook>(schema: string, filter: string) {
+      return this.realm.objects<T>(schema).filtered(filter);
    }
 }
