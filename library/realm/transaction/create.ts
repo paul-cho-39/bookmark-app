@@ -56,28 +56,33 @@ export default class RealmBookCreator {
       return type === 'reading' && library && library.books.length < 1;
    }
 
-   handleBookInOtherLib(
-      id: string,
-      type: Store['type'],
-      isPrimary: boolean,
-      isRereading: boolean
-   ): boolean {
-      const oldLibrary = this.realm
-         .objects<RealmLibrary>('Library')
-         .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
-
+   handleBookInOtherLib(id: string, type: Store['type'], isPrimary: boolean, isRereading: boolean) {
+      const oldLibrary = this.getOldLibrary(id, type);
       if (oldLibrary) {
          const oldBook = oldLibrary.books.find((book) => book.id === id);
          if (oldBook && oldLibrary.name.includes('finished') && type === 'reading' && isRereading) {
             oldBook.currentlyReading = true;
             oldBook.numberOfRead! += 1;
             oldBook.isPrimary = isPrimary;
-            return true;
+            return false;
          }
          if (oldBook) {
-            this.realm.delete(oldBook);
+            return oldBook;
          }
       }
-      return false;
+      return null;
+   }
+   addBookToLibrary(oldBook: RealmBook, library: RealmLibrary, newBook: RealmBook) {
+      if (oldBook) {
+         library.books.push(oldBook);
+         this.realm.delete(oldBook);
+      } else {
+         library.books.push(newBook);
+      }
+   }
+   private getOldLibrary(id: string, type: Store['type']) {
+      return this.realm
+         .objects<RealmLibrary>('Library')
+         .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
    }
 }

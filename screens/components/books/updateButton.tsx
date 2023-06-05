@@ -81,12 +81,14 @@ const UpdateBookButton = ({
             const init = new RealmBookCreator(realm);
             const library = init.getOrCreateLibrary(type);
             const isPrimary = init.isBookPrimary(type, library);
-            const existingBook = init.getExistingBook(library, id, toDatePage);
-            const shouldProcessOldLib = init.handleBookInOtherLib(id, type, isRereading, isPrimary);
 
-            if (shouldProcessOldLib || existingBook) return;
+            const existingBook = init.getExistingBook(library, id, toDatePage);
+            const oldBook = init.handleBookInOtherLib(id, type, isRereading, isPrimary);
+
+            if (!oldBook || existingBook) return;
+
             const newBook = init.createNewBook(id, data, isPrimary, isRereading, toDatePage);
-            library.books.push(newBook);
+            init.addBookToLibrary(oldBook, library, newBook);
          });
       } catch (err) {
          console.error(`Failed to write transaction in library for ${type}: `, err);

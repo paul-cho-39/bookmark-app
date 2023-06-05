@@ -45,6 +45,7 @@ const CustomModal = ({
    const { colors } = useTheme();
    const backgroundColor = !color ? colors.surface : color;
    const [_modalLayout, setModalLayout] = useState({ height: 0, width: 0 });
+   const { style: scaleStyle, eventHandlers, isPressedIn } = useTouchResize(0.8);
    const hideModal = () => setVisible(false);
 
    const handleLayout = (event: LayoutChangeEvent) => {
@@ -61,7 +62,16 @@ const CustomModal = ({
       }
    };
 
-   const { style: scaleStyle, eventHandlers, isPressedIn } = useTouchResize(0.8);
+   const titleElement = (title: React.ReactNode | string) => {
+      return React.isValidElement(title) ? (
+         title
+      ) : (
+         <Text style={[styles.title, titleStyle]} variant='titleMedium'>
+            {title}
+         </Text>
+      );
+   };
+
    return (
       <>
          <Portal>
@@ -84,14 +94,7 @@ const CustomModal = ({
                         onPressOut={eventHandlers.onPressEnd}
                      />
                   )}
-                  {/* so that icon can be added to the modal */}
-                  {React.isValidElement(title) ? (
-                     title
-                  ) : (
-                     <Text style={[styles.title, titleStyle]} variant='titleMedium'>
-                        {title}
-                     </Text>
-                  )}
+                  {titleElement(title)}
                   {headerRight}
                </View>
                {displayDivider && <Divider />}

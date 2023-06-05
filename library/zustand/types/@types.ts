@@ -79,7 +79,17 @@ export interface UserPreference {
    };
 }
 
-export interface UserInfo {}
+export interface UserInfo {
+   bookInfo: {
+      bookdId: string;
+      authors: string[];
+      libraryType: string; // should be object literal(?)
+   };
+   notes: {
+      latestLogIndex?: number[];
+      notes?: Delta[]; // have users multiple notes
+   };
+}
 
 interface DeltaOperation {
    insert?: string | Object;
