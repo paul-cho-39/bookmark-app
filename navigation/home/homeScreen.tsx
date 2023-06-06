@@ -4,7 +4,7 @@ import HomeScreen from '../../screens/home';
 import SearchBar from '../../screens/components/appbar/searchbar';
 
 import AddBookScreen from '../../screens/addbook/addBook';
-import SearchScreen from '../../screens/search/search';
+import SearchScreen from '../../screens/search';
 import BackButton from '../../components/buttons/backButton';
 import { useTheme } from 'react-native-paper';
 

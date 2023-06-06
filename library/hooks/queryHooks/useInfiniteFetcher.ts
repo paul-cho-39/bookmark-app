@@ -10,7 +10,6 @@ interface FetcherProps {
 }
 
 export default function useInfiniteFetcher({ search, enabler }: FetcherProps) {
-   // console.log('-----TESTING ITEMS IN INFITEFETCHER----', enabler);
    const { data, isLoading, isFetching, isError, isSuccess, hasNextPage, fetchNextPage } =
       useInfiniteQuery(
          queryKeys.bookSearch(search),
