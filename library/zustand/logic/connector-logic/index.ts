@@ -44,6 +44,14 @@ const resetQuery = () => {
    );
 };
 
+const setIsConnected = (value: boolean | null) => {
+   useConnectStore.setState(
+      produce((draft: ConnectorStoreProps) => {
+         draft.data.network.isConnected = value;
+      })
+   );
+};
+
 const setBookVisibility = (value: boolean) => {
    _setModalVisibility('edit', 'isChangeBookVisible', value);
 };
@@ -66,4 +74,5 @@ export {
    setEmail,
    setBookVisibility,
    setStopModalVisible,
+   setIsConnected,
 };

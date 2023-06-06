@@ -17,6 +17,7 @@ import * as Localization from 'expo-localization';
 import RealmContext from './library/realm/';
 import Realm from 'realm';
 import { RealmConfig } from './library/realm/schema';
+import useNetworkStatus from './library/hooks/useNetworkStatus';
 
 const queryClient = new QueryClient({
    defaultOptions: {
@@ -29,6 +30,7 @@ const queryClient = new QueryClient({
 // for the app from localication get a) "languageTag" && "languageCode"
 
 export default function App() {
+   useNetworkStatus();
    const { colors } = useTheme();
    const colorScheme = Appearance.getColorScheme();
    const isDarkPreferred = colorScheme === 'dark';

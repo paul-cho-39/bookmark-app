@@ -17,6 +17,9 @@ export interface ConnectorStoreProps {
       notes: {
          isDataAvailable: boolean;
       };
+      network: {
+         isConnected: null | boolean;
+      };
    };
    modal: {
       edit: {

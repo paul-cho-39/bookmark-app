@@ -4,7 +4,7 @@ import { getUser } from '../../library/helper';
 import { useQuery } from '@tanstack/react-query';
 import queryKeys from '../../library/helper/react-query/queryKeys';
 import { CurrentBook } from '../../library/@types/googleBooks';
-import MainBookCover from '../components/books/mainBook';
+import MainBookCover from './mainBook';
 import { useTheme } from 'react-native-paper';
 import { getFetch, getUrl } from '../../library/helper/react-query';
 

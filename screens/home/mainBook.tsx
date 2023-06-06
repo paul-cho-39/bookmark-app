@@ -1,16 +1,17 @@
 import { StyleSheet, View } from 'react-native';
-import { CurrentBookData } from '../../../library/@types/googleBooks';
-import { CONTAINER_HEIGHT, IMAGE_HEIGHT, width } from '../../../library/helper';
-import MainMenu from '../menu/mainBookMenu';
+import { CurrentBookData } from '../../library/@types/googleBooks';
+import { CONTAINER_HEIGHT, IMAGE_HEIGHT, width } from '../../library/helper';
+import MainMenu from '../components/menu/mainBookMenu';
 import { QueryCache, useQueryClient } from '@tanstack/react-query';
-import { useMutateLibrary } from '../../../library/hooks/queryHooks/useMutateLibrary';
-import BookInfo from './bookInfo';
+import { useMutateLibrary } from '../../library/hooks/queryHooks/useMutateLibrary';
+import BookInfo from '../components/books/bookInfo';
 import { Button, Text } from 'react-native-paper';
-import SurfaceButtons from '../menu/surfaceButtons';
-import queryKeys from '../../../library/helper/react-query/queryKeys';
-import getUrl from '../../../library/helper/react-query/getUrl';
-import useSettingsStore from '../../../library/zustand/settingsStore';
-import { setHasMutated } from '../../../library/zustand/logic/connector-logic';
+import SurfaceButtons from '../components/menu/surfaceButtons';
+import queryKeys from '../../library/helper/react-query/queryKeys';
+import getUrl from '../../library/helper/react-query/getUrl';
+import useSettingsStore from '../../library/zustand/settingsStore';
+import { setHasMutated } from '../../library/zustand/logic/connector-logic';
+import useConnectStore from '../../library/zustand/connectStore';
 
 interface MainBookCoverProps {
    currentBooks: CurrentBookData[];
@@ -18,6 +19,9 @@ interface MainBookCoverProps {
 }
 
 const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
+   const isConnected = useConnectStore((state) => state.data.network.isConnected);
+   console.log(`network is:`, isConnected ? 'connected' : 'not connected');
+
    const queryClient = useQueryClient();
    const timeZone = useSettingsStore(
       (state) => state.userPreference.userGeneralSettings.preference.timeZone
@@ -48,6 +52,7 @@ const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
       queryClient,
       'remove'
    );
+   // SNIP -- to here set the logic elsewhere not here
 
    const userLibrary = queryClient.getQueryData(queryKeys.userLibrary(uid as string));
 

@@ -14,6 +14,9 @@ const initialState: ConnectorStoreProps = {
       notes: {
          isDataAvailable: false,
       },
+      network: {
+         isConnected: null,
+      },
    },
    modal: {
       edit: {

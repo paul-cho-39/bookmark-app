@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import React, { useEffect } from 'react';
+import NetInfo from '@react-native-community/netinfo';
+
+import { setIsConnected } from '../zustand/logic/connector-logic';
 
 function useNetworkStatus() {
-   const [isConnected, setIsConnected] = useState<boolean | null>(null);
-
    useEffect(() => {
       const unsubscribe = NetInfo.addEventListener((state) => {
          setIsConnected(state.isConnected);
@@ -17,8 +17,6 @@ function useNetworkStatus() {
          unsubscribe();
       };
    }, []);
-
-   return isConnected;
 }
 
 export default useNetworkStatus;

@@ -1,4 +1,4 @@
-import { FlatList, View } from 'react-native';
+import { FlatList, View, Text } from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
 import useInfiniteFetcher from '../../library/hooks/queryHooks/useInfiniteFetcher';
 import createUniqueDataSets from '../../library/helper/createUniqueData';
@@ -19,7 +19,12 @@ const SearchScreen = ({}) => {
    const [isFooterLoading, setIsFooterLoading] = useState(false);
    const query = useConnectStore((state) => state.inputs.query);
 
-   const { data, isFetching, isError, hasNextPage, fetchNextPage } = useInfiniteFetcher({ search });
+   const [hasNoItems, setHasNoItems] = useState(false);
+
+   const { data, isFetching, isError, hasNextPage, fetchNextPage } = useInfiniteFetcher({
+      search,
+      hasNoItems,
+   });
 
    // resetting query so that query becomes active
    useEffect(() => {
@@ -32,6 +37,12 @@ const SearchScreen = ({}) => {
 
    // recreating isLoading
    useEffect(() => {
+      const items = data?.pages[0].items;
+      if (query && search.length > 2 && !items) {
+         console.log('Has to be false: ', !hasNoItems);
+         setHasNoItems(true);
+         console.log('Has to be true: ', hasNoItems);
+      }
       if (query && search.length > 2 && query !== search) {
          setIsLoading(true);
       }
@@ -39,10 +50,18 @@ const SearchScreen = ({}) => {
          setIsFooterLoading(true);
       }
       const timeoutId = setTimeout(() => {
-         if (query && query.length > 2) {
+         if (query && query.length > 2 && !hasNoItems) {
             setSearch(query);
          }
-      }, 500);
+      }, 300);
+
+      // if there is no items then a) set the loading time where if there is no items && setTimeout(3000)
+      // then it should display a screen that says no picture on display
+      // and in the useInfiniteSearch
+
+      const isBug = !items ? 'there is a bug' : 'no bug';
+
+      console.log('--INSIDE QUERY AND SEARCH-----', isBug, '-----------------');
 
       return () => {
          clearTimeout(timeoutId);
@@ -64,14 +83,7 @@ const SearchScreen = ({}) => {
       return () => clearTimeout(timeoutId);
    }, [data]);
 
-   const loadNextPage = () => {
-      if (hasNextPage) {
-         setTimeout(() => {
-            fetchNextPage();
-         }, 350);
-      }
-   };
-
+   // a separate component along with loader && flatList
    const renderItem = ({ item }: { item: Items<any> }) => {
       return (
          <>
@@ -81,12 +93,36 @@ const SearchScreen = ({}) => {
       );
    };
 
+   const loadNextPage = () => {
+      if (hasNextPage) {
+         setTimeout(() => {
+            fetchNextPage();
+         }, 350);
+      }
+   };
+
+   if (hasNoItems) {
+      return (
+         <View>
+            {isLoading ? (
+               <ActivityIndicator
+                  animating={isLoading}
+                  size='large'
+                  style={[styles.loading, { display: isLoading ? 'flex' : 'none' }]}
+               />
+            ) : null}
+            <Text>There is no result that you have searched</Text>
+         </View>
+      );
+   }
+
    return (
       <View
          style={[styles.container, { backgroundColor: colors.background, height: '100%' }]}
          accessible={true}
       >
          <Divider style={{ marginTop: 5 }} bold />
+
          {isLoading ? (
             <ActivityIndicator
                animating={isLoading}
@@ -94,6 +130,7 @@ const SearchScreen = ({}) => {
                style={[styles.loading, { display: isLoading ? 'flex' : 'none' }]}
             />
          ) : null}
+         {/* create a new component where if the loading screen does not show it wont show */}
          {isError || isLoading ? null : (
             <FlatList
                keyExtractor={(item) => item && item?.id}
