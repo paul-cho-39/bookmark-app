@@ -22,7 +22,7 @@ type TabsParamList = {
 };
 
 type TimerParamsList = {
-   MainTimer: { uid: string; primaryBookInfo: PrimaryBookInfoType; params: BaseUserLogProps };
+   MainTimer: { uid: string; primaryBookInfo: PrimaryBookInfoType };
    TimerSettings: undefined;
    Notes: { params: BaseUserLogProps };
 };

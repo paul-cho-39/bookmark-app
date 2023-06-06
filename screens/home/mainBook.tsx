@@ -9,7 +9,6 @@ import { Button, Text } from 'react-native-paper';
 import SurfaceButtons from '../components/menu/surfaceButtons';
 import queryKeys from '../../library/helper/react-query/queryKeys';
 import getUrl from '../../library/helper/react-query/getUrl';
-import useSettingsStore from '../../library/zustand/settingsStore';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
 import useConnectStore from '../../library/zustand/connectStore';
 
@@ -23,9 +22,6 @@ const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
    console.log(`network is:`, isConnected ? 'connected' : 'not connected');
 
    const queryClient = useQueryClient();
-   const timeZone = useSettingsStore(
-      (state) => state.userPreference.userGeneralSettings.preference.timeZone
-   );
    // TODO: refactor this part use helper function
    // when first loading will likely be using cache to open the app
    const primaryBook = currentBooks
@@ -59,8 +55,6 @@ const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
    return (
       <>
          <View style={styles.infoContainer}>
-            {/* its going to be calendar here? */}
-            {/* text component? */}
             <View style={styles.containerWrapper}>
                <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Currently Recording: </Text>
                {/* <Text>Started reading: {primaryBook.date?.toString().slice(0, 10)}</Text>*/}

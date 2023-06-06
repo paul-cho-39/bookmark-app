@@ -12,11 +12,16 @@ import useConnectStore from '../../library/zustand/connectStore';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
 
 import Realm from 'realm';
+import EmptyLibrary from './emptyLibrary';
 
 const HomeScreen = ({}) => {
    const uid = getUser() as string;
    const { colors } = useTheme();
-   const hasMutated = useConnectStore((state) => state.data.library.hasMutated);
+   const [hasMutated, isConnected] = useConnectStore((state) => [
+      state.data.library.hasMutated,
+      state.data.network.isConnected,
+   ]);
+
    // change the queryKeys based
    const { data: userLibrary, isError } = useQuery<CurrentBook>(
       queryKeys.recording(uid),
@@ -31,17 +36,10 @@ const HomeScreen = ({}) => {
    return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
          {!currentBooks ? (
-            // TDOO: replacement component if there are no books
-            // TODO: an error page if it fails to load the data here
-            <View style={{ flex: 1 }}>
-               <Text>There are no current books available</Text>
-            </View>
+            <EmptyLibrary />
          ) : (
             <MainBookCover uid={uid as string} currentBooks={currentBooks} />
          )}
-
-         {/* TODO: signout button should be where editing the book */}
-         {/* <SignoutButton /> */}
       </View>
    );
 };
