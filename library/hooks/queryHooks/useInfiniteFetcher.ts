@@ -5,12 +5,12 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface FetcherProps {
    search: string;
-   hasNoItems: boolean;
+   enabler: boolean;
    pageIndex?: number;
 }
 
-export default function useInfiniteFetcher({ search, hasNoItems }: FetcherProps) {
-   console.log('---------TESTING ITEMS----------', hasNoItems);
+export default function useInfiniteFetcher({ search, enabler }: FetcherProps) {
+   // console.log('-----TESTING ITEMS IN INFITEFETCHER----', enabler);
    const { data, isLoading, isFetching, isError, isSuccess, hasNextPage, fetchNextPage } =
       useInfiniteQuery(
          queryKeys.bookSearch(search),
@@ -34,7 +34,7 @@ export default function useInfiniteFetcher({ search, hasNoItems }: FetcherProps)
                   }
                }
             },
-            enabled: !!search || !!hasNoItems,
+            enabled: !!search || !enabler,
             keepPreviousData: true,
             retry: true,
          }
