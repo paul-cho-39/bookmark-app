@@ -1,7 +1,7 @@
 import { Realm } from '@realm/react';
-import { BasicBookInfo, Library } from '../../@types/googleBooks';
-import { RealmBook, RealmLibrary, RealmLogs } from '../schema';
-import { Store } from '../../../screens/components/books';
+import { BasicBookInfo, Library } from '../../../@types/googleBooks';
+import { RealmBook, RealmLibrary, RealmLogs } from '../../schema';
+import { Store } from '../../../../screens/components/books';
 
 interface NewBookParams {
    id: string;
@@ -39,7 +39,7 @@ export default class RealmBookCreator {
             publisher: data?.publisher,
             publishedDate: data?.publishedDate,
          },
-         isPrimary,
+         isPrimary: isPrimary,
          pageStart: toDatePage ?? 0,
          numberOfRead: isRereading ? 1 : 0,
       });
@@ -63,7 +63,10 @@ export default class RealmBookCreator {
       const oldLibrary = this.getOldLibrary(id, type);
       if (oldLibrary) {
          const oldBook = oldLibrary.books.find((book) => book.id === id);
-         if (oldBook && oldLibrary.name.includes('finished') && type === 'reading' && isRereading) {
+         if (
+            (oldBook && oldLibrary.name.includes('finished') && type === 'reading') ||
+            (oldBook && isRereading)
+         ) {
             oldBook.currentlyReading = true;
             oldBook.numberOfRead! += 1;
             oldBook.isPrimary = isPrimary;
@@ -93,13 +96,6 @@ export default class RealmBookCreator {
       return this.realm
          .objects<RealmLibrary>('Library')
          .filtered(`books.id = "${id}" AND name != "${type}"`)[0];
-   }
-   private getOldBook(id: string, type: Store['type']) {
-      const oldLibrary = this.getOldLibrary(id, type);
-      if (oldLibrary) {
-         const oldBook = oldLibrary.books.find((book) => book.id === id);
-         return oldBook;
-      }
    }
    // CONSIDER: have this in another class
    // so it will normalize ALL realm objects so it will be easier to manipulate

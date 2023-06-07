@@ -8,7 +8,7 @@ import { Library } from '../../../library/@types/googleBooks';
 import { AddBookNavigationProp } from '../../../library/@types/navigation';
 import RemoveButtonInsideModal from '../menu/removeButtonModal';
 import { RealmLibrary } from '../../../library/realm/schema';
-import RealmLibraryChange from '../../../library/realm/transaction/library';
+import RealmLibraryChange from '../../../library/realm/transaction/class/library';
 
 interface RemoveBookProps {
    library: Library;
