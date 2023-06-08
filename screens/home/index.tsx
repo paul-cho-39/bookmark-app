@@ -1,21 +1,23 @@
 import { Text, View } from 'react-native';
 import styles from './styles';
-import { getUser } from '../../library/helper';
 import { useQuery } from '@tanstack/react-query';
-import queryKeys from '../../library/helper/react-query/queryKeys';
-import { CurrentBook } from '../../library/@types/googleBooks';
-import MainBookCover from './mainBook';
 import { useTheme } from 'react-native-paper';
+
+import { getUser } from '../../library/helper';
+import queryKeys from '../../library/helper/react-query/queryKeys';
 import { getFetch, getUrl } from '../../library/helper/react-query';
+
+import { CurrentBook } from '../../library/@types/googleBooks';
 
 import useConnectStore from '../../library/zustand/connectStore';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
 
-import RealmInit from '../../library/realm/';
+import MainBookCover from './mainBook';
 import EmptyLibrary from './emptyLibrary';
-import RealmLibraryEditor from '../../library/realm/transaction/class/library';
+
+import RealmContext from '../../library/realm';
 import { RealmBook, RealmLibrary } from '../../library/realm/schema';
-import RealmLibraryRead from '../../library/realm/transaction/class/library';
+import { getRealmCurrentBookData } from '../../library/realm/transaction/controller';
 
 const HomeScreen = ({}) => {
    const uid = getUser() as string;
@@ -25,19 +27,13 @@ const HomeScreen = ({}) => {
       state.data.network.isConnected,
    ]);
 
-   const { useQuery: useRealmQuery } = RealmInit;
+   const { useQuery: useRealmQuery } = RealmContext;
    const libraries = useRealmQuery(RealmLibrary);
-   const getLibrary = new RealmLibraryRead(libraries);
-   const book = getLibrary.getBooks<'reading'>('reading');
+   const { data: current } = useQuery(queryKeys.currentlyReading, () =>
+      getRealmCurrentBookData(libraries)
+   );
 
-   console.log('reading: ', book.reading);
-   // const title = libraries[1].books.map((book) => book.bookInfo.title);
-
-   // const realmLibraryEditor = new RealmLibraryEditor(realm);
-
-   // const current = realmLibraryEditor.booksInEachLibrary<'reading'>('reading');
-   // const book = current.reading.map((book) => book.bookInfo.title).toString();
-   // change the queryKeys based
+   console.log(current);
    const { data: userLibrary, isError } = useQuery<CurrentBook>(
       queryKeys.recording(uid),
       () => getFetch(getUrl.library.file.getBooks.currentBooks(uid)),
@@ -47,6 +43,7 @@ const HomeScreen = ({}) => {
       }
    );
    const currentBooks = userLibrary?.data;
+   console.log(currentBooks);
 
    return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -55,7 +52,6 @@ const HomeScreen = ({}) => {
          ) : (
             <>
                <MainBookCover uid={uid as string} currentBooks={currentBooks} />
-               {/* <Text style={{ color: 'white' }}>{book}</Text> */}
                {/* <Text style={{ color: 'white' }}>{title}</Text> */}
             </>
          )}

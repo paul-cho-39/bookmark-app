@@ -81,8 +81,12 @@ export interface CurrentBook {
    data: CurrentBookData[];
 }
 
+export interface CurrentRealmBookData extends Omit<BasicBookInfo, 'thumbnail'> {
+   type: 'CURRENTLY_READING' | 'PRIMARY' | 'DUMMY';
+}
+
 export interface CurrentBookData extends BasicBookInfo {
-   type?: 'CURRENTLY_READING' | 'PRIMARY' | 'DUMMY';
+   type: 'CURRENTLY_READING' | 'PRIMARY' | 'DUMMY';
    date?: Date | undefined;
 }
 
