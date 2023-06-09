@@ -6,6 +6,7 @@ const initialState: ConnectorStoreProps = {
    inputs: {
       email: '',
       query: '',
+      search: '',
    },
    data: {
       library: {
@@ -16,6 +17,9 @@ const initialState: ConnectorStoreProps = {
       },
       network: {
          isConnected: null,
+      },
+      loader: {
+         isSearchLoading: false,
       },
    },
    modal: {

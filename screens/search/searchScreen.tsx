@@ -39,7 +39,7 @@ const SearchScreenResult = ({
                setUniqueDataSets(uniqueData);
             }
          }
-      }, 150);
+      }, 50);
 
       return () => clearTimeout(timeoutId);
    }, [data]);

@@ -10,6 +10,7 @@ interface FetcherProps {
 }
 
 export default function useInfiniteFetcher({ search, enabler }: FetcherProps) {
+   // const enabled = !!search && search.length > 1 && !enabler;
    const { data, isLoading, isFetching, isError, isSuccess, hasNextPage, fetchNextPage } =
       useInfiniteQuery(
          queryKeys.bookSearch(search),
@@ -33,7 +34,7 @@ export default function useInfiniteFetcher({ search, enabler }: FetcherProps) {
                   }
                }
             },
-            enabled: !!search || !enabler,
+            enabled: !!search,
             keepPreviousData: true,
             retry: true,
          }

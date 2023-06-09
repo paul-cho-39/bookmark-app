@@ -10,7 +10,6 @@ import SurfaceButtons from '../components/menu/surfaceButtons';
 import queryKeys from '../../library/helper/react-query/queryKeys';
 import getUrl from '../../library/helper/react-query/getUrl';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
-import useConnectStore from '../../library/zustand/connectStore';
 
 interface MainBookCoverProps {
    currentBooks: CurrentBookData[];
@@ -18,9 +17,6 @@ interface MainBookCoverProps {
 }
 
 const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
-   const isConnected = useConnectStore((state) => state.data.network.isConnected);
-   console.log(`network is:`, isConnected ? 'connected' : 'not connected');
-
    const queryClient = useQueryClient();
    // TODO: refactor this part use helper function
    // when first loading will likely be using cache to open the app
@@ -40,6 +36,8 @@ const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
 
    const id = primaryBook.id;
    const url = getUrl.library.file.addBooks(uid as string, id).remove;
+
+   // if the connection is there
    const { mutate, status } = useMutateLibrary(
       url,
       uid as string,

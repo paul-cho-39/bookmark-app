@@ -3,6 +3,7 @@ import { produce, Draft } from 'immer';
 import { ConnectorStoreProps } from '../../types/@types';
 import { _setModalVisibility } from './modalLogic';
 import { pauseTimer, resumeTimer } from '../bounded-logic/timerLogic';
+import debounce from '../../../helper/debouncer';
 
 const setIsDataAvailable = (value: boolean) => {
    useConnectStore.setState(
@@ -26,6 +27,26 @@ const setQuery = (text: string) => {
          draft.inputs.query = text;
       })
    );
+};
+
+const setSearchIsLoading = (isLoading: boolean) => {
+   useConnectStore.setState(
+      produce((draft: ConnectorStoreProps) => {
+         draft.data.loader.isSearchLoading = isLoading;
+      })
+   );
+};
+
+const setSubmittedQuery = (query: string) => {
+   const currentIsLoading = useConnectStore.getState().data.loader.isSearchLoading;
+   if (!currentIsLoading) {
+      setSearchIsLoading(true);
+      useConnectStore.setState(
+         produce((draft: ConnectorStoreProps) => {
+            draft.inputs.search = query;
+         })
+      );
+   }
 };
 
 const setEmail = (text: string) => {
@@ -75,4 +96,6 @@ export {
    setBookVisibility,
    setStopModalVisible,
    setIsConnected,
+   setSubmittedQuery,
+   setSearchIsLoading,
 };

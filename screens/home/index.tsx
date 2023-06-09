@@ -10,7 +10,7 @@ import { getFetch, getUrl } from '../../library/helper/react-query';
 import { CurrentBook } from '../../library/@types/googleBooks';
 
 import useConnectStore from '../../library/zustand/connectStore';
-import { setHasMutated } from '../../library/zustand/logic/connector-logic';
+import { resetQuery, setHasMutated } from '../../library/zustand/logic/connector-logic';
 
 import MainBookCover from './mainBook';
 import EmptyLibrary from './emptyLibrary';
@@ -18,9 +18,12 @@ import EmptyLibrary from './emptyLibrary';
 import RealmContext from '../../library/realm';
 import { RealmBook, RealmLibrary } from '../../library/realm/schema';
 import { getRealmCurrentBookData } from '../../library/realm/transaction/controller';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
 
 const HomeScreen = ({}) => {
    const uid = getUser() as string;
+   const navigation = useNavigation();
    const { colors } = useTheme();
    const [hasMutated, isConnected] = useConnectStore((state) => [
       state.data.library.hasMutated,
@@ -33,7 +36,6 @@ const HomeScreen = ({}) => {
       getRealmCurrentBookData(libraries)
    );
 
-   console.log(current);
    const { data: userLibrary, isError } = useQuery<CurrentBook>(
       queryKeys.recording(uid),
       () => getFetch(getUrl.library.file.getBooks.currentBooks(uid)),
@@ -43,7 +45,14 @@ const HomeScreen = ({}) => {
       }
    );
    const currentBooks = userLibrary?.data;
-   console.log(currentBooks);
+
+   useEffect(() => {
+      navigation.addListener('blur', () => resetQuery());
+
+      return () => {
+         navigation.removeListener('blur', () => resetQuery());
+      };
+   }, [navigation]);
 
    return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
