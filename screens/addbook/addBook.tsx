@@ -30,6 +30,11 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    // realm context(?);
    const { useRealm, useQuery: useRealmQuery } = RealmContext;
    const realm = useRealm();
+   const realmLibrary = useRealmQuery(RealmLibrary);
+   const realmParams = {
+      realm,
+      realmLibrary,
+   };
 
    // EXPERIMENTAL PURPOSES FOR TESTING LIBRARY BUT USE JEST LATER
    // const book = useRealmQuery(RealmBook);
@@ -154,7 +159,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
                id={id}
                navigation={navigation}
                mutate={mutationStore.removeBook.mutate}
-               realm={realm}
+               realmParams={realmParams}
             />
          </View>
       </View>

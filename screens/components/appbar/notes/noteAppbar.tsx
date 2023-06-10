@@ -4,6 +4,7 @@ import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { useState } from 'react';
 import BackButton from '../../../../components/buttons/backButton';
 import { width as WIDTH } from '../../../../library/helper';
+import { NotesNavigationProp } from '../../../../library/@types/navigation';
 
 // SAVED (CHECKMARK), PUBLIC/PRIVATE, X-CLOSE BUTTON, WORDS (ICON), TAGS (TAG)
 
@@ -16,7 +17,7 @@ interface NoteAppbarProps {
    logIndex: number;
 }
 
-const NoteAppbar = ({}) => {
+const NoteAppbar = ({ navigation, route }: NotesNavigationProp) => {
    const [visible, setVisible] = useState(false);
 
    const openMenu = () => setVisible(true);
@@ -35,6 +36,7 @@ const NoteAppbar = ({}) => {
                size={PRIMARY_ICON_SIZE}
                name='md-close'
                color={'white'}
+               onPress={() => navigation.goBack()}
                style={styles.backButton}
             />
             <View style={styles.wrapper}>
@@ -64,6 +66,7 @@ const NoteAppbar = ({}) => {
    );
 };
 
+// put this in a separate stylesheet
 const CONTENT_WIDTH = '45%';
 const BACK_HORIZONTAL = 0.03;
 const MARGIN_HORIZONTAL = 3;

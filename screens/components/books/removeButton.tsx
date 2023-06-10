@@ -7,20 +7,29 @@ import { isBookInLibrary, isBookInLibraryList } from '../../../library/helper/ch
 import { Library } from '../../../library/@types/googleBooks';
 import { AddBookNavigationProp } from '../../../library/@types/navigation';
 import RemoveButtonInsideModal from '../menu/removeButtonModal';
+<<<<<<< Updated upstream
 import { RealmLibrary } from '../../../library/realm/schema';
 import RealmLibraryChange from '../../../library/realm/transaction/library';
+=======
+import { RealmLibraryResult } from '../../../library/realm/transaction/@realmTypes';
+import RealmBookEditor from '../../../library/realm/transaction/class/write/editBook';
+>>>>>>> Stashed changes
 
 interface RemoveBookProps {
    library: Library;
    id: string;
    mutate: () => void;
    navigation?: AddBookNavigationProp['navigation'];
-   realm: Realm;
+   realmParams: {
+      realm: Realm;
+      realmLibrary: RealmLibraryResult;
+   };
 }
 
-const RemoveBookButton = ({ library, id, navigation, mutate, realm }: RemoveBookProps) => {
+const RemoveBookButton = ({ library, id, navigation, mutate, realmParams }: RemoveBookProps) => {
    const isBookInFinished = isBookInLibraryList(library, 'finished', id);
    const isBookInReading = isBookInLibraryList(library, 'reading', id);
+   const { realm, realmLibrary } = realmParams;
 
    const [visible, setVisible] = useState(false);
    const onInitialPress = () => {
@@ -48,7 +57,7 @@ const RemoveBookButton = ({ library, id, navigation, mutate, realm }: RemoveBook
    const _removeRealmObj = (id: string) => {
       try {
          realm.write(() => {
-            const init = new RealmLibraryChange(realm);
+            const init = new RealmBookEditor(realm, realmLibrary);
             init.deleteBook(id);
          });
       } catch (err) {

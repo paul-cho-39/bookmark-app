@@ -61,23 +61,32 @@ const Books = ({ book }: BookProps) => {
       [library, userLibrary]
    );
 
+   const buttonTitle =
+      bookInWhichLibrary && bookInWhichLibrary?.length > 0
+         ? bookInWhichLibrary.toString()
+         : 'Add book';
+
    return (
       <View style={styles.container} accessible={true}>
          <BookInfo
-            titleCutoff={30}
-            style={styles.descriptionWrapper}
+            style={styles.bookInfoContainer}
             descriptionContent={styles.descriptionContent}
+            titleStyle={styles.title}
             bookInfo={bookInfo}
+            authorStyle={[styles.authors, { color: colors.elevation.level3 }]}
+            titleCutoff={30}
+            subtitleCutoff={30}
+            singleAuthorCutoff={35}
+            numberOfAuthorCutoff={3}
          >
-            <Suspense fallback={<View></View>}>
+            {/* <Suspense fallback={<View></View>}>
                <DisplayBookIdIcon bookInWhichLibrary={bookInWhichLibrary as string[]} />
-            </Suspense>
+            </Suspense> */}
             <ChevronButton
-               color={colors.secondaryContainer}
-               iconColor={colors.onSecondaryContainer}
+               colors={colors}
                loadingComponent={<ActivityIndicator animating={true} />}
                status={status}
-               title='Add Book'
+               title={buttonTitle}
                onPress={() => mutate(body)}
                handleIconPress={() => {
                   navigation.navigate('AddBook', {
@@ -96,25 +105,30 @@ export default React.memo(Books);
 
 const styles = StyleSheet.create({
    container: {
+      // backgroundColor: 'red',
       marginVertical: 10,
       paddingHorizontal: 10,
       flex: 1,
       flexDirection: 'row',
    },
-   descriptionWrapper: {
-      // backgroundColor: 'red',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: WIDTH - IMAGE_WIDTH,
+   bookInfoContainer: {
+      // backgroundColor: 'white',
+      marginLeft: 10,
+      padding: 5,
    },
    descriptionContent: {
       // backgroundColor: 'white',
       justifyContent: 'flex-start',
-      alignItems: 'baseline',
-      marginBottom: 25,
-      paddingVertical: 10,
+      alignItems: 'center',
       paddingHorizontal: 10,
+      paddingVertical: 5,
+   },
+   title: {
+      // backgroundColor: 'red',
+      textAlign: 'left',
+   },
+   authors: {
+      marginTop: 15,
       width: '100%',
    },
 });

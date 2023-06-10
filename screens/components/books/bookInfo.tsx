@@ -3,10 +3,10 @@ import BookTitle from './bookTitle';
 import Authors from './authors';
 import { Text } from 'react-native-paper';
 import { View, StyleProp, ViewStyle, StyleSheet, ImageStyle, TextStyle } from 'react-native';
-import { CurrentBookData } from '../../../library/@types/googleBooks';
+import { BasicBookInfo, CurrentBookData } from '../../../library/@types/googleBooks';
 
 interface BookInfoProps {
-   bookInfo: CurrentBookData;
+   bookInfo: BasicBookInfo;
    displayPage?: boolean;
    style?: StyleProp<ViewStyle>;
    authorStyle?: StyleProp<ViewStyle & TextStyle>;
@@ -18,6 +18,7 @@ interface BookInfoProps {
    isError?: boolean;
    isLoading?: boolean;
    titleCutoff?: number;
+   subtitleCutoff?: number;
    singleAuthorCutoff?: number;
    numberOfAuthorCutoff?: number;
    children?: React.ReactNode;
@@ -35,7 +36,8 @@ const BookInfo = ({
    isLoading,
    image,
    lowQualityImage,
-   titleCutoff = 0,
+   titleCutoff = 40,
+   subtitleCutoff = 40,
    singleAuthorCutoff = 40,
    numberOfAuthorCutoff = 3,
    children,
@@ -54,7 +56,8 @@ const BookInfo = ({
                <BookTitle
                   title={title as string}
                   subtitle={subtitle}
-                  cutoff={titleCutoff}
+                  titleCutoff={titleCutoff}
+                  subtitleCutoff={subtitleCutoff}
                   style={titleStyle}
                />
                <Authors

@@ -12,7 +12,13 @@ interface BookIconProps {
 const Title: React.FC<BookIconProps> = ({ title, authors, viewStyle, children }) => {
    return (
       <View style={viewStyle}>
-         <BookTitle title={title} cutoff={0} style={styles.title} />
+         <BookTitle
+            title={title}
+            titleCutoff={25}
+            subtitleCutoff={0}
+            style={styles.title}
+            variant='titleLarge'
+         />
          <Authors
             authors={authors}
             numberOfAuthorToCut={3}

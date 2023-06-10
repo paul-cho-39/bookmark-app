@@ -1,35 +1,49 @@
 import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { Text } from 'react-native-paper';
+import { TextVariant } from '../../../library/@types/variant';
 
 interface TitleProps {
    title: string;
    subtitle?: string;
-   cutoff?: number;
    style?: StyleProp<ViewStyle>;
+   titleCutoff?: number;
+   subtitleCutoff?: number;
+   variant?: TextVariant;
 }
 
-const BookTitle = ({ title, subtitle, cutoff = 40, style }: TitleProps) => {
-   const slicedSubtitle =
-      subtitle && subtitle?.length > cutoff ? subtitle.slice(0, cutoff) + '...' : subtitle;
-
+const BookTitle = ({
+   title,
+   subtitle,
+   style,
+   titleCutoff = 40,
+   subtitleCutoff = 40,
+   variant = 'titleSmall',
+}: TitleProps) => {
+   const cutoffTitle = (cutoff: number, title?: string) => {
+      return title && title.length > cutoff ? title.slice(0, cutoff) + '...' : title;
+   };
    return (
-      <View>
-         <Text variant={'titleLarge'} style={[styles.title, style]} accessibilityLabel={title}>
-            {title}
+      <View style={styles.container}>
+         <Text variant={variant} style={[styles.title, style]} accessibilityLabel={title}>
+            {cutoffTitle(titleCutoff, title)}
          </Text>
          <Text
-            numberOfLines={cutoff === 0 ? 0 : 1}
-            style={{ display: cutoff === 0 ? 'none' : 'flex' }}
+            numberOfLines={subtitleCutoff === 0 ? 0 : 1}
+            style={[styles.subtitle, { display: subtitleCutoff === 0 ? 'none' : 'flex' }]}
             accessibilityLabel={subtitle}
          >
-            {slicedSubtitle}
+            {cutoffTitle(subtitleCutoff, subtitle)}
          </Text>
       </View>
    );
 };
 
 const styles = StyleSheet.create({
-   titleWrapper: {},
+   container: {
+      width: '100%',
+      alignContent: 'center',
+      textAlign: 'center',
+   },
    title: {
       // fontSize: 18,
    },

@@ -16,8 +16,23 @@ import Realm from 'realm';
 const HomeScreen = ({}) => {
    const uid = getUser() as string;
    const { colors } = useTheme();
+<<<<<<< Updated upstream
    const hasMutated = useConnectStore((state) => state.data.library.hasMutated);
    // change the queryKeys based
+=======
+   const [hasMutated, isConnected] = useConnectStore((state) => [
+      state.data.library.hasMutated,
+      state.data.network.isConnected,
+   ]);
+
+   const { useQuery: useRealmQuery } = RealmContext;
+   const libraries = useRealmQuery(RealmLibrary);
+   const { data: currentlyReadingData } = useQuery(queryKeys.currentlyReading, () =>
+      getRealmCurrentBookData(libraries)
+   );
+
+   // TODO: SNIP this part out!
+>>>>>>> Stashed changes
    const { data: userLibrary, isError } = useQuery<CurrentBook>(
       queryKeys.recording(uid),
       () => getFetch(getUrl.library.file.getBooks.currentBooks(uid)),
@@ -27,6 +42,7 @@ const HomeScreen = ({}) => {
       }
    );
    const currentBooks = userLibrary?.data;
+   // SNIP!
 
    return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>

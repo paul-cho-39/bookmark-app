@@ -4,7 +4,11 @@ import { BasicBookInfo, Library } from '../../../library/@types/googleBooks';
 import { Realm } from '@realm/react';
 import { RealmBook, RealmLibrary } from '../../../library/realm/schema';
 
+<<<<<<< Updated upstream
 import RealmBookCreator from '../../../library/realm/transaction/create';
+=======
+import RealmBookCreator from '../../../library/realm/transaction/class/write/createBook';
+>>>>>>> Stashed changes
 
 interface ButtonProps {
    store: Store[];

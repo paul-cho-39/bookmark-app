@@ -11,22 +11,37 @@ type Authors = {
 
 const Authors = ({ authors, authorCutoff = 45, numberOfAuthorToCut = 3, style }: Authors) => {
    const { colors } = useTheme();
+   const TEXT_COLOR = { color: colors.onBackground };
    const singleAuthorCutoff = 15; // adding commas and spacing
 
    // is this an expensive method? Test this out
    const displayAuthors = getAuthorCutoff(authors, authorCutoff, singleAuthorCutoff);
    const numberOfAuthors = displayAuthors?.length;
 
+   const SingleAuthor = () => {
+      return (
+         <Text
+            key={displayAuthors as string}
+            style={[styles.author, TEXT_COLOR]}
+            // accessibilityLabel={item}
+         >
+            <Text style={[styles.authorBy, TEXT_COLOR]}>by </Text>
+            {displayAuthors}
+         </Text>
+      );
+   };
+
    return (
-      <View style={[styles.authorContainer, style]}>
+      <View style={[style]}>
          {!authors && <View></View>}
          {Array.isArray(displayAuthors) ? (
             <View style={[styles.multipleAuthors, styles.author]}>
+               <Text style={[styles.authorBy, TEXT_COLOR]}>by </Text>
                {displayAuthors &&
                   numberOfAuthors &&
                   authors &&
                   displayAuthors?.map((author, index) => (
-                     <Text key={index} style={[{ color: colors.onBackground }]}>
+                     <Text key={index} style={[TEXT_COLOR]}>
                         {createAbbreviationForAuthors(
                            author,
                            authors.length,
@@ -40,13 +55,7 @@ const Authors = ({ authors, authorCutoff = 45, numberOfAuthorToCut = 3, style }:
                {/* this one will be used to map  */}
             </View>
          ) : (
-            <Text
-               key={displayAuthors as string}
-               style={[styles.author, { color: colors.onBackground }]}
-               // accessibilityLabel={item}
-            >
-               {displayAuthors}
-            </Text>
+            SingleAuthor()
          )}
       </View>
    );
@@ -55,11 +64,17 @@ const Authors = ({ authors, authorCutoff = 45, numberOfAuthorToCut = 3, style }:
 export default Authors;
 
 const styles = StyleSheet.create({
-   authorContainer: {},
    multipleAuthors: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginRight: 5,
+      width: '95%',
+      // backgroundColor: 'white',
+      // marginRight: 5,
    },
-   author: {},
+   authorBy: {
+      opacity: 0.8,
+   },
+   author: {
+      marginTop: 5,
+   },
 });
