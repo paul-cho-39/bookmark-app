@@ -35,6 +35,7 @@ export class RealmLibrary extends Realm.Object<RealmLibrary, 'name'> {
    };
 }
 
+// INTRODUCE EXTENSION LIBRARIES WHERE IT CAN BE STORED
 export class RealmBook extends Realm.Object<RealmBook, 'id'> {
    id!: string;
    bookInfo!: RealmBookInfo; // dict
@@ -45,6 +46,7 @@ export class RealmBook extends Realm.Object<RealmBook, 'id'> {
    logs?: Realm.List<RealmLogs>; //  O-t-M
 
    //    notes?: Realm.List<RealmNotes>; // O-t-M
+   // personalLibrary?: Realm.List<RealmPersonalLib>
    static schema = {
       name: 'Book',
       properties: {
@@ -56,6 +58,7 @@ export class RealmBook extends Realm.Object<RealmBook, 'id'> {
          pageStart: { type: 'int', default: 0 },
          logs: 'Logs[]',
          //  notes: 'Notes[]?',
+         // peronsalLibrary: 'RealmPersonalLib[]'
       },
    };
 }
@@ -63,6 +66,7 @@ export class RealmBook extends Realm.Object<RealmBook, 'id'> {
 export class RealmLogs extends Realm.Object<RealmLogs> {
    id!: string;
    logIndex!: number;
+   isUpdated!: boolean;
    startTime?: Date;
    endTime?: Date;
    timer?: RealmTimer; // dict
@@ -77,21 +81,27 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
       properties: {
          id: 'string',
          logIndex: 'int',
+         isUpdated: { type: 'bool', default: false },
          startTime: 'date?',
          endTime: 'date?',
          timer: '{}',
          pageRead: 'int?',
-         bookmarked: { type: 'bool', default: 'false' },
          rating: 'int?',
          feedback: 'int?',
+         bookmarked: { type: 'bool', default: false },
          words: { type: 'list', objectType: 'string' },
          //  note: 'Note?',
       },
    };
 }
 
+// class RealmPersonalLib extends Realm.Object<RealmPersonalLib> {
+
+// }
+
 // class RealmNotes extends Realm.Object<RealmNotes> {
 //    id!: string;
+//    isUpdated!: boolean;
 //    logIndex?: number;
 //    notes?: Realm.List<string>; // this one should be tested may be delta
 //    tags?: Realm.Set<string>;
@@ -104,6 +114,7 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
 //       properties: {
 //          id: 'string',
 //          logIndex: 'int',
+//          isUpdated: { type: 'bool', default: false },
 //          notes: {
 //             type: 'list',
 //             objectType: 'string',
@@ -132,7 +143,7 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
 
 // provide saved notes for users(?);
 // following users(?)
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 7;
 
 export const RealmConfig: Realm.Configuration = {
    schema: [RealmBook, RealmLibrary, RealmLogs],

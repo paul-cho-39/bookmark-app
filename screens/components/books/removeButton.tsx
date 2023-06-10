@@ -9,11 +9,15 @@ import { AddBookNavigationProp } from '../../../library/@types/navigation';
 import RemoveButtonInsideModal from '../menu/removeButtonModal';
 <<<<<<< Updated upstream
 import { RealmLibrary } from '../../../library/realm/schema';
+<<<<<<< HEAD
 import RealmLibraryChange from '../../../library/realm/transaction/library';
 =======
 import { RealmLibraryResult } from '../../../library/realm/transaction/@realmTypes';
 import RealmBookEditor from '../../../library/realm/transaction/class/write/editBook';
 >>>>>>> Stashed changes
+=======
+import RealmLibraryChange from '../../../library/realm/transaction/class/read/library';
+>>>>>>> change/local-database
 
 interface RemoveBookProps {
    library: Library;

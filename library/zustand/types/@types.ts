@@ -9,6 +9,7 @@ export interface ConnectorStoreProps {
    inputs: {
       email: string;
       query: string;
+      search: string;
    };
    data: {
       library: {
@@ -19,6 +20,9 @@ export interface ConnectorStoreProps {
       };
       network: {
          isConnected: null | boolean;
+      };
+      loader: {
+         isSearchLoading: boolean;
       };
    };
    modal: {

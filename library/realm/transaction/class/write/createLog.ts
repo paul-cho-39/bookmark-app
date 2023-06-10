@@ -1,7 +1,7 @@
 import { Realm } from '@realm/react';
-import { RealmLibrary, RealmLogs, RealmBook } from '../schema';
+import { RealmLibrary, RealmLogs, RealmBook } from '../../../schema';
 
-export default class TimerLogs {
+export default class RealmTimerLogs {
    private realm: Realm;
    private id: string;
 
@@ -16,16 +16,16 @@ export default class TimerLogs {
    private get bookLogs() {
       return this.realm.objects<RealmLogs>('Logs').filtered(`id = "${this.id}" `);
    }
-   //    TODO: whenever deleting the logs apply linked delete alogrithm
-   // depending on the data create a new one here
-   createNewLog(options?: Record<string, unknown>) {
+   connectLog(log: RealmLogs) {
+      this.currentBook.logs?.push(log);
+   }
+   startTimer(startTime: Date) {
       const latestLogIndex = this.getLatestLogIndex();
-
       const newLogIndex = latestLogIndex + 1;
-      this.realm.create<RealmLogs>('Logs', {
+      return this.realm.create<RealmLogs>('Logs', {
          id: this.id,
          logIndex: newLogIndex,
-         ...options,
+         startTime: startTime,
       });
    }
    deleteLog(logIndex: number) {

@@ -2,6 +2,8 @@ import { BodyEndTimer, BodyTimer, StoreProps } from '../../types/@types';
 import useBoundedStore from '../../store';
 import useSettingsStore from '../../settingsStore';
 import { convertDateFormat } from '../../../helper/timer/getTimerValue';
+import { RealmTimerParams } from '../../../realm/transaction/@realmTypes';
+import RealmTimerLogs from '../../../realm/transaction/class/write/createLog';
 
 export const setTimerWithDate = (newStartDate?: Date, newEndDate?: Date) => {
    useBoundedStore.setState({
@@ -62,7 +64,10 @@ export const startTimer = () => {
    return { newIntervalId };
 };
 // dates: { startTime: StoreProps['timerWithDate']['startTime'] }}
-export const initiateStartTime = async (callback: (body: BodyTimer) => void) => {
+export const initiateStartTime = async (
+   callback: (body: BodyTimer) => void,
+   realmParams: RealmTimerParams
+) => {
    const timeZone = useSettingsStore.getState().userPreference.userGeneralSettings.preference
       .timeZone as string;
    const localizedStartTime = new Date().toLocaleString('en-US', { timeZone });
@@ -82,7 +87,23 @@ export const initiateStartTime = async (callback: (body: BodyTimer) => void) => 
          },
       });
       callback(body);
+      writeToRealm(realmParams, startTime);
    }, 0);
+
+   function writeToRealm(realmParams: RealmTimerParams, startTime: Date | null) {
+      if (startTime !== null) {
+         const { id, realm } = realmParams;
+         try {
+            realm.write(() => {
+               const logger = new RealmTimerLogs(realm, id);
+               const log = logger.startTimer(startTime);
+               logger.connectLog(log);
+            });
+         } catch (err) {
+            console.error('Failed to write timer logs: ', err);
+         }
+      }
+   }
 };
 
 // likely to be the case for nfc but wth page(?);

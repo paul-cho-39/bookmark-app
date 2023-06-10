@@ -1,98 +1,62 @@
 import { FlatList, View, Text } from 'react-native';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useInfiniteFetcher from '../../library/hooks/queryHooks/useInfiniteFetcher';
 import styles from './styles';
 import { Divider, useTheme, ActivityIndicator } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
 import useConnectStore from '../../library/zustand/connectStore';
-import { resetQuery } from '../../library/zustand/logic/connector-logic';
 import SearchScreenResult from './searchScreen';
-import BookNotFound from './notFound';
+import { setSearchIsLoading } from '../../library/zustand/logic/connector-logic';
+// import { setSearchIsLoading } from '../../library/zustand/logic/connector-logic';
 
 const SearchScreen = ({}) => {
    const { colors } = useTheme();
-   const navigation = useNavigation();
 
-   const [search, setSearch] = useState('');
-   const [hasNoItems, setHasNoItems] = useState(false);
-   const [isLoading, setIsLoading] = useState(false); // react query isLoading not working so manually creating this
    const [isFooterLoading, setIsFooterLoading] = useState(false);
-
-   const [query, isConnected] = useConnectStore((state) => [
+   const [query, search, isConnected, isSearchLoading] = useConnectStore((state) => [
       state.inputs.query,
+      state.inputs.search,
       state.data.network.isConnected,
+      state.data.loader.isSearchLoading,
    ]);
 
    const { data, isFetching, hasNextPage, fetchNextPage } = useInfiniteFetcher({
       search,
-      enabler: hasNoItems,
+      enabler: isFooterLoading,
    });
    const items = data?.pages[0].items;
-
-   // resetting query so that query becomes active
    useEffect(() => {
-      navigation.addListener('blur', () => resetQuery());
-
-      return () => {
-         navigation.removeListener('blur', () => resetQuery());
-      };
-   }, [navigation]);
-
-   useEffect(() => {
-      if (query && search.length > 2 && data) {
-         if (items) {
-            setHasNoItems(false);
-         }
-      }
-      if (hasNoItems && query !== search) {
-         setHasNoItems(false);
-      }
-      if (query && search.length > 2 && !items) {
-         setHasNoItems(true);
-         setTimeout(() => {
-            if (isLoading && hasNoItems) {
-               setIsLoading(false);
-            }
-         }, 500);
-      }
-      if (query && search.length > 2 && query !== search) {
-         setIsLoading(true);
-      }
       if (items && isFetching && query === search) {
          setIsFooterLoading(true);
       }
-      const timeoutId = setTimeout(() => {
-         if ((query && query.length > 2) || (query && query.length < 2)) {
-            setSearch(query);
-         }
-      }, 100);
-
       return () => {
-         clearTimeout(timeoutId);
-         setIsLoading(false);
-         setHasNoItems(false);
          setIsFooterLoading(false);
       };
    }, [query, search, items]);
 
+   useEffect(() => {
+      if (items && search && isSearchLoading) {
+         setTimeout(() => {
+            setSearchIsLoading(false);
+         }, 500);
+      }
+   }, [items, isSearchLoading]);
+
    const Loader = () => {
       return (
          <ActivityIndicator
-            animating={isLoading}
+            animating={isSearchLoading}
             size='large'
-            style={[styles.loading, { display: isLoading ? 'flex' : 'none' }]}
+            style={[styles.loading, { display: isSearchLoading ? 'flex' : 'none' }]}
          />
       );
    };
 
-   if (!items && !hasNoItems) {
+   if (!items) {
       return (
          <View
             style={[styles.container, { backgroundColor: colors.background, height: '100%' }]}
             accessible={true}
-         >
-            {isLoading && <Loader />}
-         </View>
+         ></View>
       );
    }
 
@@ -102,26 +66,17 @@ const SearchScreen = ({}) => {
          accessible={true}
       >
          <Divider style={{ marginTop: 5 }} bold />
-         {isLoading ? (
-            <Loader />
-         ) : hasNoItems ? (
-            <BookNotFound />
-         ) : (
-            // one problem that i stil see is if it is hasNoItems && !items
-            <SearchScreenResult
-               data={data}
-               hasNextPage={hasNextPage}
-               isLoading={isLoading}
-               isFooterLoading={isFooterLoading}
-               loadingStyle={styles.loading}
-               fetchNextPage={fetchNextPage}
-            />
-         )}
+         {isSearchLoading && <Loader />}
+         <SearchScreenResult
+            data={data}
+            hasNextPage={hasNextPage}
+            isLoading={isSearchLoading}
+            isFooterLoading={isFooterLoading}
+            loadingStyle={styles.loading}
+            fetchNextPage={fetchNextPage}
+         />
       </View>
    );
 };
 
 export default SearchScreen;
-
-// original or old data
-// useUniqueDataSet = ((useMemo() => data?.pages && data.pages[0] && createUniqueData(data)))

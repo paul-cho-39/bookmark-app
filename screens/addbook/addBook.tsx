@@ -38,26 +38,26 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
 
    // EXPERIMENTAL PURPOSES FOR TESTING LIBRARY BUT USE JEST LATER
    // const book = useRealmQuery(RealmBook);
-   const Library = useRealmQuery(RealmLibrary);
+   // const Library = useRealmQuery(RealmLibrary);
 
-   console.log(
-      '--------LIBRARY READING BOOKS---------',
-      Library[1].name,
-      Library[1].books
-      // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
-   );
-   console.log(
-      '--------LIBRARY WANT BOOKS-------',
-      Library[0].name,
-      Library[0].books
-      // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
-   );
-   console.log(
-      '--------LIBRARY FINISHED-------',
-      Library[2].name,
-      Library[2].books
-      // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
-   );
+   // console.log(
+   //    '--------LIBRARY READING BOOKS---------',
+   //    Library[1].name,
+   //    Library[1].books
+   //    // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
+   // );
+   // console.log(
+   //    '--------LIBRARY WANT BOOKS-------',
+   //    Library[0].name,
+   //    Library[0].books
+   //    // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
+   // );
+   // console.log(
+   //    '--------LIBRARY FINISHED-------',
+   //    Library[2].name,
+   //    Library[2].books
+   //    // Library.forEach((lib) => lib.books.forEach((book) => book.bookInfo.title))
+   // );
 
    const mutationStore = useMutateLibraries(uid, id, setHasMutated, queryClient);
 

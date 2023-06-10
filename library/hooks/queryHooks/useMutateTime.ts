@@ -25,7 +25,9 @@ function useFetchLogMutation(params: TimerParamType) {
    const rest = { ...queryResult };
    return { data, mutateStartReading, rest };
 }
-
+// sending back data with endTime and other params after ending reading
+// should have bookId, logs, and all notes associated with this
+// and batch send everything
 function useSaveTimeMutation(params: BaseUserLogProps) {
    const { uid, id, logIndex } = params;
    const { mutate: mutateEndReading, ...rest } = useMutation(

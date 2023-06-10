@@ -4,11 +4,15 @@ import { BasicBookInfo, Library } from '../../../library/@types/googleBooks';
 import { Realm } from '@realm/react';
 import { RealmBook, RealmLibrary } from '../../../library/realm/schema';
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 import RealmBookCreator from '../../../library/realm/transaction/create';
 =======
 import RealmBookCreator from '../../../library/realm/transaction/class/write/createBook';
 >>>>>>> Stashed changes
+=======
+import RealmBookCreator from '../../../library/realm/transaction/class/create';
+>>>>>>> change/local-database
 
 interface ButtonProps {
    store: Store[];
@@ -89,7 +93,7 @@ const UpdateBookButton = ({
             const existingBook = init.getExistingBook(library, id, toDatePage);
             const oldBook = init.handleBookInOtherLib(id, type, isRereading, isPrimary);
 
-            if (oldBook === true || existingBook) return;
+            if (existingBook || oldBook === true) return;
 
             const newBookParams = { id, data, isPrimary, isRereading, toDatePage };
             // either creates from cloned oldBook or creates a new book and added to the library

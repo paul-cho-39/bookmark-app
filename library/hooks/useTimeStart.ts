@@ -6,11 +6,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { UseMutateFunction } from '@tanstack/react-query';
 import { initiateStartTime, setTimer, startTimer } from '../zustand/logic/bounded-logic';
 import { BodyTimer } from '../zustand/types/@types';
+import { RealmTimerParams } from '../realm/transaction/@realmTypes';
 
 function useTimeStart(
    startTime: Date | null,
    endTime: Date | null,
-   mutate: UseMutateFunction<any, unknown, BodyTimer, unknown>
+   mutate: UseMutateFunction<any, unknown, BodyTimer, unknown>,
+   realmParams: RealmTimerParams
 ) {
    const appState = useRef(AppState.currentState);
    const [_appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -20,9 +22,9 @@ function useTimeStart(
          const timeoutId = setTimeout(() => {
             if (startTime === null && endTime === null) {
                startTimer();
-               initiateStartTime(mutate);
+               initiateStartTime(mutate, realmParams);
             }
-         }, 750);
+         }, 500);
 
          return () => clearTimeout(timeoutId);
       }, [startTime])

@@ -1,0 +1,1 @@
+function useNetworkInformedQuery(isConnected: boolean) {}
