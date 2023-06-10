@@ -1,3 +1,3 @@
 import getRealmCurrentBookData from './home';
-
-export { getRealmCurrentBookData };
+import { getLogIndex } from './getLogIndex';
+export { getRealmCurrentBookData, getLogIndex };

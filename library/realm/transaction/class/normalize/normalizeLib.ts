@@ -4,7 +4,7 @@ import { RealmBook } from '../../../schema';
 const PRIMARY = 'PRIMARY';
 const READING = 'CURRENTLY_READING';
 
-export default class ParseLibrary {
+export default class NormalizeRealmBooks {
    uncleanedBooks: RealmBook[];
    constructor(uncleanedBooks: RealmBook[]) {
       this.uncleanedBooks = uncleanedBooks;

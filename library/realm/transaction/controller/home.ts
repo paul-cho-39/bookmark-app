@@ -1,5 +1,5 @@
 import { RealmLibrary } from '../../schema';
-import ParseLibrary from '../class/parse/parseLib';
+import NormalizeRealmBooks from '../class/normalize/normalizeLib';
 import RealmLibraryRead from '../class/read/library';
 
 async function getRealmCurrentBookData(
@@ -7,7 +7,7 @@ async function getRealmCurrentBookData(
 ) {
    const getLibrary = new RealmLibraryRead(library);
    const book = getLibrary.getBooks<'reading'>('reading');
-   const cleanedData = new ParseLibrary(book.reading).getCleanedData;
+   const cleanedData = new NormalizeRealmBooks(book.reading).getCleanedData;
    return cleanedData;
 }
 

@@ -30,9 +30,10 @@ function useRealmWithQuery<QueryData, ReturnedData>(
    const queryResult = useQuery<QueryData>(queryKeys, realmData, whichOption);
 
    const _data = queryResult.data;
-   if (options && _data) {
-      return options(_data);
-   }
+
+   //    if (options && _data) {
+   //       return options(_data);
+   //    }
 
    return queryResult;
 }

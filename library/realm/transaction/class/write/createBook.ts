@@ -1,7 +1,7 @@
 import { Realm } from '@realm/react';
-import { BasicBookInfo, Library } from '../../../@types/googleBooks';
-import { RealmBook, RealmLibrary, RealmLogs } from '../../schema';
-import { Store } from '../../../../screens/components/books';
+import { BasicBookInfo, Library } from '../../../../@types/googleBooks';
+import { RealmBook, RealmLibrary, RealmLogs } from '../../../schema';
+import { Store } from '../../../../../screens/components/books';
 
 interface NewBookParams {
    id: string;

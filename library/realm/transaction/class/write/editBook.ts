@@ -3,13 +3,11 @@ import { RealmBook } from '../../../schema';
 import { RealmBookResult, RealmLibraryResult } from '../../@realmTypes';
 
 export default class RealmBookEditor {
-   private book: RealmBookResult;
-   private library: RealmLibraryResult;
    private realm: Realm;
-   constructor(book: RealmBookResult, library: RealmLibraryResult, realm: Realm) {
-      this.book = book;
-      this.library = library;
+   private library: RealmLibraryResult;
+   constructor(realm: Realm, library: RealmLibraryResult) {
       this.realm = realm;
+      this.library = library;
    }
    changePrimary(id: string) {
       const library = this.library.filtered(`name = "finished" OR name = "current `)[0];
@@ -28,7 +26,8 @@ export default class RealmBookEditor {
       });
    }
    private getCurrentPrimary() {
-      return this.book.find((book) => book.isPrimary);
+      const library = this.library.filtered(`name = "finished" OR name = "current `)[0];
+      return library.books.find((book) => book.isPrimary === true);
    }
    private getLibraryWithIds(id: string) {
       return this.library.filtered(`books.id = "${id}" `);
