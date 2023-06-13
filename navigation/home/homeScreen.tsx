@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeParam } from '../../library/@types/navigation';
 import HomeScreen from '../../screens/home';
-import SearchBar from '../../screens/components/appbar/search/searchbar';
+import SearchBar from '../../screens/components/appbar/searchbar';
 
 import AddBookScreen from '../../screens/addbook/addBook';
 import SearchScreen from '../../screens/search';

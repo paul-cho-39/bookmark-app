@@ -4,3 +4,16 @@ export const IMAGES = {
    SEARCH_IMAGE_HEIGHT: 95,
    SEARCH_IMAGE_WIDTH: 70,
 };
+
+export const HEADERS = {
+   DEFAULT: 86,
+   EDITABLE: 185,
+};
+
+export const ICONS = {
+   SMALL: 14,
+   DEFAULT: 18,
+   MIDDLE: 22,
+   LARGE: 28,
+   EXTRA_LARGE: 34,
+};

@@ -66,6 +66,10 @@ const Books = ({ book }: BookProps) => {
          ? bookInWhichLibrary.toString()
          : 'Add book';
 
+   // TODO: handleAddButton
+   // if buttonTitle is equal to one of the store types
+   // then it will navigation.navigate() otherwise "AddButton"
+
    return (
       <View style={styles.container} accessible={true}>
          <BookInfo
@@ -79,9 +83,6 @@ const Books = ({ book }: BookProps) => {
             singleAuthorCutoff={35}
             numberOfAuthorCutoff={3}
          >
-            {/* <Suspense fallback={<View></View>}>
-               <DisplayBookIdIcon bookInWhichLibrary={bookInWhichLibrary as string[]} />
-            </Suspense> */}
             <ChevronButton
                colors={colors}
                loadingComponent={<ActivityIndicator animating={true} />}

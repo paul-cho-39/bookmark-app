@@ -2,7 +2,7 @@ import IconButton, { IconButtonProps } from './icons/iconButton';
 import IonIcons from '@expo/vector-icons/Ionicons';
 
 interface BackButtonProps extends Omit<IconButtonProps, 'renderIcon'> {
-   name: 'chevron-back' | 'md-close';
+   name: 'chevron-back' | 'md-close' | 'arrow-back';
    color: string;
    size?: number;
 }

@@ -64,7 +64,7 @@ const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
    const { data, mutateStartReading } = useFetchLogMutation(getParam('start'));
    const { mutateEndReading } = useSaveTimeMutation(getParam('end'));
 
-   // initiate
+   // initiate timer and save data into realm objects
    useTimeStart(startTime, endTime, mutateStartReading, realmParams);
 
    useEffect(() => {

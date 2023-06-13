@@ -3,16 +3,7 @@ import { AddBookNavigationProp } from '../../../library/@types/navigation';
 import { BasicBookInfo, Library } from '../../../library/@types/googleBooks';
 import { Realm } from '@realm/react';
 import { RealmBook, RealmLibrary } from '../../../library/realm/schema';
-
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-import RealmBookCreator from '../../../library/realm/transaction/create';
-=======
 import RealmBookCreator from '../../../library/realm/transaction/class/write/createBook';
->>>>>>> Stashed changes
-=======
-import RealmBookCreator from '../../../library/realm/transaction/class/create';
->>>>>>> change/local-database
 
 interface ButtonProps {
    store: Store[];
@@ -60,7 +51,7 @@ const UpdateBookButton = ({
       const action = storeMap[selected.type] || storeMap.default;
       action(selected);
 
-      selected && _createRealmObj(selected.type, bookInfo);
+      selected && _createRealmObj(selected.type, RealmBookCreator, bookInfo);
 
       setTimeout(() => {
          navigation.navigate('Search');
@@ -78,15 +69,17 @@ const UpdateBookButton = ({
          }
       },
    };
-   // for local database; this will not send data to the server since it will require
-   // google book api to get access. The local database is for later use case, in which calls for
-   // data consistency between local database and server
-   const _createRealmObj = (type: Store['type'], data: BasicBookInfo) => {
+
+   const _createRealmObj = (
+      type: Store['type'],
+      realmBookCreator: typeof RealmBookCreator,
+      data: BasicBookInfo
+   ) => {
       const { id, ..._ } = data;
 
       try {
          realm.write(() => {
-            const init = new RealmBookCreator(realm);
+            const init = new realmBookCreator(realm);
             const library = init.getOrCreateLibrary(type);
             const isPrimary = init.isBookPrimary(type, library);
 
@@ -97,7 +90,6 @@ const UpdateBookButton = ({
 
             const newBookParams = { id, data, isPrimary, isRereading, toDatePage };
             // either creates from cloned oldBook or creates a new book and added to the library
-            // TDOO: create an object for logs
             init.addBookToLibrary(library, oldBook, newBookParams);
          });
       } catch (err) {

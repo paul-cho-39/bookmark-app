@@ -7,17 +7,8 @@ import { isBookInLibrary, isBookInLibraryList } from '../../../library/helper/ch
 import { Library } from '../../../library/@types/googleBooks';
 import { AddBookNavigationProp } from '../../../library/@types/navigation';
 import RemoveButtonInsideModal from '../menu/removeButtonModal';
-<<<<<<< Updated upstream
-import { RealmLibrary } from '../../../library/realm/schema';
-<<<<<<< HEAD
-import RealmLibraryChange from '../../../library/realm/transaction/library';
-=======
 import { RealmLibraryResult } from '../../../library/realm/transaction/@realmTypes';
 import RealmBookEditor from '../../../library/realm/transaction/class/write/editBook';
->>>>>>> Stashed changes
-=======
-import RealmLibraryChange from '../../../library/realm/transaction/class/read/library';
->>>>>>> change/local-database
 
 interface RemoveBookProps {
    library: Library;
@@ -47,7 +38,7 @@ const RemoveBookButton = ({ library, id, navigation, mutate, realmParams }: Remo
 
    const removeBook = () => {
       mutate();
-      _removeRealmObj(id);
+      _removeRealmObj(RealmBookEditor, id);
 
       navigation &&
          setTimeout(() => {
@@ -58,10 +49,10 @@ const RemoveBookButton = ({ library, id, navigation, mutate, realmParams }: Remo
    // THIS IS NOT RECOMMENDED. SOFT DELETE FOR BOOKS CONTAINING MORE DATA
    // TODO: if the book has been read and the book has logs then soft delete
    // OR have it hard delete here and soft delete at the server
-   const _removeRealmObj = (id: string) => {
+   const _removeRealmObj = (editor: typeof RealmBookEditor, id: string) => {
       try {
          realm.write(() => {
-            const init = new RealmBookEditor(realm, realmLibrary);
+            const init = new editor(realm, realmLibrary);
             init.deleteBook(id);
          });
       } catch (err) {

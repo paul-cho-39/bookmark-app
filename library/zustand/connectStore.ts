@@ -14,6 +14,7 @@ const initialState: ConnectorStoreProps = {
       },
       notes: {
          isDataAvailable: false,
+         shouldSave: false,
       },
       network: {
          isConnected: null,

@@ -25,13 +25,7 @@ const HomeScreen = ({}) => {
    const uid = getUser() as string;
    const navigation = useNavigation();
    const { colors } = useTheme();
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-   const hasMutated = useConnectStore((state) => state.data.library.hasMutated);
-   // change the queryKeys based
-=======
-=======
->>>>>>> change/local-database
+
    const [hasMutated, isConnected] = useConnectStore((state) => [
       state.data.library.hasMutated,
       state.data.network.isConnected,
@@ -39,19 +33,15 @@ const HomeScreen = ({}) => {
 
    const { useQuery: useRealmQuery } = RealmContext;
    const libraries = useRealmQuery(RealmLibrary);
-<<<<<<< HEAD
+
    const { data: currentlyReadingData } = useQuery(queryKeys.currentlyReading, () =>
       getRealmCurrentBookData(libraries)
    );
 
    // TODO: SNIP this part out!
->>>>>>> Stashed changes
-=======
    const { data: current } = useQuery(queryKeys.currentlyReading, () =>
       getRealmCurrentBookData(libraries)
    );
-
->>>>>>> change/local-database
    const { data: userLibrary, isError } = useQuery<CurrentBook>(
       queryKeys.recording(uid),
       () => getFetch(getUrl.library.file.getBooks.currentBooks(uid)),

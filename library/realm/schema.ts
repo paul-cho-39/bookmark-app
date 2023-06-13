@@ -1,6 +1,4 @@
 import Realm from 'realm';
-// import { RealmTimer, RealmBookInfo } from './dictionary';
-import { createRealmContext } from '@realm/react';
 // location (since it will likely change(?))
 // should location differ for each time user reads the book?
 

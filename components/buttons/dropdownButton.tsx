@@ -54,7 +54,7 @@ const ChevronButton = ({
                      style={{ paddingHorizontal: '5%' }}
                      name='check'
                      size={20}
-                     color={colors.onSecondaryContainer}
+                     color={colors.onPrimaryContainer}
                   />
                )}
             </View>

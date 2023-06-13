@@ -3,6 +3,8 @@ import useBoundedStore from '../../store';
 import { NoteIndexType, StoreProps } from '../../types/@types';
 import getUsersLocalTime from '../../../helper/timer/getUsersLocalTime';
 import { _getInitialNoteData, _isNoteIdNull } from './helperLogic';
+import { NotesNavigationProp } from '../../../@types/navigation';
+import useConnectStore from '../../connectStore';
 
 // first initiated in the Timer screen where the note will have logIndex
 // and bookId as the note
@@ -38,4 +40,17 @@ function setNoteObjWithIndex<K extends keyof NoteIndexType>(logIndex: number, ke
    };
 }
 
-export { setInitiateNote, setNoteObjWithIndex, setNotePage };
+function handleUnsaveNote(
+   navigation: NotesNavigationProp['navigation'],
+   setModal: (value: true) => void
+) {
+   // connect notes where should save is turned on
+   const shouldSave = useConnectStore.getState().data.notes.shouldSave;
+   if (!shouldSave) {
+      navigation.goBack();
+   }
+   // this one should be local
+   setModal(true);
+}
+
+export { setInitiateNote, setNoteObjWithIndex, setNotePage, handleUnsaveNote };

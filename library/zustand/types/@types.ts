@@ -17,6 +17,7 @@ export interface ConnectorStoreProps {
       };
       notes: {
          isDataAvailable: boolean;
+         shouldSave: boolean;
       };
       network: {
          isConnected: null | boolean;
