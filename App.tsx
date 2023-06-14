@@ -1,3 +1,5 @@
+import React from 'react';
+import 'react-native-gesture-handler';
 import 'expo-dev-client';
 
 import { Provider as PaperProvider, useTheme, Text } from 'react-native-paper';

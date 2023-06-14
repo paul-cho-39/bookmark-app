@@ -1,3 +1,6 @@
+import Animated from 'react-native-reanimated';
+import useAnimatedHeight from '../../library/hooks/useAnimatedHeight';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TimerParamsList } from '../../library/@types/navigation';
 // screens

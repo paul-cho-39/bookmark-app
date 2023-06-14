@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, KeyboardAvoidingView, Platform, Appearance } from 'react-native';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
+import { HEADERS } from '../../../assets/constants';
 
 interface NoteLayoutProps {
    colors: MD3Colors;
@@ -37,6 +38,7 @@ const NoteLayout = ({ colors, children }: NoteLayoutProps) => {
          {/* create another one for light mode here -- dark mode only */}
          <LinearGradient
             // colors={getColorsFor()}
+            testID='note-layout'
             colors={[colors.inverseOnSurface, colors.inverseOnSurface]}
             style={styles.container}
          >
@@ -51,6 +53,7 @@ const MARGIN_HORIZONTAL = (1 - WIDTH) / 2;
 
 const styles = StyleSheet.create({
    container: {
+      marginTop: 10, // this comes creating custom headers
       flex: 1,
    },
 });

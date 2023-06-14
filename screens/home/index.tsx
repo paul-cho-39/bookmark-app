@@ -34,6 +34,8 @@ const HomeScreen = ({}) => {
    const { useQuery: useRealmQuery } = RealmContext;
    const libraries = useRealmQuery(RealmLibrary);
 
+   // useAnimatedHeight();
+
    const { data: currentlyReadingData } = useQuery(queryKeys.currentlyReading, () =>
       getRealmCurrentBookData(libraries)
    );
