@@ -39,6 +39,12 @@ export function formatTimer(timer: TimerType) {
    return `${hours}:${minutes}`;
 }
 
+export function noteHeaderTimeParser(dateTime: string | null) {
+   if (dateTime === null) return;
+   const dateParts = dateTime.split(',')[0].split('/');
+   return `${dateParts[0]}/${dateParts[1]}/${dateParts[2].slice(-2)}`;
+}
+
 // Date object is returning { NaN } and had to manually parse date
 // to get the date object
 export function convertDateFormat(dateString: string): Date {

@@ -9,9 +9,11 @@ const useBoundedStore = create(
          0: {
             logIndex: 0,
             title: undefined,
+            chapter: undefined,
+            pageFrom: null,
+            pageTo: null,
             tags: [],
             note: [],
-            page: null, // will be set alongside in the timer
             isPrivate: false, // default is public notes
             dates: {
                start: null,

@@ -4,6 +4,7 @@ import useSettingsStore from '../../settingsStore';
 import { convertDateFormat } from '../../../helper/timer/getTimerValue';
 import { RealmTimerParams } from '../../../realm/transaction/@realmTypes';
 import RealmTimerLogs from '../../../realm/transaction/class/write/createLog';
+import getUsersLocalTime from '../../../helper/timer/getUsersLocalTime';
 
 export const setTimerWithDate = (newStartDate?: Date, newEndDate?: Date) => {
    useBoundedStore.setState({
@@ -68,10 +69,11 @@ export const initiateStartTime = async (
    callback: (body: BodyTimer) => void,
    realmParams: RealmTimerParams
 ) => {
-   const timeZone = useSettingsStore.getState().userPreference.userGeneralSettings.preference
-      .timeZone as string;
-   const localizedStartTime = new Date().toLocaleString('en-US', { timeZone });
-   const localDate = convertDateFormat(localizedStartTime);
+   // const timeZone = useSettingsStore.getState().userPreference.userGeneralSettings.preference
+   //    .timeZone as string;
+   // const localizedStartTime = new Date().toLocaleString('en-US', { timeZone });
+   // const localDate = convertDateFormat(localizedStartTime);
+   const localDate = getUsersLocalTime('date');
    useBoundedStore.setState({
       timerWithDate: {
          startTime: localDate,

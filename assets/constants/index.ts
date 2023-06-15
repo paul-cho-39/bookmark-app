@@ -7,7 +7,7 @@ export const IMAGES = {
 
 export const HEADERS = {
    DEFAULT: 56,
-   EDITABLE: 195,
+   EDITABLE: 205,
 };
 
 export const ICONS = {
@@ -20,18 +20,19 @@ export const ICONS = {
 
 export const FONT_SIZE = {
    titleLarge: {
-      fontSize: 30,
-      lineHeight: 34,
+      fontSize: 28,
+      lineHeight: 32,
       fontFamily: 'Roboto-Regular',
    },
    titleMedium: {
-      fontSize: 24,
-      lineHeight: 28,
+      fontSize: 20,
+      lineHeight: 24,
+      // fontStyle: 'italic',
       fontFamily: 'Roboto-Medium',
    },
    titleSmall: {
-      fontSize: 20,
-      lineHeight: 24,
+      fontSize: 18,
+      lineHeight: 22,
       fontFamily: 'Roboto-Medium',
    },
 };

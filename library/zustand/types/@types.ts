@@ -116,10 +116,12 @@ interface NoteProps {
    id: string | null;
    [key: number]: {
       logIndex: number;
+      pageFrom: number | null;
+      pageTo: number | null;
       tags?: string[]; // use past tags so when creating this keep this in mind
       title?: string;
+      chapter?: string;
       note?: Delta | [];
-      page?: null | number;
       isPrivate: boolean;
       dates: {
          start: string | null;

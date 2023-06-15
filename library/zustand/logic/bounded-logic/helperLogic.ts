@@ -1,16 +1,17 @@
 import useBoundedStore from '../../store';
 import { NoteIndexType } from '../../types/@types';
 
-function _getInitialNoteData(logIndex: number, time: string) {
+function _getInitialNoteData(logIndex: number, createdOn: string) {
    const indexObj: NoteIndexType = {
       logIndex: logIndex,
       tags: [],
       note: [],
       title: undefined,
-      page: null,
+      pageFrom: null,
+      pageTo: null,
       isPrivate: false,
       dates: {
-         start: time,
+         start: createdOn,
          end: null,
          lastEdited: null,
       },

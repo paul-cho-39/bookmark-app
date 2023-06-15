@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import storage from './types/asyncStorage';
 import { PersistStoreProps, TimerType, UserPreference } from './types/@types';
 
-interface UserPreferenceProps extends PersistStoreProps {
+export interface UserPreferenceProps extends PersistStoreProps {
    userPreference: UserPreference;
 }
 
