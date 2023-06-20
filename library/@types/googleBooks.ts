@@ -1,4 +1,5 @@
 import getBasicBookInfo from '../helper/getBasicBookInfo';
+import { RealmBook } from '../realm/schema';
 
 export interface Data<T extends Record<string, string>> {
    pageParams?: unknown[] | [];
@@ -76,6 +77,8 @@ export interface Library {
    finished: string[] | undefined;
 }
 
+// TODO: switch out the data here
+
 export type BasicBookInfo = ReturnType<typeof getBasicBookInfo>;
 export interface CurrentBook {
    data: CurrentBookData[];
@@ -83,6 +86,12 @@ export interface CurrentBook {
 
 export interface CurrentRealmBookData extends Omit<BasicBookInfo, 'thumbnail'> {
    type: 'CURRENTLY_READING' | 'PRIMARY' | 'DUMMY';
+}
+
+export interface CurrentRealmBook {
+   data: {
+      reading: RealmBook[];
+   };
 }
 
 export interface CurrentBookData extends BasicBookInfo {

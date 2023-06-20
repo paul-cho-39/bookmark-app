@@ -106,9 +106,10 @@ const html = `
     let Inline = Quill.import('blots/inline');
     let Block = Quill.import('blots/block');
 
-    // const _absoluteHeight = document.body.scrollHeight;
+    const _absoluteHeight = document.body.scrollHeight;
     let _isReady = false;
     let _lastKnownRange = null;
+    let _tempDelta = null;
     let _urlInput;
 
     var quill = new Quill('#editor', {
@@ -191,11 +192,14 @@ const html = `
           break;
         case 'link':
           addLink(message.url);
+        case 'pressed':
+          _sendMessage(_stringifyMessage('noteData', _tempDelta))
         default:
           break;
        }
     });
 
+    // TODO: when the link contains 'https://' already then skip the parsing process
     var addLink = function(domain) {
       var range = quill.getSelection();
       let index = range.index > 0 ? range.index : 0;
@@ -215,7 +219,7 @@ const html = `
       const _absoluteHeight = document.body.scrollHeight;
       let initialHeight;
 
-      // TODO: have to test this out with other device(?);
+      // TODO: have to test this out with other device
       var adjustToKeyboard = function(totalHeight, currHeight) {
         if (totalHeight > currHeight) {
            let diff =  totalHeight - currHeight;
@@ -233,6 +237,7 @@ const html = `
         }, 50);
         editor.style.height = height - offsetHeight + "px";
       } else {
+        editor.style.height = '95vh';
         toolbar.style.bottom = 0 + 'px';
       }
     }
@@ -266,6 +271,15 @@ const html = `
     });
 
 // // <------------------- Quill logic  ------------------->
+
+// // <------------------- Quill handler ------------------->
+
+// TODO: check the condition and this is likely usable so find a better means to maintain code
+  quill.on('text-change', function(delta, oldDelta, source) {
+    if (source === 'user') {
+      changeDelta = delta;
+    }
+  }); 
 
 // // <------------------- add custom blots ------------------->
   class ReferenceQuote extends Block {

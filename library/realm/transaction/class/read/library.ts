@@ -7,6 +7,7 @@ export type RealmBooksType<T extends Keys> = T extends Keys
    ? { [K in T]: RealmBook[] }
    : { [K in Keys]: RealmBook[] };
 
+// TODO: refactor poor name. come up with a better name
 export default class RealmLibraryRead {
    private library: RealmLibraryResult;
 

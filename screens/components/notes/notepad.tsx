@@ -12,12 +12,11 @@ const RichTextEditor = React.lazy(() => import('./richEditor'));
 
 const Notepad = ({ keyboardHeight, colors, logIndex }: NotepadProps) => {
    return (
-      <View style={styles.container}>
-         {/* TODO: loading screen */}
+      <>
          <Suspense fallback={<Text>Loading Editor...</Text>}>
             <RichTextEditor colors={colors} keyboardHeight={keyboardHeight} />
          </Suspense>
-      </View>
+      </>
    );
 };
 

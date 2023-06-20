@@ -6,8 +6,8 @@ import { WebViewEvent, WebViewMessageEvent } from 'react-native-webview/lib/WebV
 import { useFocusEffect } from '@react-navigation/native';
 import { useAssets } from 'expo-asset';
 import { readAsStringAsync } from 'expo-file-system';
-
 import html from './webView/quill';
+
 import LinkModal from './webView/linkModal';
 import { SCREEN_HEIGHT, height as HEIGHT } from '../../../library/helper';
 
@@ -30,11 +30,19 @@ const RichTextEditor = ({ keyboardHeight, colors }: RichTextEditorProps) => {
    const colorScheme = useColorScheme();
    const isAndroid = Platform.OS === 'android';
 
+   // send the note data when the user presses back or presses save
+   // the save button should be global and called from here
+   // when the note is first written then send the data that it has been modified
+
    // *SNIP
    // this will be used and initiated ONLY when the network is unavailable
    // using @react-native-community/netinfo
    // if it is NOT available this asset should be downloaded
    // if not the original quill should be used
+
+   // so this should be a hook logic and used for whether to display
+   // offline.
+   // TODO: create anotehr component for this
    const [offlineHtml, setOfflineHtml] = useState('');
    const [index, indexLoadingError] = useAssets(
       require('../../../assets/quill-js/offlineQuill.html')
@@ -45,9 +53,9 @@ const RichTextEditor = ({ keyboardHeight, colors }: RichTextEditorProps) => {
          setOfflineHtml(data);
       });
    }
-
    // *SNIP
 
+   // ----- helper function -----
    const sendMessage = (message: Record<string, unknown>) =>
       webviewRef.current?.postMessage(JSON.stringify(message));
 
