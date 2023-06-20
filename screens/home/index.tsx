@@ -18,7 +18,7 @@ const HomeScreen = ({}) => {
 
    // if isRefetchingError persists then it should lead to another screen(?);s
    const { queryObject, primaryBook } = useGetCurrentReading();
-   const { data, isSuccess, isError, isRefetchError } = queryObject;
+   const { data, isSuccess, isError } = queryObject;
    const currentlyReading = data?.reading;
 
    // count the number of times it is refetching the error and if it exceeds a certain
@@ -32,6 +32,14 @@ const HomeScreen = ({}) => {
          navigation.removeListener('blur', () => resetQuery());
       };
    }, [navigation]);
+
+   if (isError) {
+      return (
+         <View>
+            <Text></Text>
+         </View>
+      );
+   }
 
    return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>

@@ -3,6 +3,7 @@ import { produce, Draft } from 'immer';
 import { ConnectorStoreProps } from '../../types/@types';
 import { _setModalVisibility } from './modalLogic';
 import { pauseTimer, resumeTimer } from '../bounded-logic/timerLogic';
+import debounce from '../../../helper/debouncer';
 
 const setIsDataAvailable = (value: boolean) => {
    useConnectStore.setState(

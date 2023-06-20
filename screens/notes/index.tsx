@@ -17,8 +17,9 @@ const Notes = ({ navigation, route }: NotesNavigationProp) => {
    const keyboardHeight = useGetKeyboardHeight();
    const { logIndex } = route.params.params;
 
-   //    testing here
+   // testing here
    const [id, noteObj] = useBoundedStore((state) => [state.notes.id, state.notes]);
+
    return (
       <NoteLayout colors={colors}>
          {/* <ParentComponent /> */}
