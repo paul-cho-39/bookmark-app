@@ -3,7 +3,7 @@ import createUniqueDataSets from './createUniqueData';
 import getBasicBookInfo from './getBasicBookInfo';
 import getPageString from './getPageString';
 import getUser from './getUser';
-import useGlobalStore from '../zustand/store';
+import parsePrimaryBooks from './parsePrimaryBooks';
 import {
    width,
    height,
@@ -17,12 +17,12 @@ import {
 } from './getMiddleValue';
 
 export {
-   useGlobalStore,
    checkBookInLibrary,
    createUniqueDataSets,
    getBasicBookInfo,
    getPageString,
    getUser,
+   parsePrimaryBooks,
    IMAGE_HEIGHT,
    IMAGE_WIDTH,
    CONTAINER_HEIGHT,

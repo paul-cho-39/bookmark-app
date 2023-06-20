@@ -5,8 +5,9 @@ import type {
    CompositeScreenProps,
    RouteProp,
 } from '@react-navigation/native';
-import { BasicBookInfo, Library, PrimaryBookInfoType } from './googleBooks';
+import { BasicBookInfo, Library } from './googleBooks';
 import { BaseUserLogProps } from './timerData';
+import type { PrimaryData } from '../helper/parsePrimaryBooks';
 
 // TODO // set the parameters as each screen page props set/change
 // change the params list here
@@ -22,7 +23,7 @@ type TabsParamList = {
 };
 
 type TimerParamsList = {
-   MainTimer: { uid: string; primaryBookInfo: PrimaryBookInfoType; params?: BaseUserLogProps };
+   MainTimer: { uid: string; primaryBookInfo: PrimaryData; params?: BaseUserLogProps };
    TimerSettings: undefined;
    Notes: { params: BaseUserLogProps };
 };

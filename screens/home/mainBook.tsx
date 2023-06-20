@@ -1,8 +1,7 @@
 import { StyleSheet, View } from 'react-native';
-import { CurrentBookData } from '../../library/@types/googleBooks';
-import { CONTAINER_HEIGHT, IMAGE_HEIGHT, width } from '../../library/helper';
+import { CONTAINER_HEIGHT, IMAGE_HEIGHT, parsePrimaryBooks, width } from '../../library/helper';
 import MainMenu from '../components/menu/mainBookMenu';
-import { QueryCache, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMutateLibrary } from '../../library/hooks/queryHooks/useMutateLibrary';
 import BookInfo from '../components/books/bookInfo';
 import { Button, Text } from 'react-native-paper';
@@ -10,34 +9,20 @@ import SurfaceButtons from '../components/menu/surfaceButtons';
 import queryKeys from '../../library/helper/react-query/queryKeys';
 import getUrl from '../../library/helper/react-query/getUrl';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';
+import { RealmBook } from '../../library/realm/schema';
 
 interface MainBookCoverProps {
-   currentBooks: CurrentBookData[];
+   currentBooks: RealmBook[];
+   primaryBook: RealmBook;
    uid?: string;
 }
 
-const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
+const MainBookCover = ({ currentBooks, primaryBook, uid }: MainBookCoverProps) => {
    const queryClient = useQueryClient();
-   // TODO: refactor this part use helper function
-   // when first loading will likely be using cache to open the app
-   const primaryBook = currentBooks
-      .filter((book) => book.type === 'PRIMARY')
-      .reduce((_, key) => {
-         return key;
-      }, {}) as CurrentBookData;
-
-   const primaryBookInfo = {
-      id: primaryBook.id,
-      title: primaryBook.title,
-      subtitle: primaryBook.subtitle,
-      authors: primaryBook.authors,
-      page: primaryBook.page,
-   };
-
    const id = primaryBook.id;
    const url = getUrl.library.file.addBooks(uid as string, id).remove;
 
-   // if the connection is there
+   // TODO: the connection is available then use this
    const { mutate, status } = useMutateLibrary(
       url,
       uid as string,
@@ -46,10 +31,12 @@ const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
       queryClient,
       'remove'
    );
-   // SNIP -- to here set the logic elsewhere not here
 
    const userLibrary = queryClient.getQueryData(queryKeys.userLibrary(uid as string));
 
+   // REFACTOR MOST OF THIS PART THIS IS WAY TOO UGLY AND UNORGANIZED
+   // THIS IS SO PRONE FOR AN ERROR LATER
+   // AND LETS THINK ABOUT HOW TO STRUCTURE THIS FILE
    return (
       <>
          <View style={styles.infoContainer}>
@@ -70,7 +57,7 @@ const MainBookCover = ({ currentBooks, uid }: MainBookCoverProps) => {
                   <Button style={styles.infoButton}>Show more info...</Button>
                </View>
             </View>
-            <SurfaceButtons uid={uid as string} primaryBookInfo={primaryBookInfo} />
+            <SurfaceButtons uid={uid as string} primaryBookInfo={parsePrimaryBooks(primaryBook)} />
          </View>
       </>
    );

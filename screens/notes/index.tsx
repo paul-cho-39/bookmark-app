@@ -19,9 +19,6 @@ const Notes = ({ navigation, route }: NotesNavigationProp) => {
 
    //    testing here
    const [id, noteObj] = useBoundedStore((state) => [state.notes.id, state.notes]);
-   // useEffect(() => {
-   //    console.log('is note private?:', noteObj[logIndex].isPrivate);
-   // }, [noteObj[logIndex].isPrivate]);
    return (
       <NoteLayout colors={colors}>
          {/* <ParentComponent /> */}

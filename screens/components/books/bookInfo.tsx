@@ -3,7 +3,7 @@ import BookTitle from './bookTitle';
 import Authors from './authors';
 import { Text } from 'react-native-paper';
 import { View, StyleProp, ViewStyle, StyleSheet, ImageStyle, TextStyle } from 'react-native';
-import { BasicBookInfo, CurrentBookData } from '../../../library/@types/googleBooks';
+import { BasicBookInfo } from '../../../library/@types/googleBooks';
 
 interface BookInfoProps {
    bookInfo: BasicBookInfo;

@@ -8,7 +8,6 @@ import { useTheme } from 'react-native-paper';
 import TimerHeaderIcons from '../../screens/components/time/headerIcons';
 import BackButton from '../../components/buttons/backButton';
 import Notes from '../../screens/notes';
-import NoteAppbar from '../../screens/components/appbar/notes/noteAppbar';
 import { BaseUserLogProps } from '../../library/@types/timerData';
 import NoteAppBarSample from '../../screens/components/appbar/notes/noteSampler';
 

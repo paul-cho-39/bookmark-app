@@ -80,9 +80,6 @@ export interface Library {
 // TODO: switch out the data here
 
 export type BasicBookInfo = ReturnType<typeof getBasicBookInfo>;
-export interface CurrentBook {
-   data: CurrentBookData[];
-}
 
 export interface CurrentRealmBookData extends Omit<BasicBookInfo, 'thumbnail'> {
    type: 'CURRENTLY_READING' | 'PRIMARY' | 'DUMMY';
@@ -94,17 +91,12 @@ export interface CurrentRealmBook {
    };
 }
 
-export interface CurrentBookData extends BasicBookInfo {
-   type: 'CURRENTLY_READING' | 'PRIMARY' | 'DUMMY';
-   date?: Date | undefined;
-}
+// export interface CurrentBook {
+//    data: CurrentBookData[];
+// }
+// export interface CurrentBookData extends BasicBookInfo {
+//    type: 'CURRENTLY_READING' | 'PRIMARY' | 'DUMMY';
+//    date?: Date | undefined;
+// }
 
 export type QueryData = { data: Library };
-
-export type PrimaryBookInfoType = {
-   id: string;
-   title: string;
-   subtitle: string | undefined;
-   authors: string[];
-   page?: number;
-};

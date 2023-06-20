@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react';
 import { Text } from 'react-native-paper';
-import { View } from 'react-native';
-import { CurrentBookData } from '../../../library/@types/googleBooks';
 import CustomModal from '../../../components/modal';
 import AnimatedModal from '../../../components/animatedModal';
 
@@ -17,10 +15,11 @@ import Config from '../../../library/config';
 import React from 'react';
 import { setBookVisibility } from '../../../library/zustand/logic/connector-logic/';
 import useConnectStore from '../../../library/zustand/connectStore';
+import { RealmBook } from '../../../library/realm/schema';
 
 interface MainMenuProps {
    removeBook: () => void;
-   currentBooks: CurrentBookData[];
+   currentBooks: RealmBook[];
 }
 
 const MainMenu = ({ removeBook, currentBooks }: MainMenuProps) => {
@@ -58,7 +57,7 @@ const MainMenu = ({ removeBook, currentBooks }: MainMenuProps) => {
             <BookCarousel goBack={setBookVisibility} data={currentBooks} />
          </AnimatedModal>
 
-         {/* deleting book */}
+         {/* TODO: create another component for deleting book */}
          <CustomModal
             title={
                <>

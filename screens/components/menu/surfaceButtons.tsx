@@ -2,16 +2,13 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import CustomSurfaceButton from './surfaceButton';
 import { useNavigation } from '@react-navigation/native';
-import {
-   TimerNavigationProp,
-   MainNavigatorTimerNavgiationProp,
-} from '../../../library/@types/navigation';
-import { PrimaryBookInfoType } from '../../../library/@types/googleBooks';
+import { MainNavigatorTimerNavgiationProp } from '../../../library/@types/navigation';
 import { setBookVisibility } from '../../../library/zustand/logic/connector-logic/';
+import { PrimaryData } from '../../../library/helper/parsePrimaryBooks';
 
 interface SurfaceButtonProps {
    uid: string;
-   primaryBookInfo: PrimaryBookInfoType;
+   primaryBookInfo: PrimaryData;
 }
 
 const SurfaceButtons = ({ uid, primaryBookInfo }: SurfaceButtonProps) => {
