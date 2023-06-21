@@ -12,8 +12,8 @@ export const HEADERS = {
 
 export const ICONS = {
    SMALL: 14,
-   DEFAULT: 18,
-   MIDDLE: 20,
+   NORMAL: 18,
+   MEDIUM: 20,
    LARGE: 28,
    EXTRA_LARGE: 34,
 };

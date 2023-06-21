@@ -1,22 +1,24 @@
-import { Appbar, Menu, IconButton, Divider, TextInput, Text } from 'react-native-paper';
-import { BackHandler, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
+import Animated from 'react-native-reanimated';
+import useAnimatedHeight from '../../../../library/hooks/useAnimatedHeight';
+import { BackHandler, Platform, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 
-import { useEffect, useState } from 'react';
-import { width as WIDTH } from '../../../../library/helper';
+import { useEffect, useRef, useState } from 'react';
 import { NotesNavigationProp } from '../../../../library/@types/navigation';
 import useBoundedStore from '../../../../library/zustand/store';
-import NoteHeaderTitle from './editableAppbar';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import EditableAppbar from './editableAppbar';
 import AnimatedBackButton from './animatedBackButton';
+import useCustomBackHandler from '../../../../library/hooks/useCustomBackHandler';
+import { retrieveNotesHeader } from '../../../../library/zustand/utils/notes/retriever';
+import NoteTagIcon from './noteContent';
+import { ICONS } from '../../../../assets/constants';
 
 // SAVED (CHECKMARK), PUBLIC/PRIVATE, X-CLOSE BUTTON, WORDS (ICON), TAGS (TAG)
 
 // make WORDS, TAGS, AND SAVED AS A DICT OR OBJECT
 
-type Mode = 'small' | 'large';
-const PRIMARY_ICON_SIZE = 28;
-const SECONDARY_ICON_SIZE = 20;
+export type Mode = 'small' | 'large';
 
 interface NoteAppbarProps extends NotesNavigationProp {
    colors: MD3Colors;
@@ -25,157 +27,87 @@ interface NoteAppbarProps extends NotesNavigationProp {
 const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
    const { logIndex } = route.params.params;
    const notes = useBoundedStore((state) => state.notes);
-
-   const [visible, setVisible] = useState(false);
-
-   const openMenu = () => setVisible(true);
-   const closeMenu = () => setVisible(false);
-
-   // const setTitle = (title: string) => {
-
-   //    closeMenu();
-   // };
-
-   const [title, setTitle] = useState('Title');
    const [mode, setMode] = useState<Mode>('small');
+
+   const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, logIndex);
 
    const handleTitlePress = () => {
       setMode(mode === 'small' ? 'large' : 'small');
    };
 
-   useEffect(() => {
-      if (Platform.OS === 'android') {
-         const backAction = () => {
-            if (mode === 'large') {
-               setMode('small');
-               return true;
-            }
-            return false;
-         };
+   const { headerStyle, titleStyle } = useAnimatedHeight(mode);
 
-         const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
-
-         return () => backHandler.remove();
+   useCustomBackHandler(() => {
+      if (mode === 'large') {
+         setMode('small');
+         return true;
       }
+      return false;
    }, [mode]);
 
+   const onPressBack = () => {
+      mode === 'large' ? setMode('small') : navigation.goBack();
+   };
+
    return (
-      <SafeAreaView style={styles.container}>
-         {mode === 'small' ? (
-            // <Appbar.Header testID='note-appbar' mode='small'>
-            //    <AnimatedBackButton
-            //       mode={mode}
-            //       color={colors.onSurface}
-            //       size={PRIMARY_ICON_SIZE}
-            //       onPress={() => navigation.goBack()}
-            //       style={styles.backButton}
-            //    />
-            //    <View style={styles.wrapper}>
-            //       <Appbar.Content title={title} onPress={handleTitlePress} />
-            //    </View>
-            // </Appbar.Header>
-            <View
-               testID='note-appbar'
-               style={{ ...styles.headerContainer, backgroundColor: colors.elevation.level5 }}
-            >
-               <AnimatedBackButton
-                  mode={mode}
-                  color={colors.onSurface}
-                  size={PRIMARY_ICON_SIZE}
-                  onPress={() => navigation.goBack()}
-                  style={styles.backButton}
-               />
-               <View style={styles.wrapper}>
-                  <Text variant='titleLarge' style={styles.title} onPress={handleTitlePress}>
-                     Title
-                  </Text>
-               </View>
-            </View>
-         ) : (
-            <EditableAppbar
-               title={title}
-               setTitle={setTitle}
+      <SafeAreaView>
+         <Animated.View
+            style={[
+               styles.headerContainer,
+               headerStyle,
+               { backgroundColor: colors.elevation.level4 },
+            ]}
+         >
+            <AnimatedBackButton
                mode={mode}
-               setMode={setMode}
-               onBlur={handleTitlePress}
-               colors={colors}
-               iconStyle={styles.backButton}
-               style={styles.wrapper}
+               color={colors.onSurface}
+               size={ICONS.LARGE}
+               onPress={onPressBack}
+               style={styles.backButton}
             />
-         )}
-         {/* <NoteHeaderTitle colors={colors} /> */}
-         {/* <Appbar.Content title={titles} onPress={() => setVisible(!visible)} /> */}
-         {/* <Menu
-                  testID='note-appbar-menu'
-                  visible={visible}
-                  anchorPosition='bottom'
-                  anchor={
-                     <IconButton
-                        icon='chevron-down'
-                        size={SECONDARY_ICON_SIZE}
-                        onPress={openMenu}
-                        style={styles.icon}
+            <View style={[styles.contentContainer]}>
+               <Animated.View style={[titleStyle]}>
+                  {mode === 'small' ? (
+                     <>
+                        <Text variant='titleLarge' style={styles.title} onPress={handleTitlePress}>
+                           {!editableHeaderParams.title ? 'Title' : editableHeaderParams.title}
+                        </Text>
+                     </>
+                  ) : (
+                     <EditableAppbar
+                        params={editableHeaderParams}
+                        onBlur={handleTitlePress}
+                        colors={colors}
                      />
-                  }
-                  onDismiss={closeMenu}
-                  keyboardShouldPersistTaps='always'
-                  contentStyle={styles.content}
-                  style={styles.menuContent}
-               >
-                  <Menu.Item onPress={() => setTitle('Title 1')} title='Title 1' />
-               </Menu>
-               <Divider />  */}
+                  )}
+               </Animated.View>
+               <NoteTagIcon noteTags={noteTags} colors={colors} />
+            </View>
+         </Animated.View>
       </SafeAreaView>
    );
 };
 
-// put this in a separate stylesheet
-const HEADER_HEIGHT = 80;
-const CONTENT_WIDTH = '32%';
-const BACK_HORIZONTAL = 0.03;
-const MARGIN_HORIZONTAL = 3;
-const LEFT_ALIGNMENT = WIDTH * BACK_HORIZONTAL + MARGIN_HORIZONTAL * 2;
+const BACK_BUTTON_PADDING = 10;
 
 const styles = StyleSheet.create({
-   container: {
-      width: WIDTH,
-   },
    headerContainer: {
-      height: HEADER_HEIGHT,
-      flexDirection: 'row',
-   },
-   wrapper: {
-      marginHorizontal: `${MARGIN_HORIZONTAL}%`,
-      paddingHorizontal: '2.5%',
-      width: CONTENT_WIDTH,
-      flexDirection: 'row',
+      top: StatusBar.currentHeight,
+      bottom: 0,
+      justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical: 3,
+      overflow: 'hidden',
+   },
+   contentContainer: {
+      flexDirection: 'row',
+      paddingHorizontal: '2%',
+      width: '100%',
    },
    backButton: {
-      top: HEADER_HEIGHT / 2,
-      left: 0,
-      marginHorizontal: WIDTH * BACK_HORIZONTAL,
+      paddingHorizontal: BACK_BUTTON_PADDING,
    },
    title: {
-      position: 'absolute',
-      top: HEADER_HEIGHT / 2,
-   },
-   // backButton: {
-   //    marginHorizontal: WIDTH * BACK_HORIZONTAL,
-   // },
-   menuContent: {
-      width: CONTENT_WIDTH,
-      left: `${LEFT_ALIGNMENT}%`,
-      textAlign: 'center',
-   },
-   content: {
-      justifyContent: 'center',
-      alignContent: 'center',
-   },
-   icon: {
-      right: '80%',
-      top: 2,
+      paddingHorizontal: BACK_BUTTON_PADDING + 35,
    },
 });
 

@@ -9,7 +9,7 @@ import TimerHeaderIcons from '../../screens/components/time/headerIcons';
 import BackButton from '../../components/buttons/backButton';
 import Notes from '../../screens/notes';
 import { BaseUserLogProps } from '../../library/@types/timerData';
-import NoteAppBarSample from '../../screens/components/appbar/notes/noteSampler';
+import NoteAppbar from '../../screens/components/appbar/notes/noteAppbar';
 
 const Stack = createNativeStackNavigator<TimerParamsList>();
 
@@ -64,7 +64,7 @@ const TimerStack = () => {
                navigationBarHidden: false,
                contentStyle: { backgroundColor: colors.surface, marginHorizontal: 0 },
                header: (props) => (
-                  <NoteAppBarSample colors={colors} navigation={navigation} route={route} />
+                  <NoteAppbar colors={colors} navigation={navigation} route={route} />
                ),
             })}
          />

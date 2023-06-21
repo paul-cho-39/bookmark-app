@@ -38,18 +38,47 @@ function setNoteObjWithIndex<K extends keyof NoteIndexType, SType extends unknow
          produce((state: StoreProps) => {
             if (!isNull) {
                // there are cases when data has to be converted back
-               // like pageFrom and pageTo
                if (converter) {
                   const newNoteObj = converter(value);
                   state.notes[logIndex][keys] = newNoteObj;
                }
                state.notes[logIndex][keys] = noteObj;
-               // }
             }
          })
       );
    };
 }
+
+// adding tags and listening for changes;
+const handleTags = {
+   _getCurrentTags(logIndex: number) {
+      return useBoundedStore.getState().notes[logIndex]?.tags || [];
+   },
+   add(logIndex: number, newTag: string) {
+      let currentTags = this._getCurrentTags(logIndex);
+      if (!currentTags.includes(newTag) && newTag.length > 0) {
+         const addTags = setNoteObjWithIndex(logIndex, 'tags');
+         addTags([...currentTags, newTag]);
+      } else return;
+   },
+
+   remove(logIndex: number, oldTag: string) {
+      let currentTags = this._getCurrentTags(logIndex);
+      if (currentTags.includes(oldTag)) {
+         const removeTags = setNoteObjWithIndex(logIndex, 'tags');
+         removeTags(currentTags.filter((existingTag) => existingTag !== oldTag));
+      }
+   },
+
+   edit(logIndex: number, oldTag: string, newTag: string) {
+      let currentTags = this._getCurrentTags(logIndex);
+      if (currentTags.includes(oldTag) && !currentTags.includes(newTag)) {
+         const newTags = currentTags.map((tag) => (tag === oldTag ? newTag : tag));
+         const editTags = setNoteObjWithIndex(logIndex, 'tags');
+         editTags(newTags);
+      }
+   },
+};
 
 function handleUnsaveNote(
    navigation: NotesNavigationProp['navigation'],
@@ -64,4 +93,4 @@ function handleUnsaveNote(
    setModal(true);
 }
 
-export { setInitiateNote, setNoteObjWithIndex, setNotePage, handleUnsaveNote };
+export { setInitiateNote, setNoteObjWithIndex, setNotePage, handleUnsaveNote, handleTags };

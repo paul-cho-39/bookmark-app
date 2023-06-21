@@ -19,7 +19,12 @@ function retrieveNotesHeader(notes: NoteType, logIndex: number) {
       createdAt: createdAt,
    };
 
-   return { editableHeaderParams };
+   const noteTags = {
+      logIndex,
+      tags,
+   };
+
+   return { editableHeaderParams, noteTags };
 }
 
 type RetrievalParams = ReturnType<typeof retrieveNotesHeader>;

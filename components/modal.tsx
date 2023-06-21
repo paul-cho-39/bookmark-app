@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Portal, Text, Modal, useTheme, Divider } from 'react-native-paper';
 import {
    StyleProp,
@@ -8,6 +8,7 @@ import {
    StyleSheet,
    ViewProps,
    TextStyle,
+   AccessibilityInfo,
 } from 'react-native';
 
 import useTouchResize from '../library/hooks/useTouchResize';
@@ -71,6 +72,11 @@ const CustomModal = ({
          </Text>
       );
    };
+
+   useEffect(() => {
+      const message = visible ? 'Modal is open' : 'Modal is closed';
+      AccessibilityInfo.announceForAccessibility(message);
+   }, [visible]);
 
    return (
       <>

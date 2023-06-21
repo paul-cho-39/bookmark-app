@@ -6,7 +6,7 @@ import Animated, {
    interpolate,
    withSpring,
 } from 'react-native-reanimated';
-import { Mode } from '../../screens/components/appbar/notes/noteSampler';
+import { Mode } from '../../screens/components/appbar/notes/noteAppbar';
 import { useEffect } from 'react';
 import { HEADERS } from '../../assets/constants';
 

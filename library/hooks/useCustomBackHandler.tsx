@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { BackHandler } from 'react-native';
 
-function useCustomBackHandler<T>(customHandler: () => boolean, dep?: T) {
-   const dependency = !dep ? customHandler : dep;
+function useCustomBackHandler<T extends Array<unknown>>(customHandler: () => boolean, deps?: T) {
    useEffect(() => {
       const backAction = () => {
          return customHandler();
@@ -13,7 +12,7 @@ function useCustomBackHandler<T>(customHandler: () => boolean, dep?: T) {
 
       // Clean up the listener on unmount
       return () => backHandler.remove();
-   }, [dependency]);
+   }, [deps]);
 }
 
 export default useCustomBackHandler;
