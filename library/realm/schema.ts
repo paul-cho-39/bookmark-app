@@ -42,8 +42,7 @@ export class RealmBook extends Realm.Object<RealmBook, 'id'> {
    numberOfRead?: number;
    pageStart?: number;
    logs?: Realm.List<RealmLogs>; //  O-t-M
-
-   //    notes?: Realm.List<RealmNotes>; // O-t-M
+   notes?: Realm.List<RealmNotes>; // O-t-M
    // personalLibrary?: Realm.List<RealmPersonalLib>
    static schema = {
       name: 'Book',
@@ -55,7 +54,7 @@ export class RealmBook extends Realm.Object<RealmBook, 'id'> {
          numberOfRead: { type: 'int', default: 0 },
          pageStart: { type: 'int', default: 0 },
          logs: 'Logs[]',
-         //  notes: 'Notes[]?',
+         notes: 'Notes[]',
          // peronsalLibrary: 'RealmPersonalLib[]'
       },
    };
@@ -88,7 +87,7 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
          feedback: 'int?',
          bookmarked: { type: 'bool', default: false },
          words: { type: 'list', objectType: 'string' },
-         //  note: 'Note?',
+         note: 'Notes?',
       },
    };
 }
@@ -97,43 +96,43 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
 
 // }
 
-// class RealmNotes extends Realm.Object<RealmNotes> {
-//    id!: string;
-//    isUpdated!: boolean;
-//    logIndex?: number;
-//    notes?: Realm.List<string>; // this one should be tested may be delta
-//    tags?: Realm.Set<string>;
-//    quotes?: Realm.Set<string>;
-//    highlight?: Realm.Set<string>;
-//    createdAt?: Date;
-//    updatedAt?: Date;
-//    static schema = {
-//       name: 'Notes',
-//       properties: {
-//          id: 'string',
-//          logIndex: 'int',
-//          isUpdated: { type: 'bool', default: false },
-//          notes: {
-//             type: 'list',
-//             objectType: 'string',
-//          },
-//          tags: {
-//             type: 'set',
-//             objectType: 'string',
-//          },
-//          quotes: {
-//             type: 'set',
-//             objectType: 'string',
-//          },
-//          highlight: {
-//             type: 'set',
-//             objectType: 'string',
-//          },
-//          createdAt: 'date?',
-//          updatedAt: 'date?',
-//       },
-//    };
-// }
+export class RealmNotes extends Realm.Object<RealmNotes> {
+   id!: string;
+   isUpdated!: boolean;
+   logIndex?: number;
+   notes?: Realm.List<string>; // this one should be tested may be delta
+   tags?: Realm.Set<string>;
+   quotes?: Realm.Set<string>;
+   highlight?: Realm.Set<string>;
+   createdAt?: Date;
+   updatedAt?: Date;
+   static schema = {
+      name: 'Notes',
+      properties: {
+         id: 'string',
+         logIndex: 'int',
+         isUpdated: { type: 'bool', default: false },
+         notes: {
+            type: 'list',
+            objectType: 'string',
+         },
+         tags: {
+            type: 'set',
+            objectType: 'string',
+         },
+         quotes: {
+            type: 'set',
+            objectType: 'string',
+         },
+         highlight: {
+            type: 'set',
+            objectType: 'string',
+         },
+         createdAt: 'date?',
+         updatedAt: 'date?',
+      },
+   };
+}
 
 // export const RealmConfig: Realm.Configuration = {
 //    schema: [RealmLibrary, RealmBook, RealmLogs, RealmNotes],
@@ -141,10 +140,10 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
 
 // provide saved notes for users(?);
 // following users(?)
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 11;
 
 export const RealmConfig: Realm.Configuration = {
-   schema: [RealmBook, RealmLibrary, RealmLogs],
+   schema: [RealmBook, RealmLibrary, RealmLogs, RealmNotes],
    schemaVersion: SCHEMA_VERSION,
    //    onMigration: (oldRealm: Realm, newRealm: Realm) => {
    //     // only apply this change if upgrading schemaVersion

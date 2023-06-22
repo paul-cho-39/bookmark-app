@@ -28,7 +28,6 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
    const { logIndex } = route.params.params;
    const notes = useBoundedStore((state) => state.notes);
    const [mode, setMode] = useState<Mode>('small');
-
    const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, logIndex);
 
    const handleTitlePress = () => {

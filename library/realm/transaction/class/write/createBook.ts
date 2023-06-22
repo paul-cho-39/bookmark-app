@@ -72,9 +72,7 @@ export default class RealmBookCreator {
             oldBook.isPrimary = isPrimary;
             return true;
          }
-         if (oldBook) {
-            return oldBook;
-         }
+         if (oldBook) return oldBook;
       }
       return false;
    }
