@@ -16,6 +16,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
 }) => {
    return (
       <TouchableOpacity
+         accessibilityRole='button'
          style={[
             { backgroundColor: backgroundColor },
             rest.style, // Allow user to pass in additional styles

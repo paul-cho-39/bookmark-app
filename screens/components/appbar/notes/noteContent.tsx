@@ -8,29 +8,33 @@ import useGetKeyboardHeight from '../../../../library/hooks/useGetKeyboardHeight
 import { StyleSheet, View } from 'react-native';
 import Tags from './noteTags';
 import { ICONS } from '../../../../assets/constants';
+import NoteTagHeader from './noteTagHeader';
 
 interface NoteTagIconProps {
    colors: MD3Colors;
    noteTags: { tags: string[] | undefined; logIndex: number };
 }
 
-const chipData = ['Chip 1', 'Chip 2', 'Chip 3', 'Chip 4', 'Chip 5', 'Chip 6'];
+const DEFAULT_HEIGHT = 30; // in percentage
 
 const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
    const [isDrawerVisible, setDrawerVisible] = useState(false);
    const [shouldAddTags, setShouldAddTags] = useState(false);
-   const [height, setHeight] = useState('30%');
+   // creating heights for views
+   const [tagViewHeight, setTagViewHeight] = useState(0);
+   const [height, setHeight] = useState(`${DEFAULT_HEIGHT}%`);
    const keyboardHeight = useGetKeyboardHeight();
 
    useLayoutEffect(() => {
-      const DEFAULT_HEIGHT = 35; // in percentage
-
+      const addBy = 15;
+      const viewHeight = Math.round((tagViewHeight / windowHeight) * 100);
+      const defaultHeight = viewHeight + addBy;
       if (keyboardHeight === 0) {
          setShouldAddTags(false);
-         setHeight(`${DEFAULT_HEIGHT}%`);
+         setHeight(`${defaultHeight}%`);
       } else {
-         const availableScreenHeight = windowHeight - keyboardHeight;
-         const newHeight = Math.round((availableScreenHeight / windowHeight) * 100) + 10;
+         const availableScreenHeight = windowHeight - keyboardHeight + tagViewHeight;
+         const newHeight = Math.round((availableScreenHeight / windowHeight) * 100);
          setHeight(`${newHeight}%`);
       }
    }, [keyboardHeight]);
@@ -39,6 +43,8 @@ const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
       setShouldAddTags(false);
       setDrawerVisible(false);
    };
+
+   //    const screenHeight = viewHeight - keyboardHeight;
 
    return (
       <>
@@ -53,15 +59,26 @@ const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
             height={height}
             isVisible={isDrawerVisible}
             onClose={closeDrawer}
-            role='listitem'
             colors={colors}
          >
-            <View style={styles.container}>
+            <View
+               onLayout={(e) => {
+                  console.log(
+                     'the main height of the modal is: ',
+                     (windowHeight - e.nativeEvent.layout.height) / windowHeight
+                  );
+               }}
+               accessibilityViewIsModal
+               style={{ ...styles.container }}
+            >
+               <NoteTagHeader />
                <Tags
                   colors={colors}
                   tagsData={noteTags.tags}
                   logIndex={noteTags.logIndex}
                   shouldAddTags={shouldAddTags}
+                  viewHeight={tagViewHeight}
+                  setViewHeight={setTagViewHeight}
                   setShouldAddTags={setShouldAddTags}
                />
             </View>
