@@ -8,6 +8,7 @@ interface BottomDrawerProps
    onClose: () => void;
    colors: MD3Colors;
    children: React.ReactNode;
+   bottom?: number | string;
    height?: number | string;
 }
 
@@ -16,6 +17,7 @@ const BottomDrawer = ({
    onClose,
    colors,
    children,
+   bottom = 0,
    height = '30%',
    ...props
 }: BottomDrawerProps) => {
@@ -32,7 +34,14 @@ const BottomDrawer = ({
          onRequestClose={onClose}
          {...props}
       >
-         <View style={{ ...styles.modalView, height: height, backgroundColor: colors.surface }}>
+         <View
+            style={{
+               ...styles.modalView,
+               height: height,
+               bottom: bottom,
+               backgroundColor: colors.surface,
+            }}
+         >
             {children}
          </View>
       </Modal>
@@ -47,7 +56,6 @@ const styles = StyleSheet.create({
       position: 'absolute',
       width: `${WIDTH}%`,
       marginHorizontal: `${MARGIN_HORIZONTAL}%`,
-      height: '30%',
       bottom: 0,
       borderTopStartRadius: 10,
       borderTopEndRadius: 10,

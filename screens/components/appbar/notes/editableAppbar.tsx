@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle, Animated, TextInput } from 'react-native';
+import { View, StyleSheet, StyleProp, ViewStyle, TextInput } from 'react-native';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import TitleInput from './titleInput';
 import { width } from '../../../../library/helper';

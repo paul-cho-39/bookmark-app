@@ -3,9 +3,8 @@ import IconButton from '../../../../components/buttons/icons/iconButton';
 import { AntDesign } from '@expo/vector-icons';
 import BottomDrawer from '../../../../components/bottomDrawer';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
-import { height as windowHeight } from '../../../../library/helper';
 import useGetKeyboardHeight from '../../../../library/hooks/useGetKeyboardHeight';
-import { StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import Tags from './noteTags';
 import { ICONS } from '../../../../assets/constants';
 import NoteTagHeader from './noteTagHeader';
@@ -15,27 +14,14 @@ interface NoteTagIconProps {
    noteTags: { tags: string[] | undefined; logIndex: number };
 }
 
-const DEFAULT_HEIGHT = 30; // in percentage
-
 const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
    const [isDrawerVisible, setDrawerVisible] = useState(false);
    const [shouldAddTags, setShouldAddTags] = useState(false);
-   // creating heights for views
-   const [tagViewHeight, setTagViewHeight] = useState(0);
-   const [height, setHeight] = useState(`${DEFAULT_HEIGHT}%`);
    const keyboardHeight = useGetKeyboardHeight();
 
    useLayoutEffect(() => {
-      const addBy = 15;
-      const viewHeight = Math.round((tagViewHeight / windowHeight) * 100);
-      const defaultHeight = viewHeight + addBy;
       if (keyboardHeight === 0) {
          setShouldAddTags(false);
-         setHeight(`${defaultHeight}%`);
-      } else {
-         const availableScreenHeight = windowHeight - keyboardHeight + tagViewHeight;
-         const newHeight = Math.round((availableScreenHeight / windowHeight) * 100);
-         setHeight(`${newHeight}%`);
       }
    }, [keyboardHeight]);
 
@@ -43,8 +29,6 @@ const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
       setShouldAddTags(false);
       setDrawerVisible(false);
    };
-
-   //    const screenHeight = viewHeight - keyboardHeight;
 
    return (
       <>
@@ -56,18 +40,14 @@ const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
             )}
          />
          <BottomDrawer
-            height={height}
+            height={keyboardHeight === 0 ? '30%' : '65%'}
             isVisible={isDrawerVisible}
             onClose={closeDrawer}
             colors={colors}
+            style={styles.bottomDrawer}
          >
-            <View
-               onLayout={(e) => {
-                  console.log(
-                     'the main height of the modal is: ',
-                     (windowHeight - e.nativeEvent.layout.height) / windowHeight
-                  );
-               }}
+            <KeyboardAvoidingView
+               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                accessibilityViewIsModal
                style={{ ...styles.container }}
             >
@@ -77,18 +57,21 @@ const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
                   tagsData={noteTags.tags}
                   logIndex={noteTags.logIndex}
                   shouldAddTags={shouldAddTags}
-                  viewHeight={tagViewHeight}
-                  setViewHeight={setTagViewHeight}
                   setShouldAddTags={setShouldAddTags}
                />
-            </View>
+            </KeyboardAvoidingView>
          </BottomDrawer>
       </>
    );
 };
 
 const styles = StyleSheet.create({
+   bottomDrawer: {
+      borderWidth: 0,
+      borderRadius: 10,
+   },
    container: {
+      flex: 1,
       width: '100%',
    },
 });
