@@ -113,23 +113,22 @@ interface Delta {
 }
 
 interface NoteProps {
-   id: string | null;
-   [key: number]: {
-      logIndex: number;
-      pageFrom: number | null;
-      pageTo: number | null;
-      tags?: string[]; // use past tags so when creating this keep this in mind
-      title?: string;
-      chapter?: string;
-      note?: Delta | [];
-      isPrivate: boolean;
-      dates: {
-         start: string | null;
-         end: string | null;
-         lastEdited: string | null;
-      };
+   logIndex: number;
+   pageFrom: number | null;
+   pageTo: number | null;
+   tags?: string[]; // use past tags so when creating this keep this in mind
+   title?: string;
+   chapter?: string;
+   note?: Delta | [];
+   isPrivate: boolean;
+   dates: {
+      start: string | null;
+      end: string | null;
+      lastEdited: string | null;
    };
 }
+
+type NoteCollections = Record<string, Record<number, NoteProps>>;
 
 export type TimerType = StoreProps['timer'];
 export type NoteType = StoreProps['notes'];
