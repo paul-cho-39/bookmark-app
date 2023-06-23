@@ -5,20 +5,20 @@ import { immer } from 'zustand/middleware/immer';
 const useBoundedStore = create(
    immer<StoreProps>(() => ({
       notes: {
-         id: null,
-         0: {
-            logIndex: 0,
-            title: undefined,
-            chapter: undefined,
-            pageFrom: null,
-            pageTo: null,
-            tags: [],
-            note: [],
-            isPrivate: false, // default is public notes
-            dates: {
-               start: null,
-               end: null,
-               lastEdited: null,
+         '': {
+            0: {
+               title: '',
+               chapter: '',
+               pageFrom: null,
+               pageTo: null,
+               tags: [],
+               note: [],
+               isPrivate: false, // default is public notes
+               dates: {
+                  start: null,
+                  end: null,
+                  lastEdited: null,
+               },
             },
          },
       },

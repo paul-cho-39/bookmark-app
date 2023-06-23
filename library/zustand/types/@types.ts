@@ -42,7 +42,7 @@ export interface ConnectorStoreProps {
 }
 
 export interface StoreProps {
-   notes: NoteProps;
+   notes: NoteCollections;
    timer: {
       hours: number;
       minutes: number;
@@ -112,8 +112,7 @@ interface Delta {
    ops: DeltaOperation[];
 }
 
-interface NoteProps {
-   logIndex: number;
+export interface NoteProps {
    pageFrom: number | null;
    pageTo: number | null;
    tags?: string[]; // use past tags so when creating this keep this in mind
@@ -128,11 +127,11 @@ interface NoteProps {
    };
 }
 
-type NoteCollections = Record<string, Record<number, NoteProps>>;
+export type NoteCollections = Record<string, Record<number, NoteProps>>;
 
 export type TimerType = StoreProps['timer'];
 export type NoteType = StoreProps['notes'];
-export type NoteIndexType = NoteType[number];
+export type NoteIndexType = NoteCollections[string];
 
 export interface BodyTimer {
    dates: Record<string, Date | null>;

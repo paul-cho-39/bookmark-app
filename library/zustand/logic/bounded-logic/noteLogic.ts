@@ -1,8 +1,8 @@
 import { current, produce } from 'immer';
 import useBoundedStore from '../../store';
-import { NoteIndexType, StoreProps } from '../../types/@types';
+import { NoteProps, StoreProps } from '../../types/@types';
 import getUsersLocalTime from '../../../helper/timer/getUsersLocalTime';
-import { _getInitialNoteData, _isNoteIdNull } from './helperLogic';
+import { _getInitialNoteData, _isNoteIdNull, _updateNoteObj } from './helperLogic';
 import { NotesNavigationProp } from '../../../@types/navigation';
 import useConnectStore from '../../connectStore';
 
@@ -10,72 +10,104 @@ import useConnectStore from '../../connectStore';
 // and bookId as the note
 function setInitiateNote(id: string, logIndex: number) {
    const localizedStartTime = getUsersLocalTime('string');
-   const indexObj = _getInitialNoteData(logIndex, localizedStartTime);
+   const note = _getInitialNoteData(logIndex, localizedStartTime);
    useBoundedStore.setState(
       produce((state: StoreProps) => {
-         state.notes.id = id;
-         state.notes[logIndex] = indexObj;
+         if (!state.notes[id]) {
+            state.notes[id] = {};
+         }
+         state.notes[id][logIndex] = note;
       })
    );
 }
 
-function setNotePage(page: number, logIndex: number) {
-   const updatePage = setNoteObjWithIndex(logIndex, 'pageFrom');
-   updatePage(page);
+function createNoteParams<K extends keyof NoteProps>(id: string, logIndex: number, params?: K) {
+   const notes = setNoteObjWithIndex(id, logIndex);
+   if (notes && params) return notes(params);
 }
 
 // higher order function for returning object with a certain logIndex
 // SType stands for StandardType
-function setNoteObjWithIndex<K extends keyof NoteIndexType, SType extends unknown>(
-   logIndex: number,
-   keys: K,
-   value?: SType,
-   converter?: (value?: SType) => NoteIndexType[K]
-) {
-   const isNull = _isNoteIdNull();
-   return (noteObj: NoteIndexType[K]) => {
-      useBoundedStore.setState(
-         produce((state: StoreProps) => {
-            if (!isNull) {
-               // there are cases when data has to be converted back
-               if (converter) {
-                  const newNoteObj = converter(value);
-                  state.notes[logIndex][keys] = newNoteObj;
+// function setNoteObjWithIndex<K extends keyof NoteProps, SType extends unknown>(
+//    id: string,
+//    logIndex: number,
+//    key: K,
+//    value?: SType,
+//    converter?: (value?: SType) => NoteProps[K]
+// ) {
+//    const noteExists = _isNoteIdNull(id) && useBoundedStore.getState().notes[id][logIndex];
+
+//    if (!noteExists) return;
+
+//    return (noteObj: NoteProps[K]) => {
+//       useBoundedStore.setState(
+//          produce((state: StoreProps) => {
+//             const currentNote = state.notes[id][logIndex];
+//             if (currentNote) {
+//                _updateNoteObj(currentNote, key, noteObj, value, converter);
+//             }
+//          })
+//       );
+//    };
+// }
+
+function setNoteObjWithIndex(id: string, logIndex: number) {
+   const noteExists = _isNoteIdNull(id) && useBoundedStore.getState().notes[id][logIndex];
+
+   if (!noteExists) return;
+
+   return function <K extends keyof NoteProps, SType extends unknown>(
+      key: K,
+      value?: SType,
+      converter?: (value?: SType) => NoteProps[K]
+   ) {
+      return (noteObj: NoteProps[K]) => {
+         useBoundedStore.setState(
+            produce((state: StoreProps) => {
+               const currentNote = state.notes[id][logIndex];
+               if (currentNote) {
+                  _updateNoteObj(currentNote, key, noteObj, value, converter);
                }
-               state.notes[logIndex][keys] = noteObj;
-            }
-         })
-      );
+            })
+         );
+      };
    };
 }
 
-// adding tags and listening for changes;
 const handleTags = {
-   _getCurrentTags(logIndex: number) {
-      return useBoundedStore.getState().notes[logIndex]?.tags || [];
+   _getCurrentNote(id: string, logIndex: number) {
+      return createNoteParams(id, logIndex, 'tags');
    },
-   add(logIndex: number, newTag: string) {
-      let currentTags = this._getCurrentTags(logIndex);
+
+   _getCurrentTags(id: string, logIndex: number) {
+      return useBoundedStore.getState().notes[id][logIndex]?.tags || [];
+   },
+
+   add(id: string, logIndex: number, newTag: string) {
+      let currentTags = this._getCurrentTags(id, logIndex);
       if (!currentTags.includes(newTag) && newTag.length > 0) {
-         const addTags = setNoteObjWithIndex(logIndex, 'tags');
-         addTags([...currentTags, newTag]);
+         const addTags = this._getCurrentNote(id, logIndex);
+
+         addTags && addTags([...currentTags, newTag]);
       } else return;
    },
 
-   remove(logIndex: number, oldTag: string) {
-      let currentTags = this._getCurrentTags(logIndex);
+   remove(id: string, logIndex: number, oldTag: string) {
+      let currentTags = this._getCurrentTags(id, logIndex);
       if (currentTags.includes(oldTag)) {
-         const removeTags = setNoteObjWithIndex(logIndex, 'tags');
-         removeTags(currentTags.filter((existingTag) => existingTag !== oldTag));
+         const removeTags = this._getCurrentNote(id, logIndex);
+
+         removeTags && removeTags(currentTags.filter((existingTag) => existingTag !== oldTag));
       }
    },
 
-   edit(logIndex: number, oldTag: string, newTag: string) {
-      let currentTags = this._getCurrentTags(logIndex);
+   edit(id: string, logIndex: number, oldTag: string, newTag: string) {
+      let currentTags = this._getCurrentTags(id, logIndex);
       if (currentTags.includes(oldTag) && !currentTags.includes(newTag)) {
          const newTags = currentTags.map((tag) => (tag === oldTag ? newTag : tag));
-         const editTags = setNoteObjWithIndex(logIndex, 'tags');
-         editTags(newTags);
+         const editTags = this._getCurrentNote(id, logIndex);
+
+         editTags && editTags(newTags);
       }
    },
 };
@@ -93,4 +125,4 @@ function handleUnsaveNote(
    setModal(true);
 }
 
-export { setInitiateNote, setNoteObjWithIndex, setNotePage, handleUnsaveNote, handleTags };
+export { setInitiateNote, setNoteObjWithIndex, createNoteParams, handleUnsaveNote, handleTags };

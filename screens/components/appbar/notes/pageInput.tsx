@@ -5,7 +5,6 @@ import { convertPage } from '../../../../library/zustand/utils/notes/converter';
 import { Text } from 'react-native-paper';
 
 interface Params {
-   logIndex: number;
    keys: 'pageFrom' | 'pageTo';
    page: EditableHeaderParams['pageFrom'];
 }
@@ -17,16 +16,16 @@ interface PageInputProps
    > {
    params: Params;
    setPage: (
-      index: Params['logIndex'],
       keys: Params['keys'],
       value: string,
       converter: (value: string | undefined) => number | null
-   ) => (value: number | null) => void;
+   ) => ((noteObj: number | null) => void) | undefined;
    style?: StyleProp<ViewStyle>;
 }
 
 const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
-   const { logIndex, keys, page } = params;
+   const { keys, page } = params;
+
    function convertToString(value: null | number) {
       if (value === null || isNaN(value)) {
          return '';
@@ -36,6 +35,13 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
 
    const value = convertToString(page);
    const label = keys === 'pageTo' ? 'To' : 'From';
+
+   const onPageChange = (text: string) => {
+      console.log('the text is:', text);
+      const parsedInt = parseInt(value, 10);
+      const setter = setPage(keys, text, convertPage);
+      setter && setter(parsedInt);
+   };
 
    return (
       <View style={[style, styles.container]}>
@@ -47,7 +53,7 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
             keyboardType='numeric'
             size='titleSmall'
             value={value}
-            onChangeText={setPage(logIndex, keys, value, convertPage)}
+            onChangeText={(text) => onPageChange(text)}
             {...props}
          />
       </View>
@@ -61,7 +67,6 @@ const styles = StyleSheet.create({
    container: {
       width: WIDTH, // subtitle is 55% of width
       flexDirection: 'row',
-      //   backgroundColor: 'grey',
    },
    label: {
       minWidth: MIN_WIDTH,

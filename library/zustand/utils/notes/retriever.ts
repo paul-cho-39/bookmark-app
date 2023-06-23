@@ -1,15 +1,16 @@
 import { NoteType } from '../../types/@types';
 
-function retrieveNotesHeader(notes: NoteType, logIndex: number) {
-   const lastEdited = notes[logIndex].dates.lastEdited;
-   const createdAt = notes[logIndex].dates.start;
-   const title = notes[logIndex].title;
-   const chapter = notes[logIndex].chapter;
-   const pageFrom = notes[logIndex].pageFrom;
-   const pageTo = notes[logIndex].pageTo;
-   const tags = notes[logIndex].tags;
+function retrieveNotesHeader(notes: NoteType[string][number], id: string, logIndex: number) {
+   const lastEdited = notes.dates.lastEdited;
+   const createdAt = notes.dates.start;
+   const title = notes.title;
+   const chapter = notes.chapter;
+   const pageFrom = notes.pageFrom;
+   const pageTo = notes.pageTo;
+   const tags = notes.tags;
 
    const editableHeaderParams = {
+      id,
       logIndex,
       title: title,
       chapter: chapter,
@@ -20,6 +21,7 @@ function retrieveNotesHeader(notes: NoteType, logIndex: number) {
    };
 
    const noteTags = {
+      id,
       logIndex,
       tags,
    };

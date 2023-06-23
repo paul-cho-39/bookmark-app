@@ -25,11 +25,13 @@ interface NoteAppbarProps extends NotesNavigationProp {
 }
 
 const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
-   const { logIndex } = route.params.params;
-   const notes = useBoundedStore((state) => state.notes);
+   const { logIndex, id } = route.params.params;
+   const notes = useBoundedStore((state) => state.notes[id][logIndex]);
    const [mode, setMode] = useState<Mode>('small');
-   const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, logIndex);
 
+   const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, id, logIndex);
+
+   console.log(editableHeaderParams);
    const handleTitlePress = () => {
       setMode(mode === 'small' ? 'large' : 'small');
    };

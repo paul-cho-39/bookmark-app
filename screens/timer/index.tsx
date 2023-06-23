@@ -71,7 +71,7 @@ const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
       const logIndex = getLogResult();
       const params = getParam('end');
 
-      if (!noteObj[logIndex]) {
+      if (!noteObj[id] || !noteObj[id][logIndex]) {
          // NOTE: data will be unavailable at the start the header will listen to
          // this when the data is ready
          // this will be connected to ./components/time/headerIcons

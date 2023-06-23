@@ -3,10 +3,14 @@ import { View, StyleSheet, StyleProp, ViewStyle, TextInput } from 'react-native'
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import TitleInput from './titleInput';
 import { width } from '../../../../library/helper';
-import { setNoteObjWithIndex } from '../../../../library/zustand/logic/bounded-logic';
+import {
+   createNoteParams,
+   setNoteObjWithIndex,
+} from '../../../../library/zustand/logic/bounded-logic';
 import { EditableHeaderParams } from '../../../../library/zustand/utils/notes/retriever';
 import PageInput from './pageInput';
 import NoteDates from './noteDates';
+import React from 'react';
 
 interface EditableAppbarProps {
    params: EditableHeaderParams;
@@ -16,8 +20,10 @@ interface EditableAppbarProps {
 }
 
 type ParamKeys = 'pageFrom' | 'pageTo';
+type NoteContent = 'title' | 'chapter' | ParamKeys;
 
 const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) => {
+   const { id, logIndex } = params;
    const [isTitleFocused, setTitleFocused] = useState(false);
    const [isSubtitleFocused, setSubtitleFocused] = useState(false);
    const [isPageFromFocused, setIsPageFromFocused] = useState(false);
@@ -41,15 +47,29 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
    const getParams = (key: 'from' | 'to') =>
       key === 'from'
          ? {
-              logIndex: params.logIndex,
               keys: 'pageFrom' as ParamKeys,
               page: params.pageFrom,
            }
          : {
-              logIndex: params.logIndex,
               keys: 'pageTo' as ParamKeys,
               page: params.pageTo,
            };
+
+   const setNotePage = (type: ParamKeys, text: string, converter: any) => {
+      const notes = setNoteObjWithIndex(id, logIndex);
+      const setPage = notes && notes(type, text, converter);
+      return setPage && setPage;
+   };
+
+   const setNoteContent = (type: 'chapter' | 'title', text: string) => {
+      const setNoteContent = createNoteParams(params.id, params.logIndex, type);
+      return setNoteContent && setNoteContent(text);
+   };
+
+   const setChapter = (text: string) => setNoteContent('chapter', text);
+   const setTitle = (text: string) => setNoteContent('title', text);
+
+   console.log(params.pageFrom);
 
    // TODO: the background color should be changed on the basis of notebook color
    // use global state to control this part
@@ -61,7 +81,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   inputRef={titleRef}
                   nextRef={chapterRef}
                   value={params.title}
-                  onChangeText={setNoteObjWithIndex(params.logIndex, 'title')}
+                  onChangeText={(text) => setTitle(text)}
                   autofocus={true}
                   placeholder='Title'
                   colors={colors}
@@ -78,7 +98,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   inputRef={chapterRef}
                   nextRef={pageFromRef}
                   value={params.chapter}
-                  onChangeText={setNoteObjWithIndex(params.logIndex, 'chapter')}
+                  onChangeText={(text) => setChapter(text)}
                   placeholder='Chapter'
                   colors={colors}
                   size={'titleMedium'}
@@ -95,7 +115,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   isFocused={isPageFromFocused}
                   setIsFocused={setIsPageFromFocused}
                   params={getParams('from')}
-                  setPage={setNoteObjWithIndex}
+                  setPage={setNotePage}
                />
                <PageInput
                   inputRef={pageToRef}
@@ -103,7 +123,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   isFocused={isPageToFocused}
                   setIsFocused={setIsPageToFocused}
                   params={getParams('to')}
-                  setPage={setNoteObjWithIndex}
+                  setPage={setNotePage}
                />
             </View>
          </View>
@@ -139,4 +159,4 @@ const styles = StyleSheet.create({
    },
 });
 
-export default EditableAppbar;
+export default React.memo(EditableAppbar);

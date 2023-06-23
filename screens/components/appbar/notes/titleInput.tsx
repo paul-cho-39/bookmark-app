@@ -3,13 +3,15 @@ import { TextInput } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { FONT_SIZE } from '../../../../assets/constants';
 import { EditableHeaderParams } from '../../../../library/zustand/utils/notes/retriever';
-import { useImperativeHandle } from 'react';
+import useRenderCount from '../../../../library/hooks/useRenderCount';
+import React from 'react';
 
 export interface TitleInputProps<
    TInput extends EditableHeaderParams['title'] | EditableHeaderParams['pageFrom']
 > {
    value: EditableHeaderParams['title'];
-   onChangeText: (text: TInput) => void;
+   // onChangeText: (text: TInput) => void;
+   onChangeText: (text: string) => void;
    isFocused: boolean;
    setIsFocused: (value: boolean) => void;
    placeholder: string;
@@ -45,17 +47,13 @@ const TitleInput = <
    const getSize = FONT_SIZE[size];
    const getMaxLength = keyboardType == 'default' ? 60 : 5;
 
-   const handleChangeText = (text: string) => {
-      keyboardType === 'numeric'
-         ? onChangeText(parseInt(text, 10) as unknown as TInput)
-         : onChangeText(text as unknown as TInput);
-   };
-
    const onSubmitEditing = (ref?: React.RefObject<NativeInput>) => {
       if (ref && ref?.current) {
          ref.current?.focus();
       }
    };
+
+   useRenderCount(value as string);
 
    return (
       <>
@@ -72,7 +70,7 @@ const TitleInput = <
             underlineColor='transparent'
             spellCheck={keyboardType === 'default'}
             selectionColor={colors.onPrimaryContainer}
-            onChangeText={handleChangeText}
+            onChangeText={onChangeText}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             maxLength={getMaxLength}
