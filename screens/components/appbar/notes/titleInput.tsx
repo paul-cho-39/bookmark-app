@@ -16,7 +16,7 @@ export interface TitleInputProps<
    setIsFocused: (value: boolean) => void;
    placeholder: string;
    colors: MD3Colors;
-   size: keyof typeof FONT_SIZE;
+   size: keyof (typeof FONT_SIZE)['title'];
    keyboardType?: 'numeric' | 'default';
    onLayout?: (event: LayoutChangeEvent) => void;
    autofocus?: boolean;
@@ -44,7 +44,7 @@ const TitleInput = <
    TitleInputProps<TInput>,
    ref: React.Ref<null>
 ) => {
-   const getSize = FONT_SIZE[size];
+   const getSize = FONT_SIZE['title'][size];
    const getMaxLength = keyboardType == 'default' ? 60 : 5;
 
    const onSubmitEditing = (ref?: React.RefObject<NativeInput>) => {

@@ -81,7 +81,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   autofocus={true}
                   placeholder='Title'
                   colors={colors}
-                  size={'titleLarge'}
+                  size={'large'}
                   isFocused={isTitleFocused}
                   setIsFocused={setTitleFocused}
                />
@@ -98,7 +98,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   // onChangeText={(text) => setChapter(text)}
                   placeholder='Chapter'
                   colors={colors}
-                  size={'titleMedium'}
+                  size={'medium'}
                   isFocused={isSubtitleFocused}
                   setIsFocused={setSubtitleFocused}
                />

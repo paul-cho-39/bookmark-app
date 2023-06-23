@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, TextInput as NativeInput } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput as NativeInput, Keyboard } from 'react-native';
 import { Text, Button, Chip, TextInput } from 'react-native-paper';
 import { FONT_SIZE, ICONS } from '../../../../assets/constants';
 import IconButton from '../../../../components/buttons/icons/iconButton';
@@ -7,18 +7,30 @@ import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
 import { NoteTagsParams } from '../../../../library/zustand/utils/notes/retriever';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface AddTagsProps {
    noteTags: NoteTagsParams;
    colors: MD3Colors;
    shouldAddTags: boolean;
+   keyboardHeight: number;
    setShouldAddTags: (value: AddTagsProps['shouldAddTags']) => void;
 }
 
-const Tags = ({ noteTags, colors, shouldAddTags, setShouldAddTags }: AddTagsProps) => {
+const Tags = ({
+   noteTags,
+   colors,
+   shouldAddTags,
+   keyboardHeight,
+   setShouldAddTags,
+}: AddTagsProps) => {
    const { id, logIndex, tags: tagsData } = noteTags;
    const [tags, setTags] = useState('');
    const [oldTags, setOldTags] = useState('');
+
+   const onPressAddTags = () => {
+      setShouldAddTags(true);
+   };
 
    const tagHandler = () => {
       if (tags) {
@@ -40,11 +52,12 @@ const Tags = ({ noteTags, colors, shouldAddTags, setShouldAddTags }: AddTagsProp
    };
 
    const editTags = (tag: string) => {
-      setShouldAddTags(true);
+      // setShouldAddTags(true);
       setOldTags(tag);
       setTags(tag);
    };
 
+   const shouldInputDisplay = keyboardHeight >= 1 || tags.length >= 1 ? 'flex' : 'none';
    return (
       <>
          <ScrollView
@@ -77,7 +90,7 @@ const Tags = ({ noteTags, colors, shouldAddTags, setShouldAddTags }: AddTagsProp
                   accessibilityRole='button'
                   accessibilityLabel='Add Tags'
                   style={[styles.chips]}
-                  onPress={() => setShouldAddTags(true)}
+                  onPress={onPressAddTags}
                >
                   Add Tags
                </Chip>
@@ -85,7 +98,11 @@ const Tags = ({ noteTags, colors, shouldAddTags, setShouldAddTags }: AddTagsProp
          </ScrollView>
 
          {shouldAddTags && (
-            <View style={[styles.inputContainer, { display: shouldAddTags ? 'flex' : 'none' }]}>
+            <View
+               aria-hidden
+               collapsable
+               style={[styles.inputContainer, { display: shouldInputDisplay }]}
+            >
                <Text variant='titleLarge'>#</Text>
                <TextInput
                   autoFocus
@@ -96,10 +113,10 @@ const Tags = ({ noteTags, colors, shouldAddTags, setShouldAddTags }: AddTagsProp
                   onChangeText={(text) => setTags(text)}
                   onBlur={() => setShouldAddTags(false)}
                   onSubmitEditing={tagHandler}
-                  style={[styles.input]}
+                  style={[styles.input, { display: shouldInputDisplay }]}
                />
                <IconButton
-                  style={[styles.button, { display: tags.length >= 1 ? 'flex' : 'none' }]}
+                  style={[styles.button, { display: shouldInputDisplay }]}
                   onPress={tagHandler}
                   renderIcon={() => (
                      <AntDesign name='pluscircleo' size={ICONS.MEDIUM} color={colors.primary} />
@@ -134,7 +151,8 @@ const styles = StyleSheet.create({
    input: {
       width: '90%',
       backgroundColor: 'transparent',
-      fontSize: FONT_SIZE.titleMedium.fontSize,
+      paddingHorizontal: 15,
+      fontSize: FONT_SIZE.title.medium.fontSize,
    },
    button: {
       alignItems: 'flex-start',

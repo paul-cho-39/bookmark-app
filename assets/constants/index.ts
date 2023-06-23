@@ -11,28 +11,38 @@ export const HEADERS = {
 };
 
 export const ICONS = {
-   SMALL: 14,
-   NORMAL: 18,
-   MEDIUM: 20,
+   EXTRA_SMALL: 12,
+   SMALL: 16,
+   NORMAL: 20,
+   MEDIUM: 24,
    LARGE: 28,
    EXTRA_LARGE: 34,
 };
 
 export const FONT_SIZE = {
-   titleLarge: {
-      fontSize: 28,
-      lineHeight: 32,
-      fontFamily: 'Roboto-Regular',
+   title: {
+      large: {
+         fontSize: 28,
+         lineHeight: 32,
+         fontFamily: 'Roboto-Regular',
+      },
+      medium: {
+         fontSize: 20,
+         lineHeight: 24,
+         // fontStyle: 'italic',
+         fontFamily: 'Roboto-Medium',
+      },
+      small: {
+         fontSize: 18,
+         lineHeight: 22,
+         fontFamily: 'Roboto-Medium',
+      },
    },
-   titleMedium: {
-      fontSize: 20,
-      lineHeight: 24,
-      // fontStyle: 'italic',
-      fontFamily: 'Roboto-Medium',
-   },
-   titleSmall: {
-      fontSize: 18,
-      lineHeight: 22,
-      fontFamily: 'Roboto-Medium',
+   button: {
+      extraSmall: 10,
+      small: 12,
+      medium: 16,
+      large: 20,
+      extraLarge: 24,
    },
 };

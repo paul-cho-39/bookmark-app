@@ -101,6 +101,8 @@ export class RealmNotes extends Realm.Object<RealmNotes> {
    isUpdated!: boolean;
    logIndex?: number;
    notes?: Realm.List<string>; // this one should be tested may be delta
+   title?: string;
+   chapter?: string;
    tags?: Realm.Set<string>;
    quotes?: Realm.Set<string>;
    highlight?: Realm.Set<string>;
@@ -112,10 +114,13 @@ export class RealmNotes extends Realm.Object<RealmNotes> {
          id: 'string',
          logIndex: 'int',
          isUpdated: { type: 'bool', default: false },
+         // should probably be changed to delta
          notes: {
             type: 'list',
             objectType: 'string',
          },
+         title: 'string',
+         chapter: 'string',
          tags: {
             type: 'set',
             objectType: 'string',
@@ -140,7 +145,7 @@ export class RealmNotes extends Realm.Object<RealmNotes> {
 
 // provide saved notes for users(?);
 // following users(?)
-const SCHEMA_VERSION = 11;
+const SCHEMA_VERSION = 12;
 
 export const RealmConfig: Realm.Configuration = {
    schema: [RealmBook, RealmLibrary, RealmLogs, RealmNotes],

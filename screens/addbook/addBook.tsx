@@ -28,6 +28,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
    const queryClient = useQueryClient();
 
    // realm context(?);
+   // where should this be updated at removeButton & updateButton or here?
    const { useRealm, useQuery: useRealmQuery } = RealmContext;
    const realm = useRealm();
    const realmLibrary = useRealmQuery(RealmLibrary);

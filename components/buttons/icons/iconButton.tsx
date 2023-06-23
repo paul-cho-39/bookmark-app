@@ -1,6 +1,11 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
-import React from 'react';
-import { StyleProp, TouchableOpacity, ViewStyle, TouchableOpacityProps } from 'react-native';
+import React, { useState } from 'react';
+import {
+   TouchableOpacity,
+   TouchableOpacityProps,
+   TouchableNativeFeedbackProps,
+   Platform,
+   TouchableNativeFeedback,
+} from 'react-native';
 
 export interface IconButtonProps extends TouchableOpacityProps {
    renderIcon: () => React.ReactNode;
@@ -8,7 +13,7 @@ export interface IconButtonProps extends TouchableOpacityProps {
    children?: React.ReactNode;
 }
 
-export const IconButton: React.FC<IconButtonProps> = ({
+const IconButton: React.FC<IconButtonProps> = ({
    renderIcon,
    backgroundColor,
    children,
@@ -17,15 +22,38 @@ export const IconButton: React.FC<IconButtonProps> = ({
    return (
       <TouchableOpacity
          accessibilityRole='button'
-         style={[
-            { backgroundColor: backgroundColor },
-            rest.style, // Allow user to pass in additional styles
-         ]}
+         style={[{ backgroundColor: backgroundColor }, rest.style]}
          {...rest}
       >
          {renderIcon()}
          {children}
       </TouchableOpacity>
+   );
+};
+
+// this is for clicking highlighted button
+type TouchableIconButtonProps = {
+   highlighterColor: string;
+} & IconButtonProps &
+   TouchableNativeFeedbackProps;
+
+export const TouchableIconButton: React.FC<TouchableIconButtonProps> = ({
+   renderIcon,
+   backgroundColor,
+   highlighterColor,
+   children,
+   ...rest
+}) => {
+   const Touchable: any = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+
+   return (
+      <Touchable
+         useForeground={TouchableNativeFeedback.canUseNativeForeground()}
+         style={[{ backgroundColor }, rest.style]}
+         {...rest}
+      >
+         {renderIcon()}
+      </Touchable>
    );
 };
 
@@ -231,10 +259,3 @@ export default IconButton;
 
 //    return permutations;
 // }
-
-function depthFirstTraversal(graphs: Record<string, string>[], current: string) {
-   console.log(current);
-   for (let graph of graphs) {
-      depthFirstTraversal(graphs, graph[current]);
-   }
-}

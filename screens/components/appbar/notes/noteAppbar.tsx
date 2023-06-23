@@ -11,7 +11,7 @@ import EditableAppbar from './editableAppbar';
 import AnimatedBackButton from './animatedBackButton';
 import useCustomBackHandler from '../../../../library/hooks/useCustomBackHandler';
 import { retrieveNotesHeader } from '../../../../library/zustand/utils/notes/retriever';
-import NoteTagIcon from './noteContent';
+import NoteIconContents from './noteIconContents';
 import { ICONS } from '../../../../assets/constants';
 
 // SAVED (CHECKMARK), PUBLIC/PRIVATE, X-CLOSE BUTTON, WORDS (ICON), TAGS (TAG)
@@ -31,7 +31,6 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
 
    const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, id, logIndex);
 
-   console.log(editableHeaderParams);
    const handleTitlePress = () => {
       setMode(mode === 'small' ? 'large' : 'small');
    };
@@ -71,7 +70,9 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
                   {mode === 'small' ? (
                      <>
                         <Text variant='titleLarge' style={styles.title} onPress={handleTitlePress}>
-                           {!editableHeaderParams.title ? 'Title' : editableHeaderParams.title}
+                           {!editableHeaderParams.title
+                              ? DEFAULT_TITLE
+                              : editableHeaderParams.title}
                         </Text>
                      </>
                   ) : (
@@ -82,13 +83,14 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
                      />
                   )}
                </Animated.View>
-               <NoteTagIcon noteTags={noteTags} colors={colors} />
+               <NoteIconContents noteTags={noteTags} colors={colors} />
             </View>
          </Animated.View>
       </SafeAreaView>
    );
 };
 
+const DEFAULT_TITLE = 'title';
 const BACK_BUTTON_PADDING = 10;
 
 const styles = StyleSheet.create({
