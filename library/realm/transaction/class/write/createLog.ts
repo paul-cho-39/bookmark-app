@@ -19,6 +19,8 @@ export default class RealmTimerLogs {
    connectLog(log: RealmLogs) {
       this.currentBook.logs?.push(log);
    }
+   // one thing to look out for is if it will duplicate the data
+   // make sure it is creating one data at a time
    startTimer(startTime: Date) {
       const latestLogIndex = this.getLatestLogIndex();
       const newLogIndex = latestLogIndex + 1;

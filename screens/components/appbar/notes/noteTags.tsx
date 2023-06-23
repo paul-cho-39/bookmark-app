@@ -6,22 +6,25 @@ import IconButton from '../../../../components/buttons/icons/iconButton';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
+import { NoteTagsParams } from '../../../../library/zustand/utils/notes/retriever';
 
 interface AddTagsProps {
+   noteTags: NoteTagsParams;
    colors: MD3Colors;
-   logIndex: number;
-   tagsData: string[] | undefined;
    shouldAddTags: boolean;
    setShouldAddTags: (value: AddTagsProps['shouldAddTags']) => void;
 }
 
-const Tags = ({ colors, tagsData, logIndex, shouldAddTags, setShouldAddTags }: AddTagsProps) => {
+const Tags = ({ noteTags, colors, shouldAddTags, setShouldAddTags }: AddTagsProps) => {
+   const { id, logIndex, tags: tagsData } = noteTags;
    const [tags, setTags] = useState('');
    const [oldTags, setOldTags] = useState('');
 
    const tagHandler = () => {
       if (tags) {
-         oldTags ? handleTags.edit(logIndex, oldTags, tags) : handleTags.add(logIndex, tags);
+         oldTags
+            ? handleTags.edit(id, logIndex, oldTags, tags)
+            : handleTags.add(id, logIndex, tags);
          clearTags();
       }
       setShouldAddTags(true);
@@ -33,7 +36,7 @@ const Tags = ({ colors, tagsData, logIndex, shouldAddTags, setShouldAddTags }: A
    };
 
    const removeTags = (tag: string) => {
-      handleTags.remove(logIndex, tag);
+      handleTags.remove(id, logIndex, tag);
    };
 
    const editTags = (tag: string) => {

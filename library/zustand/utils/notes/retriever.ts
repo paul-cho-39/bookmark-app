@@ -31,6 +31,7 @@ function retrieveNotesHeader(notes: NoteType[string][number], id: string, logInd
 
 type RetrievalParams = ReturnType<typeof retrieveNotesHeader>;
 type EditableHeaderParams = RetrievalParams['editableHeaderParams'];
+type NoteTagsParams = RetrievalParams['noteTags'];
 
 export { retrieveNotesHeader };
-export type { EditableHeaderParams };
+export type { EditableHeaderParams, NoteTagsParams };

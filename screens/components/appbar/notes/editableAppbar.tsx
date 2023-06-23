@@ -61,15 +61,10 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
       return setPage && setPage;
    };
 
-   const setNoteContent = (type: 'chapter' | 'title', text: string) => {
+   const setNoteContent = (type: 'chapter' | 'title') => (text: string) => {
       const setNoteContent = createNoteParams(params.id, params.logIndex, type);
       return setNoteContent && setNoteContent(text);
    };
-
-   const setChapter = (text: string) => setNoteContent('chapter', text);
-   const setTitle = (text: string) => setNoteContent('title', text);
-
-   console.log(params.pageFrom);
 
    // TODO: the background color should be changed on the basis of notebook color
    // use global state to control this part
@@ -81,7 +76,8 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   inputRef={titleRef}
                   nextRef={chapterRef}
                   value={params.title}
-                  onChangeText={(text) => setTitle(text)}
+                  // onChangeText={(text) => setTitle(text)}
+                  onChangeText={setNoteContent('title')}
                   autofocus={true}
                   placeholder='Title'
                   colors={colors}
@@ -98,7 +94,8 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   inputRef={chapterRef}
                   nextRef={pageFromRef}
                   value={params.chapter}
-                  onChangeText={(text) => setChapter(text)}
+                  onChangeText={setNoteContent('chapter')}
+                  // onChangeText={(text) => setChapter(text)}
                   placeholder='Chapter'
                   colors={colors}
                   size={'titleMedium'}

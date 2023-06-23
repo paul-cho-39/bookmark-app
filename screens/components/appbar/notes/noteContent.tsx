@@ -8,10 +8,11 @@ import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import Tags from './noteTags';
 import { ICONS } from '../../../../assets/constants';
 import NoteTagHeader from './noteTagHeader';
+import { NoteTagsParams } from '../../../../library/zustand/utils/notes/retriever';
 
 interface NoteTagIconProps {
    colors: MD3Colors;
-   noteTags: { tags: string[] | undefined; logIndex: number };
+   noteTags: NoteTagsParams;
 }
 
 const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
@@ -53,9 +54,8 @@ const NoteTagIcon = ({ noteTags, colors }: NoteTagIconProps) => {
             >
                <NoteTagHeader />
                <Tags
+                  noteTags={noteTags}
                   colors={colors}
-                  tagsData={noteTags.tags}
-                  logIndex={noteTags.logIndex}
                   shouldAddTags={shouldAddTags}
                   setShouldAddTags={setShouldAddTags}
                />

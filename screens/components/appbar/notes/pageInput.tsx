@@ -37,7 +37,6 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
    const label = keys === 'pageTo' ? 'To' : 'From';
 
    const onPageChange = (text: string) => {
-      console.log('the text is:', text);
       const parsedInt = parseInt(value, 10);
       const setter = setPage(keys, text, convertPage);
       setter && setter(parsedInt);
