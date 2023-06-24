@@ -38,7 +38,7 @@ const NoteTagsDrawer = (props: NoteTagsDrawerProps) => {
 
    return (
       <BottomDrawer
-         height={keyboardHeight === 0 ? '30%' : '65%'}
+         height={'65%'}
          isVisible={isDrawerVisible}
          onClose={closeDrawer}
          colors={colors}
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
    },
 });
 
-export default React.memo(NoteTagsDrawer);
+export default NoteTagsDrawer;

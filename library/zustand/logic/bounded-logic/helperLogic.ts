@@ -22,6 +22,10 @@ function _isNoteIdNull(id: string) {
    return useBoundedStore.getState().notes[id];
 }
 
+function _noteExists(id: string, logIndex: number) {
+   return _isNoteIdNull(id) && useBoundedStore.getState().notes[id][logIndex];
+}
+
 function _updateNoteObj<K extends keyof NoteProps, SType extends unknown>(
    note: NoteProps,
    key: K,
@@ -36,4 +40,4 @@ function _updateNoteObj<K extends keyof NoteProps, SType extends unknown>(
    }
 }
 
-export { _getInitialNoteData, _isNoteIdNull, _updateNoteObj };
+export { _getInitialNoteData, _isNoteIdNull, _noteExists, _updateNoteObj };

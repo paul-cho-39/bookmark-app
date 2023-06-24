@@ -7,13 +7,15 @@ import {
    createNoteParams,
    setNoteObjWithIndex,
 } from '../../../../library/zustand/logic/bounded-logic';
-import { EditableHeaderParams } from '../../../../library/zustand/utils/notes/retriever';
+import { retrieveNotesHeader } from '../../../../library/zustand/utils/notes/retriever';
 import PageInput from './pageInput';
 import NoteDates from './noteDates';
 import { PageParamKeys } from '../../../../constants';
+import useBoundedStore from '../../../../library/zustand/store';
+import { BaseUserLogProps } from '../../../../library/@types/timerData';
 
 interface EditableAppbarProps {
-   params: EditableHeaderParams;
+   params: BaseUserLogProps;
    colors: MD3Colors;
    onBlur: () => void;
    style?: StyleProp<ViewStyle>;
@@ -21,6 +23,10 @@ interface EditableAppbarProps {
 
 const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) => {
    const { id, logIndex } = params;
+   const notes = useBoundedStore((state) => state.notes[id][logIndex]);
+
+   const { editableHeaderParams } = retrieveNotesHeader(notes);
+   const { chapter, title, createdAt, lastEdited, pageFrom, pageTo } = editableHeaderParams;
 
    const [isTitleFocused, setTitleFocused] = useState(false);
    const [isSubtitleFocused, setSubtitleFocused] = useState(false);
@@ -46,11 +52,11 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
       key === 'from'
          ? {
               keys: 'pageFrom' as PageParamKeys.FROM,
-              page: params.pageFrom,
+              page: pageFrom,
            }
          : {
               keys: 'pageTo' as PageParamKeys.TO,
-              page: params.pageTo,
+              page: pageTo,
            };
 
    const setNotePage = (type: PageParamKeys, text: string, converter: any) => {
@@ -73,7 +79,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                <TitleInput
                   inputRef={titleRef}
                   nextRef={chapterRef}
-                  value={params.title}
+                  value={title}
                   onChangeText={setNoteContent('title')}
                   autofocus={true}
                   placeholder='Title'
@@ -83,14 +89,14 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   setIsFocused={setTitleFocused}
                />
             </View>
-            <NoteDates dateTime={params.createdAt} colors={colors} style={styles.dateContainer} />
+            <NoteDates dateTime={createdAt} colors={colors} style={styles.dateContainer} />
          </View>
          <View style={styles.subcontentWrapper}>
             <View style={[styles.subtitleContainer, style]}>
                <TitleInput
                   inputRef={chapterRef}
                   nextRef={pageFromRef}
-                  value={params.chapter}
+                  value={chapter}
                   onChangeText={setNoteContent('chapter')}
                   placeholder='Chapter'
                   colors={colors}

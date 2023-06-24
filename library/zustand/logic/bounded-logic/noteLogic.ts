@@ -2,7 +2,7 @@ import { current, produce } from 'immer';
 import useBoundedStore from '../../store';
 import { NoteProps, StoreProps } from '../../types/@types';
 import getUsersLocalTime from '../../../helper/timer/getUsersLocalTime';
-import { _getInitialNoteData, _isNoteIdNull, _updateNoteObj } from './helperLogic';
+import { _getInitialNoteData, _isNoteIdNull, _noteExists, _updateNoteObj } from './helperLogic';
 import { NotesNavigationProp } from '../../../@types/navigation';
 import useConnectStore from '../../connectStore';
 
@@ -21,40 +21,8 @@ function setInitiateNote(id: string, logIndex: number) {
    );
 }
 
-function createNoteParams<K extends keyof NoteProps>(id: string, logIndex: number, params?: K) {
-   const notes = setNoteObjWithIndex(id, logIndex);
-   if (notes && params) return notes(params);
-}
-
-// higher order function for returning object with a certain logIndex
-// SType stands for StandardType
-// function setNoteObjWithIndex<K extends keyof NoteProps, SType extends unknown>(
-//    id: string,
-//    logIndex: number,
-//    key: K,
-//    value?: SType,
-//    converter?: (value?: SType) => NoteProps[K]
-// ) {
-//    const noteExists = _isNoteIdNull(id) && useBoundedStore.getState().notes[id][logIndex];
-
-//    if (!noteExists) return;
-
-//    return (noteObj: NoteProps[K]) => {
-//       useBoundedStore.setState(
-//          produce((state: StoreProps) => {
-//             const currentNote = state.notes[id][logIndex];
-//             if (currentNote) {
-//                _updateNoteObj(currentNote, key, noteObj, value, converter);
-//             }
-//          })
-//       );
-//    };
-// }
-
 function setNoteObjWithIndex(id: string, logIndex: number) {
-   const noteExists = _isNoteIdNull(id) && useBoundedStore.getState().notes[id][logIndex];
-
-   if (!noteExists) return;
+   if (!_noteExists(id, logIndex)) return;
 
    return function <K extends keyof NoteProps, SType extends unknown>(
       key: K,
@@ -72,6 +40,11 @@ function setNoteObjWithIndex(id: string, logIndex: number) {
          );
       };
    };
+}
+
+function createNoteParams<K extends keyof NoteProps>(id: string, logIndex: number, params?: K) {
+   const notes = setNoteObjWithIndex(id, logIndex);
+   if (notes && params) return notes(params);
 }
 
 const handleTags = {

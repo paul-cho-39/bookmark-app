@@ -42,6 +42,7 @@ const NoteTagHeader = ({ isInputFocused, setIsDrawer, colors }: NoteTagHeaderPar
             isHighlighted={true}
             activeOpacity={0.68}
             highlighterColor={colors.primary}
+            style={{ padding: 20 }}
          />
       </View>
    );

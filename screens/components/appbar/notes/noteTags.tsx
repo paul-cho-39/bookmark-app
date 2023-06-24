@@ -6,10 +6,13 @@ import IconButton from '../../../../components/buttons/icons/iconButton';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
-import { NoteTagsParams } from '../../../../library/zustand/utils/notes/retriever';
 
 interface AddTagsProps {
-   noteTags: NoteTagsParams;
+   noteTags: {
+      tags: string[] | undefined;
+      id: string;
+      logIndex: number;
+   };
    colors: MD3Colors;
    shouldAddTags: boolean;
    keyboardHeight: number;
@@ -96,33 +99,40 @@ const Tags = ({
             </View>
          </ScrollView>
 
-         {shouldAddTags && (
-            <View
-               aria-hidden
-               collapsable
-               style={[styles.inputContainer, { display: shouldInputDisplay }]}
-            >
-               <Text variant='titleLarge'>#</Text>
-               <TextInput
-                  autoFocus
-                  clearTextOnFocus
-                  aria-valuemax={60}
-                  maxLength={60}
-                  value={tags}
-                  onChangeText={(text) => setTags(text)}
-                  onBlur={() => setShouldAddTags(false)}
-                  onSubmitEditing={tagHandler}
-                  style={[styles.input, { display: shouldInputDisplay }]}
-               />
-               <IconButton
-                  style={[styles.button, { display: shouldInputDisplay }]}
-                  onPress={tagHandler}
-                  renderIcon={() => (
-                     <AntDesign name='pluscircleo' size={ICONS.MEDIUM} color={colors.primary} />
-                  )}
-               />
-            </View>
-         )}
+         {/* {shouldAddTags && ( */}
+         <View
+            aria-hidden
+            style={[
+               styles.inputContainer,
+               // { display: shouldInputDisplay }
+            ]}
+         >
+            <Text variant='titleLarge'>#</Text>
+            <TextInput
+               autoFocus
+               clearTextOnFocus
+               aria-valuemax={60}
+               maxLength={60}
+               value={tags}
+               onChangeText={(text) => setTags(text)}
+               onBlur={() => setShouldAddTags(false)}
+               onSubmitEditing={tagHandler}
+               style={[
+                  styles.input,
+                  // { display: shouldInputDisplay }
+               ]}
+            />
+            <IconButton
+               style={[
+                  styles.button,
+                  // { display: shouldInputDisplay }
+               ]}
+               onPress={tagHandler}
+               renderIcon={() => (
+                  <AntDesign name='pluscircleo' size={ICONS.MEDIUM} color={colors.primary} />
+               )}
+            />
+         </View>
       </>
    );
 };
@@ -138,6 +148,7 @@ const styles = StyleSheet.create({
       flexWrap: 'wrap',
    },
    chips: {
+      height: 50,
       margin: 5,
       borderRadius: 10,
    },

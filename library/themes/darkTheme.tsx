@@ -1,4 +1,4 @@
-import darkTheme from './../../assets/constants/dark-theme.json';
+import darkTheme from './../../assets/paper-themes/dark-theme.json';
 import { MD3DarkTheme } from 'react-native-paper';
 
 // edit any color changes and additional color that may be reused

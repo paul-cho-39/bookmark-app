@@ -125,6 +125,15 @@ export interface NoteProps {
       end: string | null;
       lastEdited: string | null;
    };
+   meta?: NoteMetaProps;
+}
+
+// use this to set it in the settings
+export interface NoteMetaProps {
+   bgColor: string;
+   fontSize: number;
+   fontFamily: string;
+   // add theme here;
 }
 
 export type NoteCollections = Record<string, Record<number, NoteProps>>;
