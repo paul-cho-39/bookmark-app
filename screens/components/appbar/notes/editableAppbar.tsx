@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle, TextInput } from 'react-native';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import TitleInput from './titleInput';
@@ -10,7 +10,7 @@ import {
 import { EditableHeaderParams } from '../../../../library/zustand/utils/notes/retriever';
 import PageInput from './pageInput';
 import NoteDates from './noteDates';
-import React from 'react';
+import { PageParamKeys } from '../../../../constants';
 
 interface EditableAppbarProps {
    params: EditableHeaderParams;
@@ -19,11 +19,9 @@ interface EditableAppbarProps {
    style?: StyleProp<ViewStyle>;
 }
 
-type ParamKeys = 'pageFrom' | 'pageTo';
-type NoteContent = 'title' | 'chapter' | ParamKeys;
-
 const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) => {
    const { id, logIndex } = params;
+
    const [isTitleFocused, setTitleFocused] = useState(false);
    const [isSubtitleFocused, setSubtitleFocused] = useState(false);
    const [isPageFromFocused, setIsPageFromFocused] = useState(false);
@@ -39,7 +37,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
          if (!isTitleFocused && !isSubtitleFocused && !isPageFromFocused && !isPageToFocused) {
             onBlur();
          }
-      }, 100);
+      }, 50);
 
       return () => clearTimeout(timerId);
    }, [isTitleFocused, isSubtitleFocused, isPageFromFocused, isPageToFocused]);
@@ -47,15 +45,15 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
    const getParams = (key: 'from' | 'to') =>
       key === 'from'
          ? {
-              keys: 'pageFrom' as ParamKeys,
+              keys: 'pageFrom' as PageParamKeys.FROM,
               page: params.pageFrom,
            }
          : {
-              keys: 'pageTo' as ParamKeys,
+              keys: 'pageTo' as PageParamKeys.TO,
               page: params.pageTo,
            };
 
-   const setNotePage = (type: ParamKeys, text: string, converter: any) => {
+   const setNotePage = (type: PageParamKeys, text: string, converter: any) => {
       const notes = setNoteObjWithIndex(id, logIndex);
       const setPage = notes && notes(type, text, converter);
       return setPage && setPage;

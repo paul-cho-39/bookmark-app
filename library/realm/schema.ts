@@ -21,6 +21,22 @@ export interface RealmBookInfo extends Realm.Dictionary {
    publishedDate?: string;
 }
 
+export interface RealmNoteMeta extends Realm.Dictionary {
+   bgColor?: string;
+   fontSize?: number;
+}
+
+export interface RealmNoteData extends Realm.Dictionary {
+   hasAttached?: boolean;
+   body?: Realm.List<string>;
+   attr?: Realm.List<RealNoteBodyParams>;
+   links?: Realm.List<string>;
+   quotes?: Realm.Set<string>;
+   highlight?: Realm.Set<string>;
+}
+
+export interface RealNoteBodyParams extends Realm.Dictionary {}
+
 export class RealmLibrary extends Realm.Object<RealmLibrary, 'name'> {
    name!: string;
    books!: Realm.List<RealmBook>;
@@ -87,7 +103,7 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
          feedback: 'int?',
          bookmarked: { type: 'bool', default: false },
          words: { type: 'list', objectType: 'string' },
-         note: 'Notes?',
+         // note: 'Notes?', // if
       },
    };
 }
@@ -98,43 +114,29 @@ export class RealmLogs extends Realm.Object<RealmLogs> {
 
 export class RealmNotes extends Realm.Object<RealmNotes> {
    id!: string;
+   noteId!: Realm.BSON.UUID;
    isUpdated!: boolean;
-   logIndex?: number;
-   notes?: Realm.List<string>; // this one should be tested may be delta
+   logIndex?: number; // if logIndex is deleted then should be -1;
    title?: string;
    chapter?: string;
    tags?: Realm.Set<string>;
-   quotes?: Realm.Set<string>;
-   highlight?: Realm.Set<string>;
    createdAt?: Date;
-   updatedAt?: Date;
+   lastEdited?: Date;
+   meta?: RealmNoteMeta;
+   noteData?: RealmNoteData;
    static schema = {
       name: 'Notes',
       properties: {
          id: 'string',
-         logIndex: 'int',
+         noteId: { type: 'uuid', indexed: true },
+         logIndex: 'int?',
          isUpdated: { type: 'bool', default: false },
-         // should probably be changed to delta
-         notes: {
-            type: 'list',
-            objectType: 'string',
-         },
-         title: 'string',
-         chapter: 'string',
-         tags: {
-            type: 'set',
-            objectType: 'string',
-         },
-         quotes: {
-            type: 'set',
-            objectType: 'string',
-         },
-         highlight: {
-            type: 'set',
-            objectType: 'string',
-         },
+         title: 'string?',
+         chapter: 'string?',
          createdAt: 'date?',
          updatedAt: 'date?',
+         meta: '{}',
+         noteData: '{}',
       },
    };
 }
@@ -145,7 +147,7 @@ export class RealmNotes extends Realm.Object<RealmNotes> {
 
 // provide saved notes for users(?);
 // following users(?)
-const SCHEMA_VERSION = 12;
+const SCHEMA_VERSION = 13;
 
 export const RealmConfig: Realm.Configuration = {
    schema: [RealmBook, RealmLibrary, RealmLogs, RealmNotes],

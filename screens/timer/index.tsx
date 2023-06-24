@@ -27,6 +27,7 @@ import { setInitiateNote } from '../../library/zustand/logic/bounded-logic/noteL
 import RealmContext from '../../library/realm';
 import { RealmBook, RealmLibrary, RealmLogs } from '../../library/realm/schema';
 import { getLogIndex } from '../../library/realm/transaction/controller';
+import useRenderCount from '../../library/hooks/useRenderCount';
 
 const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
    const { colors } = useTheme();

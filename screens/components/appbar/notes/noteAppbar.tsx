@@ -12,7 +12,7 @@ import AnimatedBackButton from './animatedBackButton';
 import useCustomBackHandler from '../../../../library/hooks/useCustomBackHandler';
 import { retrieveNotesHeader } from '../../../../library/zustand/utils/notes/retriever';
 import NoteIconContents from './noteIconContents';
-import { ICONS, Mode } from '../../../../constants';
+import { CONTENT, ICONS, Mode } from '../../../../constants';
 
 interface NoteAppbarProps extends NotesNavigationProp {
    colors: MD3Colors;
@@ -20,10 +20,10 @@ interface NoteAppbarProps extends NotesNavigationProp {
 
 const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
    const { logIndex, id } = route.params.params;
-   const notes = useBoundedStore((state) => state.notes[id][logIndex]);
+   // const notes = useBoundedStore((state) => state.notes[id][logIndex]);
    const [mode, setMode] = useState<Mode>(Mode.SMALL);
 
-   const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, id, logIndex);
+   // const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, id, logIndex);
 
    const handleTitlePress = () => {
       setMode(mode === Mode.SMALL ? Mode.LARGE : Mode.SMALL);
@@ -52,20 +52,20 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
                { backgroundColor: colors.elevation.level4 },
             ]}
          >
-            <AnimatedBackButton
+            {/* <AnimatedBackButton
                mode={mode}
                color={colors.onSurface}
                size={ICONS.LARGE}
                onPress={onPressBack}
                style={styles.backButton}
-            />
+            /> */}
             <View style={[styles.contentContainer]}>
-               <Animated.View style={[titleStyle]}>
+               {/* <Animated.View style={[titleStyle]}>
                   {mode === Mode.SMALL ? (
                      <>
                         <Text variant='titleLarge' style={styles.title} onPress={handleTitlePress}>
                            {!editableHeaderParams.title
-                              ? DEFAULT_TITLE
+                              ? CONTENT.DEFAULT_TITLE
                               : editableHeaderParams.title}
                         </Text>
                      </>
@@ -76,15 +76,15 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
                         colors={colors}
                      />
                   )}
-               </Animated.View>
-               <NoteIconContents noteTags={noteTags} colors={colors} />
+               </Animated.View> */}
+               {/* <NoteIconContents noteTags={noteTags} colors={colors} /> */}
+               <NoteIconContents params={route.params.params} colors={colors} />
             </View>
          </Animated.View>
       </SafeAreaView>
    );
 };
 
-const DEFAULT_TITLE = 'Title';
 const BACK_BUTTON_PADDING = 10;
 
 const styles = StyleSheet.create({

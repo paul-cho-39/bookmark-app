@@ -3,9 +3,10 @@ import { EditableHeaderParams } from '../../../../library/zustand/utils/notes/re
 import TitleInput, { TitleInputProps } from './titleInput';
 import { convertPage } from '../../../../library/zustand/utils/notes/converter';
 import { Text } from 'react-native-paper';
+import { PageParamKeys } from '../../../../constants';
 
 interface Params {
-   keys: 'pageFrom' | 'pageTo';
+   keys: PageParamKeys;
    page: EditableHeaderParams['pageFrom'];
 }
 
@@ -34,7 +35,7 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
    }
 
    const value = convertToString(page);
-   const label = keys === 'pageTo' ? 'To' : 'From';
+   const label = keys === PageParamKeys.TO ? 'To: ' : 'From: ';
 
    const onPageChange = (text: string) => {
       const parsedInt = parseInt(value, 10);
@@ -45,7 +46,7 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
    return (
       <View style={[style, styles.container]}>
          <Text variant='labelLarge' style={styles.label}>
-            {label}:
+            {label}
          </Text>
          <TitleInput
             placeholder='Page'

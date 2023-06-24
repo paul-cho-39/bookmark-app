@@ -30,7 +30,6 @@ const TitleInput = <
    {
       value,
       onChangeText,
-      isFocused,
       setIsFocused,
       placeholder,
       colors,
