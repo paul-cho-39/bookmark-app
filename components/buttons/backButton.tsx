@@ -1,5 +1,5 @@
 import { ViewStyle } from 'react-native';
-import { ICONS } from '../../assets/constants';
+import { ICONS } from '../../constants';
 import IconButton, { IconButtonProps, TouchableIconButton } from './icons/iconButton';
 import IonIcons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';

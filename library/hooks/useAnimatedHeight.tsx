@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Mode } from '../../screens/components/appbar/notes/noteAppbar';
 import { useEffect } from 'react';
-import { HEADERS } from '../../assets/constants';
+import { HEADERS } from '../../constants';
 
 // TODO: change NAME!
 function useAnimatedHeight<T extends Mode>(value: T) {

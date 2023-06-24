@@ -1,7 +1,7 @@
 import { LayoutChangeEvent, StyleSheet, TextInput as NativeInput } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
-import { FONT_SIZE } from '../../../../assets/constants';
+import { FONT_SIZE } from '../../../../constants';
 import { EditableHeaderParams } from '../../../../library/zustand/utils/notes/retriever';
 import useRenderCount from '../../../../library/hooks/useRenderCount';
 import React from 'react';

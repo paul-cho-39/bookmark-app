@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput as NativeInput, Keyboard } from 'react-native';
 import { Text, Button, Chip, TextInput } from 'react-native-paper';
-import { FONT_SIZE, ICONS } from '../../../../assets/constants';
+import { FONT_SIZE, ICONS } from '../../../../constants';
 import IconButton from '../../../../components/buttons/icons/iconButton';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
 import { NoteTagsParams } from '../../../../library/zustand/utils/notes/retriever';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface AddTagsProps {
    noteTags: NoteTagsParams;

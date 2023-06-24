@@ -76,7 +76,6 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   inputRef={titleRef}
                   nextRef={chapterRef}
                   value={params.title}
-                  // onChangeText={(text) => setTitle(text)}
                   onChangeText={setNoteContent('title')}
                   autofocus={true}
                   placeholder='Title'
@@ -95,7 +94,6 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   nextRef={pageFromRef}
                   value={params.chapter}
                   onChangeText={setNoteContent('chapter')}
-                  // onChangeText={(text) => setChapter(text)}
                   placeholder='Chapter'
                   colors={colors}
                   size={'medium'}

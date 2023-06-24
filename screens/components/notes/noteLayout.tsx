@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, KeyboardAvoidingView, Platform, Appearance } from 'react-native';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
-import { HEADERS } from '../../../assets/constants';
+import { HEADERS } from '../../../constants';
 
 interface NoteLayoutProps {
    colors: MD3Colors;

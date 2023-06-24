@@ -50,7 +50,7 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
          <TitleInput
             placeholder='Page'
             keyboardType='numeric'
-            size='titleSmall'
+            size='small'
             value={value}
             onChangeText={(text) => onPageChange(text)}
             {...props}

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleProp, ViewStyle, StyleSheet, StatusBar } from 'react-native';
 import BackButton from '../../../../components/buttons/backButton';
+import { Mode } from '../../../../constants';
 
 interface AnimatedBackButtonProps {
-   mode: 'small' | 'large';
+   mode: Mode;
    onPress: () => void;
    color: string;
    size: number;
@@ -15,7 +16,7 @@ const AnimatedBackButton = ({ color, onPress, mode, size, style }: AnimatedBackB
 
    useEffect(() => {
       Animated.timing(rotation, {
-         toValue: mode === 'large' ? 1 : 0,
+         toValue: mode === Mode.LARGE ? 1 : 0,
          duration: 200,
          useNativeDriver: true,
       }).start();
