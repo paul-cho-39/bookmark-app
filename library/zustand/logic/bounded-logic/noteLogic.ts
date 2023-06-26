@@ -1,6 +1,6 @@
 import { current, produce } from 'immer';
 import useBoundedStore from '../../store';
-import { NoteProps, StoreProps } from '../../types/@types';
+import { NoteProps, StoreProps, NotePropsHistoryKeys } from '../../types/@types';
 import getUsersLocalTime from '../../../helper/timer/getUsersLocalTime';
 import { _getInitialNoteData, _isNoteIdNull, _noteExists, _updateNoteObj } from './helperLogic';
 import { NotesNavigationProp } from '../../../@types/navigation';
@@ -10,7 +10,7 @@ import useConnectStore from '../../connectStore';
 // and bookId as the note
 function setInitiateNote(id: string, logIndex: number) {
    const localizedStartTime = getUsersLocalTime('string');
-   const note = _getInitialNoteData(logIndex, localizedStartTime);
+   const note = _getInitialNoteData(localizedStartTime);
    useBoundedStore.setState(
       produce((state: StoreProps) => {
          if (!state.notes[id]) {
@@ -21,10 +21,22 @@ function setInitiateNote(id: string, logIndex: number) {
    );
 }
 
+type NoteArrayType = 'history' | 'tags' | 'note';
+
 function setNoteObjWithIndex(id: string, logIndex: number) {
    if (!_noteExists(id, logIndex)) return;
 
-   return function <K extends keyof NoteProps, SType extends unknown>(
+   // defining typescript overloads for array types
+   function setNoteObj<K extends NoteArrayType>(key: K, value: NoteProps[K]): void;
+
+   // for types that are not array this will be defined here
+   function setNoteObj<K extends keyof NoteProps, SType extends unknown>(
+      key: K,
+      value?: SType,
+      converter?: (value?: SType) => NoteProps[K]
+   ): (noteObj: NoteProps[K]) => void;
+
+   function setNoteObj<K extends keyof NoteProps, SType extends unknown>(
       key: K,
       value?: SType,
       converter?: (value?: SType) => NoteProps[K]
@@ -39,7 +51,15 @@ function setNoteObjWithIndex(id: string, logIndex: number) {
             })
          );
       };
-   };
+   }
+
+   return setNoteObj;
+}
+
+// write a resetter
+function resetHistory(id: string, logIndex: number) {
+   const resetter = setNoteObjWithIndex(id, logIndex);
+   resetter('history', []);
 }
 
 function createNoteParams<K extends keyof NoteProps>(id: string, logIndex: number, params?: K) {

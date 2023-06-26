@@ -8,13 +8,15 @@ const useBoundedStore = create(
       notes: {
          '': {
             0: {
-               title: '',
-               chapter: '',
-               pageFrom: null,
-               pageTo: null,
+               attr: {
+                  title: '',
+                  chapter: '',
+                  pageFrom: null,
+                  pageTo: null,
+                  isPrivate: false, // default is public notes
+               },
                tags: [],
                note: [],
-               isPrivate: false, // default is public notes
                dates: {
                   start: null,
                   end: null,

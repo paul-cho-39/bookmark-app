@@ -3,7 +3,7 @@ import useSettingsStore from '../../settingsStore';
 import useBoundedStore from '../../store';
 import { NoteProps } from '../../types/@types';
 
-function _getInitialNoteData(logIndex: number, createdOn: string) {
+function _getInitialNoteData(createdOn: string) {
    const darkMode =
       useSettingsStore.getState().userPreference.userGeneralSettings.display.isDarkMode;
    const defaultColor = darkMode ? NoteDarkColor.Default : NoteLightColor.Default;
@@ -11,11 +11,14 @@ function _getInitialNoteData(logIndex: number, createdOn: string) {
    const indexObj: NoteProps = {
       tags: [],
       note: [],
-      title: undefined,
-      chapter: undefined,
-      pageFrom: null,
-      pageTo: null,
-      isPrivate: false,
+      history: [],
+      attr: {
+         title: undefined,
+         chapter: undefined,
+         pageFrom: null,
+         pageTo: null,
+         isPrivate: false,
+      },
       dates: {
          start: createdOn,
          end: null,

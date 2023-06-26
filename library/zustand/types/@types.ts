@@ -113,22 +113,29 @@ interface Delta {
    ops: DeltaOperation[];
 }
 
-export interface NoteHistoryProps {
+export interface NoteAttributesType {
+   pageFrom: number | null;
+   pageTo: number | null;
+   title?: string;
+   chapter?: string;
+   isPrivate: boolean;
+}
+
+// NoteProps keys which are saved for recording the history
+export type NotePropsHistoryKeys = 'tags' | 'note' | 'meta';
+
+export interface NoteHistoryProps<K extends NotePropsHistoryKeys> {
    timestamp: string;
-   propertyChanged: string;
-   oldValue: any;
-   newValue: any;
+   propertyChanged: K;
+   oldValue: NoteProps[K];
+   newValue: NoteProps[K];
 }
 
 export interface NoteProps {
-   pageFrom: number | null;
-   pageTo: number | null;
+   attr: NoteAttributesType;
    tags?: string[]; // use past tags so when creating this keep this in mind
-   title?: string;
-   chapter?: string;
    note?: Delta | [];
-   isPrivate: boolean;
-   history?: NoteHistoryProps[];
+   history?: NoteHistoryProps<NotePropsHistoryKeys>[];
    dates: {
       start: string | null;
       end: string | null;
@@ -145,7 +152,7 @@ export interface NoteMetaProps {
    // add theme here;
 }
 
-export type NoteCollections = Record<string, Record<number, NoteProps>>;
+export type NoteCollections = Record<string, Record<string | number, NoteProps>>;
 
 export type TimerType = StoreProps['timer'];
 export type NoteType = StoreProps['notes'];
