@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
       width: `${WIDTH}%`,
       marginHorizontal: `${MARGIN_HORIZONTAL}%`,
       bottom: 0,
-      borderTopStartRadius: 10,
-      borderTopEndRadius: 10,
+      borderTopStartRadius: 15,
+      borderTopEndRadius: 15,
    },
 });
 

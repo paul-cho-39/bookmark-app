@@ -1,3 +1,6 @@
+import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
+import { BaseUserLogProps } from '../library/@types/timerData';
+
 enum Mode {
    SMALL = 'small',
    LARGE = 'large',
@@ -5,6 +8,11 @@ enum Mode {
 enum PageParamKeys {
    FROM = 'pageFrom',
    TO = 'pageTo',
+}
+
+enum NoteThemeParamKeys {
+   BACKGROUND = 'background',
+   THEME = 'theme',
 }
 
 enum PublishedNoteType {
@@ -48,12 +56,19 @@ const CONTENT = {
    DEFAULT_TITLE: 'Title',
 };
 
+interface NoteAppbarParams {
+   params: Omit<BaseUserLogProps, 'uid'>;
+   colors: MD3Colors;
+}
+
 export {
    Mode,
    PageParamKeys,
+   NoteThemeParamKeys,
    PublishedNoteType,
    NotesFontSize,
    NoteDarkColor,
    NoteLightColor,
+   NoteAppbarParams,
    CONTENT,
 };

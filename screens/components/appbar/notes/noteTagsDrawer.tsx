@@ -1,14 +1,14 @@
 import React, { useLayoutEffect, useState } from 'react';
 import useGetKeyboardHeight from '../../../../library/hooks/useGetKeyboardHeight';
-import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import BottomDrawer from '../../../../components/bottomDrawer';
 import NoteTagHeader from './noteTagHeader';
 import Tags from './noteTags';
-import { NoteIconContentsProps } from './noteIconContents';
 import useBoundedStore from '../../../../library/zustand/store';
+import { NoteAppbarParams } from '../../../../constants';
 
-interface NoteTagsDrawerProps extends Pick<NoteIconContentsProps, 'params' | 'colors'> {
+interface NoteTagsDrawerProps extends NoteAppbarParams {
    isDrawerVisible: boolean;
    setDrawerVisible: (value: NoteTagsDrawerProps['isDrawerVisible']) => void;
 }
@@ -16,11 +16,11 @@ interface NoteTagsDrawerProps extends Pick<NoteIconContentsProps, 'params' | 'co
 const NoteTagsDrawer = (props: NoteTagsDrawerProps) => {
    const { isDrawerVisible, setDrawerVisible, params, colors } = props;
    const { id, logIndex } = params;
-
    const tags = useBoundedStore((state) => state.notes[id][logIndex].tags);
-   const noteTags = { tags, id, logIndex };
 
    const [shouldAddTags, setShouldAddTags] = useState(false);
+
+   // have to experiment for better experience with tags
    const keyboardHeight = useGetKeyboardHeight();
 
    useLayoutEffect(() => {
@@ -42,27 +42,24 @@ const NoteTagsDrawer = (props: NoteTagsDrawerProps) => {
          isVisible={isDrawerVisible}
          onClose={closeDrawer}
          colors={colors}
-         style={styles.bottomDrawer}
+         style={[styles.bottomDrawer]}
       >
          {/* create another component here */}
-         <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            accessibilityViewIsModal
-            style={{ ...styles.container }}
-         >
+         <View collapsable accessibilityViewIsModal style={{ ...styles.container }}>
             <NoteTagHeader
                isInputFocused={isDrawerVisible}
                setIsDrawer={setDrawerVisible}
                colors={colors}
             />
             <Tags
-               noteTags={noteTags}
+               tagsData={tags}
+               params={params}
                colors={colors}
                keyboardHeight={keyboardHeight}
                shouldAddTags={shouldAddTags}
                setShouldAddTags={setShouldAddTags}
             />
-         </KeyboardAvoidingView>
+         </View>
       </BottomDrawer>
    );
 };

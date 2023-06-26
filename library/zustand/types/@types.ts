@@ -1,3 +1,4 @@
+import { NoteDarkColor, NoteLightColor } from '../../../constants/notes';
 import { BodyType } from '../logic/bounded-logic/timerLogic';
 
 export interface PersistStoreProps {
@@ -112,6 +113,13 @@ interface Delta {
    ops: DeltaOperation[];
 }
 
+export interface NoteHistoryProps {
+   timestamp: string;
+   propertyChanged: string;
+   oldValue: any;
+   newValue: any;
+}
+
 export interface NoteProps {
    pageFrom: number | null;
    pageTo: number | null;
@@ -120,6 +128,7 @@ export interface NoteProps {
    chapter?: string;
    note?: Delta | [];
    isPrivate: boolean;
+   history?: NoteHistoryProps[];
    dates: {
       start: string | null;
       end: string | null;
@@ -130,9 +139,9 @@ export interface NoteProps {
 
 // use this to set it in the settings
 export interface NoteMetaProps {
-   bgColor: string;
-   fontSize: number;
-   fontFamily: string;
+   bgColor: NoteDarkColor | NoteLightColor;
+   // fontSize: number;
+   // fontFamily: string;
    // add theme here;
 }
 

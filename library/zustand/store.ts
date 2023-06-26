@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { StoreProps } from './types/@types';
 import { immer } from 'zustand/middleware/immer';
+import { NoteLightColor, NotesFontSize } from '../../constants/notes';
 
 const useBoundedStore = create(
    immer<StoreProps>(() => ({
@@ -18,6 +19,13 @@ const useBoundedStore = create(
                   start: null,
                   end: null,
                   lastEdited: null,
+               },
+               history: [],
+               meta: {
+                  bgColor: NoteLightColor.Default,
+                  // from ./constants/
+                  // fontSize: NotesFontSize.Medium,
+                  // fontFamily: 'none',
                },
             },
          },

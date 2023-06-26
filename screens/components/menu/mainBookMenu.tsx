@@ -45,8 +45,8 @@ const MainMenu = ({ removeBook, currentBooks }: MainMenuProps) => {
 
          {/* edit primary */}
          <AnimatedModal
-            animationType='slide'
             title='Change Recording'
+            animationType='slide'
             visible={editvisible}
             setVisible={setBookVisibility}
             titleStyle={{ paddingVertical: 3, marginBottom: 8 }}

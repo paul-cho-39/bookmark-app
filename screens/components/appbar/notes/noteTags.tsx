@@ -1,32 +1,28 @@
 import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput as NativeInput, Keyboard } from 'react-native';
 import { Text, Button, Chip, TextInput } from 'react-native-paper';
-import { FONT_SIZE, ICONS } from '../../../../constants';
+import { FONT_SIZE, ICONS, NoteAppbarParams } from '../../../../constants';
 import IconButton from '../../../../components/buttons/icons/iconButton';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
 
-interface AddTagsProps {
-   noteTags: {
-      tags: string[] | undefined;
-      id: string;
-      logIndex: number;
-   };
-   colors: MD3Colors;
+interface AddTagsProps extends NoteAppbarParams {
+   tagsData: string[] | undefined;
    shouldAddTags: boolean;
    keyboardHeight: number;
    setShouldAddTags: (value: AddTagsProps['shouldAddTags']) => void;
 }
 
 const Tags = ({
-   noteTags,
+   tagsData,
+   params,
    colors,
    shouldAddTags,
    keyboardHeight,
    setShouldAddTags,
 }: AddTagsProps) => {
-   const { id, logIndex, tags: tagsData } = noteTags;
+   const { id, logIndex } = params;
    const [tags, setTags] = useState('');
    const [oldTags, setOldTags] = useState('');
 
@@ -64,13 +60,21 @@ const Tags = ({
       <>
          <ScrollView
             showsVerticalScrollIndicator={true}
+            automaticallyAdjustContentInsets={false}
+            keyboardDismissMode='interactive'
+            contentInsetAdjustmentBehavior='never'
             keyboardShouldPersistTaps='always'
             alwaysBounceVertical
             automaticallyAdjustKeyboardInsets
             horizontal={false}
-            style={styles.chipsContainer}
+            style={[styles.chipsContainer, { backgroundColor: colors.elevation.level1 }]}
          >
             <View accessibilityRole='list' style={styles.chipsWrapper}>
+               {tagsData && tagsData?.length < 1 && (
+                  <Text style={styles.noTagsFound} variant='bodyLarge'>
+                     No Tags Found
+                  </Text>
+               )}
                {tagsData?.map((tag, index) => (
                   <Chip
                      key={index}
@@ -86,7 +90,7 @@ const Tags = ({
                      {tag}
                   </Chip>
                ))}
-               <Chip
+               {/* <Chip
                   mode='outlined'
                   icon='plus'
                   accessibilityRole='button'
@@ -95,7 +99,7 @@ const Tags = ({
                   onPress={onPressAddTags}
                >
                   Add Tags
-               </Chip>
+               </Chip> */}
             </View>
          </ScrollView>
 
@@ -146,6 +150,13 @@ const styles = StyleSheet.create({
    chipsWrapper: {
       flexDirection: 'row',
       flexWrap: 'wrap',
+   },
+   noTagsFound: {
+      width: '100%',
+      // backgroundColor: 'red',
+      marginTop: '20%',
+      textAlign: 'center',
+      opacity: 0.8,
    },
    chips: {
       height: 50,

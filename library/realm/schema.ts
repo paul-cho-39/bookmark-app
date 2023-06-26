@@ -23,6 +23,7 @@ export interface RealmBookInfo extends Realm.Dictionary {
 
 export interface RealmNoteMeta extends Realm.Dictionary {
    bgColor?: string;
+   fontFamily?: string;
    fontSize?: number;
 }
 

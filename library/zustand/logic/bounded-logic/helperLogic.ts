@@ -1,11 +1,18 @@
+import { NoteDarkColor, NoteLightColor } from '../../../../constants/notes';
+import useSettingsStore from '../../settingsStore';
 import useBoundedStore from '../../store';
 import { NoteProps } from '../../types/@types';
 
 function _getInitialNoteData(logIndex: number, createdOn: string) {
+   const darkMode =
+      useSettingsStore.getState().userPreference.userGeneralSettings.display.isDarkMode;
+   const defaultColor = darkMode ? NoteDarkColor.Default : NoteLightColor.Default;
+
    const indexObj: NoteProps = {
       tags: [],
       note: [],
       title: undefined,
+      chapter: undefined,
       pageFrom: null,
       pageTo: null,
       isPrivate: false,
@@ -13,6 +20,9 @@ function _getInitialNoteData(logIndex: number, createdOn: string) {
          start: createdOn,
          end: null,
          lastEdited: null,
+      },
+      meta: {
+         bgColor: defaultColor,
       },
    };
    return indexObj;

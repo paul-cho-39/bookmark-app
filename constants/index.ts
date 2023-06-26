@@ -1,4 +1,11 @@
-import { CONTENT, Mode, PageParamKeys, PublishedNoteType } from './notes';
+import {
+   CONTENT,
+   Mode,
+   NoteAppbarParams,
+   NoteThemeParamKeys,
+   PageParamKeys,
+   PublishedNoteType,
+} from './notes';
 
 export const IMAGES = {
    HOME_IMAGE_HEIGHT: 110,
@@ -53,4 +60,4 @@ export const FONT_SIZE = {
    },
 };
 
-export { Mode, PageParamKeys, PublishedNoteType, CONTENT };
+export { Mode, PageParamKeys, NoteThemeParamKeys, PublishedNoteType, NoteAppbarParams, CONTENT };

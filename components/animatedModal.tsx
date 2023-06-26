@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
-import { StyleProp, ViewStyle, Animated, Modal, View, StyleSheet } from 'react-native';
-import { ModalProps } from './modal';
+import { StyleProp, ViewStyle, Animated, Modal, View, StyleSheet, ModalProps } from 'react-native';
 import { Divider, useTheme, Text } from 'react-native-paper';
 import { height } from '../library/helper';
 
 interface AnimatedModalProps extends ModalProps {
+   setVisible: (value: boolean) => void;
+   title?: string | React.ReactNode;
    titleStyle?: StyleProp<ViewStyle>;
-   animationType?: 'slide' | 'fade' | 'none';
+   containerStyle?: StyleProp<ViewStyle>;
+   displayDivider?: boolean;
 }
 
 const AnimatedModal = ({
+   setVisible,
    title,
    visible,
-   setVisible,
    children,
    titleStyle,
    containerStyle,
-   animationType,
+   displayDivider = true,
 }: AnimatedModalProps) => {
    const { colors } = useTheme();
    const value = height * 0.2;
@@ -46,13 +48,7 @@ const AnimatedModal = ({
 
    return (
       <>
-         <Modal
-            style={{}}
-            animationType={animationType}
-            visible={visible}
-            onRequestClose={() => animateModal(false)}
-            transparent
-         >
+         <Modal visible={visible} onRequestClose={() => animateModal(false)} transparent>
             <Animated.View
                style={[
                   containerStyle,
@@ -63,7 +59,7 @@ const AnimatedModal = ({
                <View style={[styles.title, titleStyle]}>
                   {React.isValidElement(title) ? title : <Text variant='titleMedium'>{title}</Text>}
                </View>
-               <Divider />
+               {displayDivider && <Divider />}
                <View>{children}</View>
             </Animated.View>
          </Modal>

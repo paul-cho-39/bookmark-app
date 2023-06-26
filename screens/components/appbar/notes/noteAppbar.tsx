@@ -20,9 +20,8 @@ interface NoteAppbarProps extends NotesNavigationProp {
 
 const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
    const { logIndex, id } = route.params.params;
+   const params = { logIndex, id };
    const [mode, setMode] = useState<Mode>(Mode.SMALL);
-
-   // const { editableHeaderParams, noteTags } = retrieveNotesHeader(notes, id, logIndex);
 
    const handleTitlePress = () => {
       setMode(mode === Mode.SMALL ? Mode.LARGE : Mode.SMALL);
@@ -67,7 +66,7 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
                      colors={colors}
                   />
                </Animated.View>
-               <NoteIconContents params={route.params.params} colors={colors} />
+               <NoteIconContents params={params} colors={colors} />
             </View>
          </Animated.View>
       </SafeAreaView>
