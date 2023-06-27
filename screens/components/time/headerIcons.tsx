@@ -1,8 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import HeaderMenuIcon from '../../../components/menu/headerMenuIcon';
 import { MainTimerNavigationProp } from '../../../library/@types/navigation';
-// .json file
-import settings from './../../../assets/constants/settings.json';
+import settings from './../../../assets/paper-themes/settings.json';
 import IconButton from '../../../components/buttons/icons/iconButton';
 import Entypo from '@expo/vector-icons/Entypo';
 import { BaseUserLogProps } from '../../../library/@types/timerData';

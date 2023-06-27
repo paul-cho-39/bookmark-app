@@ -69,7 +69,7 @@ const AddBookScreen = ({ navigation, route }: AddBookScreenProps) => {
 
    const DISABLED = isRereading || parseInt(value) > 0;
    const body = {
-      currentlyReading: library.reading,
+      currentlyReading: library?.reading,
       isRereading: isRereading,
    };
 

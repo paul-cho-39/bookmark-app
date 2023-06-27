@@ -1,7 +1,7 @@
 import { NoteDarkColor, NoteLightColor } from '../../../../constants/notes';
 import useSettingsStore from '../../settingsStore';
 import useBoundedStore from '../../store';
-import { NoteProps } from '../../types/@types';
+import { NoteAttributesType, NoteProps } from '../../types/@types';
 
 function _getInitialNoteData(createdOn: string) {
    const darkMode =
@@ -39,18 +39,19 @@ function _noteExists(id: string, logIndex: number) {
    return _isNoteIdNull(id) && useBoundedStore.getState().notes[id][logIndex];
 }
 
-function _updateNoteObj<K extends keyof NoteProps, SType extends unknown>(
-   note: NoteProps,
-   key: K,
-   noteObj: NoteProps[K],
-   value?: SType,
-   converter?: (value?: SType) => NoteProps[K]
-) {
-   if (converter) {
-      note[key] = converter(value);
-   } else {
-      note[key] = noteObj;
-   }
-}
+// depending on the values that need to be converted
+// function _convertNoteObj<K extends keyof NoteAttributesType, SType extends unknown>(
+//    noteAttributes: NoteAttributesType,
+//    key: K,
+//    noteObj: NoteAttributesType[K],
+//    value?: SType,
+//    converter?: (value?: SType) => NoteAttributesType[K]
+// ) {
+//    if (converter) {
+//       noteAttributes[key] = converter(value);
+//    } else {
+//       noteAttributes[key] = noteObj;
+//    }
+// }
 
-export { _getInitialNoteData, _isNoteIdNull, _noteExists, _updateNoteObj };
+export { _getInitialNoteData, _isNoteIdNull, _noteExists };

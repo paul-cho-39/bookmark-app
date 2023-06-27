@@ -5,14 +5,15 @@ import TitleInput from './titleInput';
 import { width } from '../../../../library/helper';
 import {
    createNoteParams,
+   setNoteAttributes,
    setNoteObjWithIndex,
 } from '../../../../library/zustand/logic/bounded-logic';
-import { retrieveNotesHeader } from '../../../../library/zustand/utils/notes/retriever';
 import PageInput from './pageInput';
 import NoteDates from './noteDates';
 import { PageParamKeys } from '../../../../constants';
 import useBoundedStore from '../../../../library/zustand/store';
 import { BaseUserLogProps } from '../../../../library/@types/timerData';
+import { convertPage } from '../../../../library/zustand/utils/notes/converter';
 
 interface EditableAppbarProps {
    params: BaseUserLogProps;
@@ -23,10 +24,13 @@ interface EditableAppbarProps {
 
 const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) => {
    const { id, logIndex } = params;
-   const notes = useBoundedStore((state) => state.notes[id][logIndex]);
+   const [noteAttributes, noteDates] = useBoundedStore((state) => [
+      state.notes[id][logIndex].attr,
+      state.notes[id][logIndex].dates,
+   ]);
 
-   const { editableHeaderParams } = retrieveNotesHeader(notes);
-   const { chapter, title, createdAt, lastEdited, pageFrom, pageTo } = editableHeaderParams;
+   const { chapter, title, pageFrom, pageTo, isPrivate } = noteAttributes;
+   const { start: createdAt, lastEdited } = noteDates;
 
    const [isTitleFocused, setTitleFocused] = useState(false);
    const [isSubtitleFocused, setSubtitleFocused] = useState(false);
@@ -59,16 +63,18 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
               page: pageTo,
            };
 
-   const setNotePage = (type: PageParamKeys, text: string, converter: any) => {
-      const notes = setNoteObjWithIndex(id, logIndex);
-      const setPage = notes && notes(type, text, converter);
-      return setPage && setPage;
+   const setNotePage = (type: PageParamKeys) => (text: string) => {
+      const setPage = setNoteAttributes(id, logIndex);
+      setPage && setPage(type, text, convertPage);
    };
 
    const setNoteContent = (type: 'chapter' | 'title') => (text: string) => {
-      const setNoteContent = createNoteParams(params.id, params.logIndex, type);
-      return setNoteContent && setNoteContent(text);
+      // console.log('text is:', text);
+      const setContents = setNoteAttributes(id, logIndex);
+      setContents && setContents(type, text);
    };
+
+   console.log('notes attributes are  : ', pageFrom);
 
    // TODO: the background color should be changed on the basis of notebook color
    // use global state to control this part
@@ -114,7 +120,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   isFocused={isPageFromFocused}
                   setIsFocused={setIsPageFromFocused}
                   params={getParams('from')}
-                  setPage={setNotePage}
+                  setPage={setNotePage(PageParamKeys.FROM)}
                />
                <PageInput
                   inputRef={pageToRef}
@@ -122,7 +128,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   isFocused={isPageToFocused}
                   setIsFocused={setIsPageToFocused}
                   params={getParams('to')}
-                  setPage={setNotePage}
+                  setPage={setNotePage(PageParamKeys.TO)}
                />
             </View>
          </View>

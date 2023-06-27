@@ -1,26 +1,31 @@
 import { NoteDarkColor, NoteLightColor } from '../../../../constants/notes';
-import useSettingsStore from '../../settingsStore';
 import useBoundedStore from '../../store';
 import { NoteMetaProps, NoteProps } from '../../types/@types';
 import { _noteExists } from './helperLogic';
-import { setNoteObjWithIndex } from './noteLogic';
+import { setNoteObjWithIndex, updateNestedPropsWithIndex } from './noteLogic';
 
-function setNoteMeta(id: string, logIndex: number) {
+function updateNoteMetaAndHistory(id: string, logIndex: number) {
    return function <K extends keyof NoteMetaProps>(key: K, value: NoteMetaProps[K]) {
       const currentNotes = useBoundedStore.getState().notes[id][logIndex];
       const setNoteProperty = setNoteObjWithIndex(id, logIndex);
+      const setMeta = updateNestedPropsWithIndex(id, logIndex);
 
-      if (currentNotes && setNoteProperty) {
-         currentNotes.history?.push({
+      if (setNoteProperty && setMeta) {
+         const history = currentNotes.history || [];
+         const newHistory = {
             timestamp: new Date().toISOString(),
-            propertyChanged: 'meta',
-            oldValue: currentNotes.meta,
-            newValue: { ...currentNotes.meta, bgColor: value },
-         });
-         setNoteProperty('meta', {
-            ...useBoundedStore.getState().notes[id][logIndex].meta,
-            [key]: value,
-         });
+            propertyChanged: `meta.${key}`,
+            oldValue: currentNotes.meta?.[key],
+            newValue: value,
+         };
+
+         setNoteProperty('history', [...history, newHistory]);
+         // the typescript cannot correctly infer the color name schemes so
+         // for now typescript will be ignored here
+         // @ts-ignore
+         setMeta('meta', key, value);
+
+         return [...history, newHistory];
       }
    };
 }
@@ -30,13 +35,15 @@ function setNoteColor<TColor extends NoteDarkColor | NoteLightColor>(
    logIndex: number,
    selected: TColor
 ) {
-   const setBg = setNoteMeta(id, logIndex);
+   const setBg = updateNoteMetaAndHistory(id, logIndex);
    if (setBg) {
-      setBg('bgColor', selected);
+      const history = setBg('bgColor', selected);
+      return history;
    }
+   return [];
 }
 
-export { setNoteMeta, setNoteColor };
+export { updateNoteMetaAndHistory, setNoteColor };
 
 // 1) change textInputs for "attr"
 // 2) and change how it loads for this one too

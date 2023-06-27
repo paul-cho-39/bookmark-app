@@ -1,8 +1,6 @@
 import constants from 'expo-constants';
 import Config from '../config';
 
-// const TEMP_API_URL = 'http://10.0.0.34:5000';
-
 // fetcher used for backend support
 // this is the main connector to the backend server;
 export default async function useFetcher(req: RequestInfo, res: RequestInit, error?: string) {

@@ -1,5 +1,11 @@
 import { setCurrentPage, setTempPage } from './bookLogic';
-import { createNoteParams, setNoteObjWithIndex, setInitiateNote } from './noteLogic';
+import {
+   createNoteParams,
+   setNoteObjWithIndex,
+   setInitiateNote,
+   setNoteAttributes,
+   resetHistory,
+} from './noteLogic';
 import {
    setTimerWithDate,
    setTimer,
@@ -25,6 +31,8 @@ export {
    resumeTimer,
    resetTimer,
    createNoteParams,
+   setNoteAttributes,
+   resetHistory,
    setNoteObjWithIndex,
    setInitiateNote,
 };

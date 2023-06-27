@@ -16,7 +16,7 @@ const EdiableContentsWrapper = (props: EdiableContentsWrapper) => {
    const { mode, handleTitlePress, colors } = props;
    const { id, logIndex } = props.params;
 
-   const title = useBoundedStore((state) => state.notes[id][logIndex].title);
+   const title = useBoundedStore((state) => state.notes[id][logIndex].attr.title);
 
    if (mode === Mode.SMALL) {
       return (

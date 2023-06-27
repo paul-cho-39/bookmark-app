@@ -1,4 +1,4 @@
-import colorTheme from './../../assets/constants/dark-theme.json';
+import colorTheme from './../../assets/paper-themes/dark-theme.json';
 import { MD3LightTheme } from 'react-native-paper';
 
 // CURRENT COLOR THEME: slateblue

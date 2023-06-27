@@ -3,9 +3,9 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { MD3Theme } from 'react-native-paper';
-import { IconButton } from './icons/iconButton';
 import { Entypo } from '@expo/vector-icons';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
+import IconButton from './icons/iconButton';
 
 interface ChevronButtonProps {
    title: string;
@@ -29,6 +29,7 @@ const ChevronButton = ({
    });
 
    if (!loadChevronIcon) {
+      // TODO: create skeleton instead of loading
       return loadingComponent;
    }
 

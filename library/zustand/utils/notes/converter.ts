@@ -1,4 +1,4 @@
-function convertPage(value: string | undefined) {
+function convertPage(value: string) {
    if (value === '') {
       return null;
    }

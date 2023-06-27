@@ -16,11 +16,12 @@ interface PageInputProps
       'value' | 'keyboardType' | 'size' | 'onChangeText' | 'placeholder'
    > {
    params: Params;
-   setPage: (
-      keys: Params['keys'],
-      value: string,
-      converter: (value: string | undefined) => number | null
-   ) => ((noteObj: number | null) => void) | undefined;
+   setPage: (text: string) => void;
+   // setPage: (
+   //    keys: Params['keys'],
+   //    value: string,
+   //    converter: (value: string | undefined) => number | null
+   // ) => ((noteObj: number | null) => void) | undefined;
    style?: StyleProp<ViewStyle>;
 }
 
@@ -37,11 +38,11 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
    const value = convertToString(page);
    const label = keys === PageParamKeys.TO ? 'To: ' : 'From: ';
 
-   const onPageChange = (text: string) => {
-      const parsedInt = parseInt(value, 10);
-      const setter = setPage(keys, text, convertPage);
-      setter && setter(parsedInt);
-   };
+   // const onPageChange = (text: string) => {
+   //    const parsedInt = parseInt(value, 10);
+   //    const setter = setPage(keys, text, convertPage);
+   //    setter && setter(parsedInt);
+   // };
 
    return (
       <View style={[style, styles.container]}>
@@ -53,7 +54,8 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
             keyboardType='numeric'
             size='small'
             value={value}
-            onChangeText={(text) => onPageChange(text)}
+            // onChangeText={(text) => onPageChange(text)}
+            onChangeText={(text) => setPage(text)}
             {...props}
          />
       </View>

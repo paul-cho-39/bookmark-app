@@ -1,5 +1,5 @@
 let Config = {
-   apiUrl: 'http://192.168.86.52:5000',
+   apiUrl: 'http://192.168.86.248:5000',
    WEB_CLIENT_ID: '820364727873-j177f8aa7mpu6qnd6dkn276dl6qnj2if.apps.googleusercontent.com',
    GOOGLE_BOOK_KEY: 'AIzaSyB5Ir0sDRVUZ_yO2R0IX_eQY8jVSFsKfrA',
    HOME_IMAGE_HEIGHT: 100,
