@@ -35,6 +35,7 @@ export interface ConnectorStoreProps {
          isStopTimeVisible: boolean;
       };
       note: {
+         isModalVisible: boolean;
          isAddNoteVisible: boolean;
          isAddTagsVisible: boolean;
          isUploadNotesVisible: boolean;
@@ -123,9 +124,9 @@ export interface NoteAttributesType {
 
 // NoteProps keys which are saved for recording the history
 export type NotePropsHistoryKeys = 'tags' | 'note' | 'meta';
+export type NoteColors = NoteDarkColor | NoteLightColor;
 
 export interface NoteHistoryProps<K extends NotePropsHistoryKeys> {
-   timestamp: string;
    propertyChanged: K;
    oldValue: NoteProps[K];
    newValue: NoteProps[K];
@@ -146,7 +147,8 @@ export interface NoteProps {
 
 // use this to set it in the settings
 export interface NoteMetaProps {
-   bgColor: NoteDarkColor | NoteLightColor;
+   headerColor: NoteColors;
+   bgColor: string;
    // fontSize: number;
    // fontFamily: string;
    // add theme here;

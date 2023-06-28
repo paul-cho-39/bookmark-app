@@ -1,6 +1,7 @@
 import { StyleProp, View, ViewStyle, Text } from 'react-native';
 import { noteHeaderTimeParser } from '../../../../library/helper/timer/getTimerValue';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
+import { NoteAppbarParams } from '../../../../constants';
 
 interface NoteDatesParams {
    dateTime: string | null;

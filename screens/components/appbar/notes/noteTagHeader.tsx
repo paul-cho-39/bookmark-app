@@ -4,17 +4,11 @@ import BackButton from '../../../../components/buttons/backButton';
 import { FONT_SIZE, ICONS } from '../../../../constants';
 
 interface NoteTagHeaderParams {
-   isInputFocused: boolean;
-   setIsDrawer: (value: boolean) => void;
    colors: MD3Colors;
+   onPressTags: () => void;
 }
 
-const NoteTagHeader = ({ isInputFocused, setIsDrawer, colors }: NoteTagHeaderParams) => {
-   const onPressTags = () => {
-      if (isInputFocused) setIsDrawer(false);
-      return;
-   };
-
+const NoteTagHeader = ({ onPressTags, colors }: NoteTagHeaderParams) => {
    return (
       <View
          style={{

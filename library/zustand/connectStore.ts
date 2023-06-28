@@ -31,6 +31,7 @@ const initialState: ConnectorStoreProps = {
          isStopTimeVisible: false,
       },
       note: {
+         isModalVisible: false,
          isAddNoteVisible: false,
          isAddTagsVisible: false,
          isUploadNotesVisible: false,

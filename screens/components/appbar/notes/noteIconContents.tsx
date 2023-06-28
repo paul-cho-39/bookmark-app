@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Keyboard, StyleSheet, View } from 'react-native';
+
 import IconButton from '../../../../components/buttons/icons/iconButton';
 import { AntDesign } from '@expo/vector-icons';
-import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import RealmContext from '../../../../library/realm';
 import useRenderCount from '../../../../library/hooks/useRenderCount';
 import NoteTagsDrawer from './noteTagsDrawer';
 import { ICONS, NoteAppbarParams } from '../../../../constants';
 import NoteTheme from './noteTheme';
-import { StyleSheet, View } from 'react-native';
+import { Modalize } from 'react-native-modalize';
+import { Portal } from 'react-native-paper';
 
 const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
    // so this would be called at SEPARATE BACKBUTTON COMPONENT and WHEREEVER IT IS NEEDED
@@ -15,14 +17,20 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
    const [isTagDrawerVisible, setTagDrawerVisible] = useState(false);
    const [isThemeModalVisible, setThemeModalVisible] = useState(false);
 
+   const tagModalRef = useRef<Modalize>(null);
+
    useRenderCount('contents');
+
+   const openTagModal = () => {
+      if (tagModalRef && tagModalRef.current) tagModalRef.current.open();
+   };
 
    return (
       <>
          <View style={styles.iconContainer}>
             {/* add more icons here */}
             <IconButton
-               onPress={() => setTagDrawerVisible(true)}
+               onPress={openTagModal}
                style={{}}
                renderIcon={() => (
                   <AntDesign name='tagso' color={colors.onSurface} size={ICONS.LARGE} />
@@ -36,12 +44,10 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
                )}
             />
          </View>
-         <NoteTagsDrawer
-            isDrawerVisible={isTagDrawerVisible}
-            setDrawerVisible={setTagDrawerVisible}
-            colors={colors}
-            params={params}
-         />
+
+         <Portal>
+            <NoteTagsDrawer ref={tagModalRef} colors={colors} params={params} />
+         </Portal>
          <NoteTheme
             params={params}
             colors={colors}

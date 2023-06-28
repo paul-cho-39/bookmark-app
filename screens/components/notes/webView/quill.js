@@ -36,7 +36,6 @@ const html = `
         border-right-width: 0;
         border-bottom-width: 0;
         background-color: transparent;
-
       }
       .toolbar___container {
         display: flex; 
@@ -174,6 +173,10 @@ const html = `
       return JSON.stringify({ type: type, option })
     }
 
+    var _getToolbar = function() {
+      return document.getElementById("toolbar");
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       const message = _stringifyMessage('ready', true);
       _sendMessage(message);
@@ -192,12 +195,27 @@ const html = `
           break;
         case 'link':
           addLink(message.url);
+          break;
         case 'pressed':
           _sendMessage(_stringifyMessage('noteData', _tempDelta))
+          break;
+        case 'displayToolbar':
+          toggleToolbar(message.value);
+          break;
         default:
           break;
        }
     });
+
+    var toggleToolbar = function(shouldHide) {
+      const toolbar = _getToolbar();
+      if (shouldHide) {
+        toolbar.style.display = 'none';      
+      }
+      if (!shouldHide) {
+        toolbar.style.display = 'flex'
+      }
+    }
 
     // TODO: when the link contains 'https://' already then skip the parsing process
     var addLink = function(domain) {

@@ -3,7 +3,6 @@ import { produce, Draft } from 'immer';
 import { ConnectorStoreProps } from '../../types/@types';
 import { _setModalVisibility } from './modalLogic';
 import { pauseTimer, resumeTimer } from '../bounded-logic/timerLogic';
-import debounce from '../../../helper/debouncer';
 
 const setIsDataAvailable = (value: boolean) => {
    useConnectStore.setState(
@@ -87,6 +86,13 @@ const setStopModalVisible = (value: boolean) => {
    _setModalVisibility('timer', 'isStopTimeVisible', value);
 };
 
+const setNoteModalVisible = (type: 'opened' | 'closed') => {
+   const isAlreadyVisible = useConnectStore.getState().modal.note.isModalVisible;
+   type === 'opened'
+      ? !isAlreadyVisible && _setModalVisibility('note', 'isModalVisible', true)
+      : isAlreadyVisible && _setModalVisibility('note', 'isModalVisible', false);
+};
+
 export {
    setIsDataAvailable,
    setHasMutated,
@@ -98,4 +104,5 @@ export {
    setIsConnected,
    setSubmittedQuery,
    setSearchIsLoading,
+   setNoteModalVisible,
 };

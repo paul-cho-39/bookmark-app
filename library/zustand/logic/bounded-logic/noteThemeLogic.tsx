@@ -1,4 +1,5 @@
-import { NoteDarkColor, NoteLightColor } from '../../../../constants/notes';
+import { DARKEN_BY_DEFAULT, NoteDarkColor, NoteLightColor } from '../../../../constants/notes';
+import darkenColor from '../../../helper/darkenColor';
 import useBoundedStore from '../../store';
 import { NoteMetaProps, NoteProps } from '../../types/@types';
 import { _noteExists } from './helperLogic';
@@ -13,7 +14,6 @@ function updateNoteMetaAndHistory(id: string, logIndex: number) {
       if (setNoteProperty && setMeta) {
          const history = currentNotes.history || [];
          const newHistory = {
-            timestamp: new Date().toISOString(),
             propertyChanged: `meta.${key}`,
             oldValue: currentNotes.meta?.[key],
             newValue: value,
@@ -30,14 +30,28 @@ function updateNoteMetaAndHistory(id: string, logIndex: number) {
    };
 }
 
+function updateNoteMetaWithoutHistory(id: string, logIndex: number) {
+   return function <K extends keyof NoteMetaProps>(key: K, value: NoteMetaProps[K]) {
+      const setMeta = updateNestedPropsWithIndex(id, logIndex);
+
+      if (setMeta) {
+         // @ts-ignore
+         setMeta('meta', key, value);
+      }
+   };
+}
+
 function setNoteColor<TColor extends NoteDarkColor | NoteLightColor>(
    id: string,
    logIndex: number,
    selected: TColor
 ) {
-   const setBg = updateNoteMetaAndHistory(id, logIndex);
-   if (setBg) {
-      const history = setBg('bgColor', selected);
+   const setHeader = updateNoteMetaAndHistory(id, logIndex);
+   const setBg = updateNoteMetaWithoutHistory(id, logIndex);
+   if (setHeader && setBg) {
+      const history = setHeader('headerColor', selected);
+      setBg('bgColor', darkenColor(selected, DARKEN_BY_DEFAULT));
+
       return history;
    }
    return [];

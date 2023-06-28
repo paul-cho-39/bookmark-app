@@ -1,12 +1,12 @@
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import React from 'react';
-import 'react-native-gesture-handler';
 import 'expo-dev-client';
 
 import { Provider as PaperProvider, useTheme, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
-import { Appearance } from 'react-native';
+import { Appearance, Platform } from 'react-native';
 import DarkTheme from './library/themes/darkTheme';
 import LightTheme from './library/themes/lightTheme';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
@@ -31,7 +31,7 @@ const queryClient = new QueryClient({
 
 // for the app from localication get a) "languageTag" && "languageCode"
 
-export default function App() {
+function App() {
    useNetworkStatus();
    const { colors } = useTheme();
    const colorScheme = Appearance.getColorScheme();
@@ -99,3 +99,5 @@ export default function App() {
       </RealmProvider>
    );
 }
+
+export default Platform.OS === 'android' ? gestureHandlerRootHOC(App) : App;

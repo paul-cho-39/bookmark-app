@@ -1,45 +1,62 @@
 import Animated from 'react-native-reanimated';
 import useAnimatedHeight from '../../../../library/hooks/useAnimatedHeight';
 import { SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
 
 import { useState } from 'react';
 import { NotesNavigationProp } from '../../../../library/@types/navigation';
 import useBoundedStore from '../../../../library/zustand/store';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
-import EditableAppbar from './editableAppbar';
 import AnimatedBackButton from './animatedBackButton';
 import useCustomBackHandler from '../../../../library/hooks/useCustomBackHandler';
 import NoteIconContents from './noteIconContents';
-import { CONTENT, ICONS, Mode } from '../../../../constants';
+import { ICONS, Mode } from '../../../../constants';
 import EdiableContentsWrapper from './editableContentsWrapper';
+import darkenColor from '../../../../library/helper/darkenColor';
+import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 
 interface NoteAppbarProps extends NotesNavigationProp {
    colors: MD3Colors;
 }
 
 const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
+   // write a preview; have to save the old data; stays immutable or create a
+   // snapshot
+
    const { logIndex, id } = route.params.params;
    const params = { logIndex, id };
-   const [mode, setMode] = useState<Mode>(Mode.SMALL);
 
-   const handleTitlePress = () => {
-      setMode(mode === Mode.SMALL ? Mode.LARGE : Mode.SMALL);
-   };
+   const bgColor = useBoundedStore((state) => state.notes[id][logIndex].meta?.bgColor);
+
+   const [mode, setMode] = useState<Mode>(Mode.SMALL);
 
    const { headerStyle, titleStyle } = useAnimatedHeight(mode);
 
-   useCustomBackHandler(() => {
+   const toggleOrGoBack = () => {
       if (mode === Mode.LARGE) {
+         setNoteModalVisible('closed');
          setMode(Mode.SMALL);
          return true;
       }
       return false;
-   }, [mode]);
+   };
+
+   const handleTitlePress = () => {
+      const isOpened = toggleOrGoBack();
+      if (!isOpened) {
+         setNoteModalVisible('opened');
+         setMode(Mode.LARGE);
+      }
+   };
+
+   useCustomBackHandler(toggleOrGoBack, [mode]);
 
    const onPressBack = () => {
-      mode === Mode.LARGE ? setMode(Mode.SMALL) : navigation.goBack();
+      if (!toggleOrGoBack()) {
+         navigation.goBack();
+      }
    };
+
+   const color = darkenColor('#D2691E', -5);
 
    return (
       <SafeAreaView>
@@ -47,7 +64,9 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
             style={[
                styles.headerContainer,
                headerStyle,
-               { backgroundColor: colors.elevation.level4 },
+               { backgroundColor: color },
+               // { backgroundColor: '#2E8B57' },
+               // { backgroundColor: colors.elevation.level4 },
             ]}
          >
             <AnimatedBackButton
@@ -60,7 +79,7 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
             <View style={[styles.contentContainer]}>
                <Animated.View style={[titleStyle]}>
                   <EdiableContentsWrapper
-                     params={route.params.params}
+                     params={params}
                      mode={mode}
                      handleTitlePress={handleTitlePress}
                      colors={colors}

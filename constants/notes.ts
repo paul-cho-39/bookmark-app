@@ -1,5 +1,7 @@
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { BaseUserLogProps } from '../library/@types/timerData';
+import darkenColor from '../library/helper/darkenColor';
+import { height as HEIGHT, height } from '../library/helper';
 
 enum Mode {
    SMALL = 'small',
@@ -28,16 +30,18 @@ enum NotesFontSize {
    ExtraLarge = 24,
 }
 
+const DARKEN_BY_DEFAULT = -8;
+
 enum NoteDarkColor {
    Default = '#E3E2E6',
-   DarkOrange = '#FF8C00',
+   SeaGreen = '#2E8B57',
    Chocolate = '#D2691E',
    DarkGoldenrod = '#B8860B',
    DarkViolet = '#9400D3',
    Indigo = '#4B0082',
    DarkRed = '#8B0000',
    Firebrick = '#B22222',
-   DeepPink = '#FF1493',
+   MediumPurple = '#9370DB',
 }
 
 enum NoteLightColor {
@@ -52,9 +56,17 @@ enum NoteLightColor {
    PinkLace = '#FFDDF4',
 }
 
+// IF IT IS POSSIBLE SHOULD TRY TO TEST OUT AND CREATE ENUM FOR DARKENING COLOR
+
 const CONTENT = {
    DEFAULT_TITLE: 'Title',
 };
+
+enum NotesHeightParams {
+   QuillEditorHeight = 80,
+   NoteModalHeight = HEIGHT * 0.65,
+   NoteTagsScrollViewHeight = HEIGHT * 0.47,
+}
 
 interface NoteAppbarParams {
    params: Omit<BaseUserLogProps, 'uid'>;
@@ -71,4 +83,6 @@ export {
    NoteLightColor,
    NoteAppbarParams,
    CONTENT,
+   DARKEN_BY_DEFAULT,
+   NotesHeightParams,
 };

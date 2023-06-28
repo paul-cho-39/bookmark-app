@@ -1,34 +1,21 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput as NativeInput, Keyboard } from 'react-native';
-import { Text, Button, Chip, TextInput } from 'react-native-paper';
+import { Text, Button, Chip, TextInput, IconButton as PaperIconButton } from 'react-native-paper';
 import { FONT_SIZE, ICONS, NoteAppbarParams } from '../../../../constants';
 import IconButton from '../../../../components/buttons/icons/iconButton';
-import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
+import { height as HEIGHT } from '../../../../library/helper';
 
 interface AddTagsProps extends NoteAppbarParams {
    tagsData: string[] | undefined;
-   shouldAddTags: boolean;
-   keyboardHeight: number;
-   setShouldAddTags: (value: AddTagsProps['shouldAddTags']) => void;
+   inputHeight: number;
 }
 
-const Tags = ({
-   tagsData,
-   params,
-   colors,
-   shouldAddTags,
-   keyboardHeight,
-   setShouldAddTags,
-}: AddTagsProps) => {
+const Tags = ({ tagsData, inputHeight, params, colors }: AddTagsProps) => {
    const { id, logIndex } = params;
    const [tags, setTags] = useState('');
    const [oldTags, setOldTags] = useState('');
-
-   const onPressAddTags = () => {
-      setShouldAddTags(true);
-   };
 
    const tagHandler = () => {
       if (tags) {
@@ -37,7 +24,6 @@ const Tags = ({
             : handleTags.add(id, logIndex, tags);
          clearTags();
       }
-      setShouldAddTags(true);
    };
 
    const clearTags = () => {
@@ -50,28 +36,28 @@ const Tags = ({
    };
 
    const editTags = (tag: string) => {
-      // setShouldAddTags(true);
       setOldTags(tag);
       setTags(tag);
    };
 
-   const shouldInputDisplay = keyboardHeight >= 1 || tags.length >= 1 ? 'flex' : 'none';
+   const scrollViewHeight = inputHeight >= 1 ? HEIGHT * 0.325 : HEIGHT * 0.45;
+
    return (
       <>
          <ScrollView
             showsVerticalScrollIndicator={true}
             automaticallyAdjustContentInsets={false}
-            keyboardDismissMode='interactive'
+            keyboardDismissMode='none'
             contentInsetAdjustmentBehavior='never'
             keyboardShouldPersistTaps='always'
             alwaysBounceVertical
             automaticallyAdjustKeyboardInsets
             horizontal={false}
-            style={[styles.chipsContainer, { backgroundColor: colors.elevation.level1 }]}
+            style={[styles.container, { height: scrollViewHeight }]}
          >
-            <View accessibilityRole='list' style={styles.chipsWrapper}>
+            <View accessibilityRole='list' style={styles.chipsContainer}>
                {tagsData && tagsData?.length < 1 && (
-                  <Text style={styles.noTagsFound} variant='bodyLarge'>
+                  <Text style={styles.tagsNotFound} variant='bodyLarge'>
                      No Tags Found
                   </Text>
                )}
@@ -83,55 +69,42 @@ const Tags = ({
                      accessibilityHint='press the right icon to remove the tag and press the tag to edit.'
                      mode='outlined'
                      onClose={() => removeTags(tag)}
-                     closeIcon={'window-close'}
+                     closeIcon={() => (
+                        <PaperIconButton
+                           icon={'window-close'}
+                           accessibilityRole='button'
+                           accessibilityLabel={`delete ${tag}`}
+                           hitSlop={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                        />
+                     )}
                      onPress={() => editTags(tag)}
                      style={styles.chips}
                   >
                      {tag}
                   </Chip>
                ))}
-               {/* <Chip
-                  mode='outlined'
-                  icon='plus'
-                  accessibilityRole='button'
-                  accessibilityLabel='Add Tags'
-                  style={[styles.chips]}
-                  onPress={onPressAddTags}
-               >
-                  Add Tags
-               </Chip> */}
             </View>
          </ScrollView>
-
-         {/* {shouldAddTags && ( */}
-         <View
-            aria-hidden
-            style={[
-               styles.inputContainer,
-               // { display: shouldInputDisplay }
-            ]}
-         >
+         <View aria-hidden style={[styles.inputContainer]}>
             <Text variant='titleLarge'>#</Text>
             <TextInput
                autoFocus
-               clearTextOnFocus
                aria-valuemax={60}
                maxLength={60}
                value={tags}
-               onChangeText={(text) => setTags(text)}
-               onBlur={() => setShouldAddTags(false)}
+               blurOnSubmit={false}
+               onChangeText={(text) => {
+                  let newText = text.replace(/[^a-zA-Z0-9]/g, '');
+                  setTags(newText);
+               }}
                onSubmitEditing={tagHandler}
-               style={[
-                  styles.input,
-                  // { display: shouldInputDisplay }
-               ]}
+               style={[styles.input]}
             />
             <IconButton
-               style={[
-                  styles.button,
-                  // { display: shouldInputDisplay }
-               ]}
+               accessibilityLabel='add tag'
+               style={[styles.button]}
                onPress={tagHandler}
+               hitSlop={{ top: 10, bottom: 10, right: 10, left: 10 }}
                renderIcon={() => (
                   <AntDesign name='pluscircleo' size={ICONS.MEDIUM} color={colors.primary} />
                )}
@@ -142,30 +115,30 @@ const Tags = ({
 };
 
 const styles = StyleSheet.create({
-   chipsContainer: {
+   container: {
       marginHorizontal: '5%',
       overflow: 'scroll',
       flex: 1,
+      // height: height * 0.4,
+      backgroundColor: 'grey',
    },
-   chipsWrapper: {
+   chipsContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
    },
-   noTagsFound: {
+   tagsNotFound: {
       width: '100%',
-      // backgroundColor: 'red',
-      marginTop: '20%',
+      marginTop: '25%',
       textAlign: 'center',
       opacity: 0.8,
    },
    chips: {
-      height: 50,
+      height: 45,
       margin: 5,
       borderRadius: 10,
    },
    inputContainer: {
       marginHorizontal: 10,
-      marginBottom: 10,
       flexDirection: 'row',
       alignItems: 'center',
    },
@@ -178,7 +151,8 @@ const styles = StyleSheet.create({
    button: {
       alignItems: 'flex-start',
       position: 'absolute',
-      right: 20,
+      zIndex: 5000,
+      right: 25,
    },
 });
 

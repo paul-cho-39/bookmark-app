@@ -1,7 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, KeyboardAvoidingView, Platform, Appearance } from 'react-native';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
-import { HEADERS } from '../../../constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface NoteLayoutProps {
    colors: MD3Colors;
@@ -28,32 +27,28 @@ const NoteLayout = ({ colors, children }: NoteLayoutProps) => {
       // light mode colors here
       return [];
    };
+
    return (
-      <KeyboardAvoidingView
-         enabled
+      <>
+         {/* enabled
          style={styles.container}
          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
          keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
-      >
+      > */}
          {/* create another one for light mode here -- dark mode only */}
-         <LinearGradient
+         <SafeAreaView
             // colors={getColorsFor()}
             testID='note-layout'
-            colors={[colors.inverseOnSurface, colors.inverseOnSurface]}
             style={styles.container}
          >
             {children}
-         </LinearGradient>
-      </KeyboardAvoidingView>
+         </SafeAreaView>
+      </>
    );
 };
 
-const WIDTH = 0.9;
-const MARGIN_HORIZONTAL = (1 - WIDTH) / 2;
-
 const styles = StyleSheet.create({
    container: {
-      marginTop: 10, // this comes creating custom headers
       flex: 1,
    },
 });

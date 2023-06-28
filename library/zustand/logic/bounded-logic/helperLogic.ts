@@ -1,4 +1,5 @@
-import { NoteDarkColor, NoteLightColor } from '../../../../constants/notes';
+import { DARKEN_BY_DEFAULT, NoteDarkColor, NoteLightColor } from '../../../../constants/notes';
+import darkenColor from '../../../helper/darkenColor';
 import useSettingsStore from '../../settingsStore';
 import useBoundedStore from '../../store';
 import { NoteAttributesType, NoteProps } from '../../types/@types';
@@ -25,7 +26,8 @@ function _getInitialNoteData(createdOn: string) {
          lastEdited: null,
       },
       meta: {
-         bgColor: defaultColor,
+         headerColor: defaultColor,
+         bgColor: darkenColor(defaultColor, DARKEN_BY_DEFAULT),
       },
    };
    return indexObj;

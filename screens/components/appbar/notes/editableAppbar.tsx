@@ -1,33 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle, TextInput } from 'react-native';
-import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
+
 import TitleInput from './titleInput';
-import { width } from '../../../../library/helper';
-import {
-   createNoteParams,
-   setNoteAttributes,
-   setNoteObjWithIndex,
-} from '../../../../library/zustand/logic/bounded-logic';
 import PageInput from './pageInput';
 import NoteDates from './noteDates';
-import { PageParamKeys } from '../../../../constants';
-import useBoundedStore from '../../../../library/zustand/store';
-import { BaseUserLogProps } from '../../../../library/@types/timerData';
-import { convertPage } from '../../../../library/zustand/utils/notes/converter';
 
-interface EditableAppbarProps {
-   params: BaseUserLogProps;
-   colors: MD3Colors;
+import { NoteAppbarParams, PageParamKeys } from '../../../../constants';
+import { width } from '../../../../library/helper';
+import { setNoteAttributes } from '../../../../library/zustand/logic/bounded-logic';
+
+import useBoundedStore from '../../../../library/zustand/store';
+import { convertPage } from '../../../../library/zustand/utils/notes/converter';
+import { shallow } from 'zustand/shallow';
+
+interface EditableAppbarProps extends NoteAppbarParams {
    onBlur: () => void;
    style?: StyleProp<ViewStyle>;
 }
 
 const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) => {
    const { id, logIndex } = params;
-   const [noteAttributes, noteDates] = useBoundedStore((state) => [
-      state.notes[id][logIndex].attr,
-      state.notes[id][logIndex].dates,
-   ]);
+   const [noteAttributes, noteDates] = useBoundedStore(
+      (state) => [state.notes[id][logIndex].attr, state.notes[id][logIndex].dates],
+      shallow
+   );
 
    const { chapter, title, pageFrom, pageTo, isPrivate } = noteAttributes;
    const { start: createdAt, lastEdited } = noteDates;
@@ -69,12 +65,9 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
    };
 
    const setNoteContent = (type: 'chapter' | 'title') => (text: string) => {
-      // console.log('text is:', text);
       const setContents = setNoteAttributes(id, logIndex);
       setContents && setContents(type, text);
    };
-
-   console.log('notes attributes are  : ', pageFrom);
 
    // TODO: the background color should be changed on the basis of notebook color
    // use global state to control this part

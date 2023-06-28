@@ -10,6 +10,8 @@ import html from './webView/quill';
 
 import LinkModal from './webView/linkModal';
 import { SCREEN_HEIGHT, height as HEIGHT } from '../../../library/helper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import useConnectStore from '../../../library/zustand/connectStore';
 
 interface RichTextEditorProps {
    keyboardHeight: number;
@@ -21,6 +23,7 @@ interface RichTextEditorProps {
 // AND THEREFORE THE SCREEN SIZE DIFFERS EVERY TIME
 
 const RichTextEditor = ({ keyboardHeight, colors }: RichTextEditorProps) => {
+   const isAnyNoteModalVisible = useConnectStore((state) => state.modal.note.isModalVisible);
    const [isWebViewLoaded, setIsWebViewLoaded] = useState(false);
    const [visible, setVisible] = useState(false);
 
@@ -71,6 +74,14 @@ const RichTextEditor = ({ keyboardHeight, colors }: RichTextEditorProps) => {
       }, 300);
    };
 
+   function createMessage<T>(type: string, value: T) {
+      return {
+         type: type,
+         value: value,
+      };
+   }
+
+   // MAIN MESSAGE HERE
    const incomingMessage = (event: WebViewMessageEvent) => {
       console.log(event.nativeEvent.data);
       const message = JSON.parse(event.nativeEvent.data);
@@ -104,13 +115,12 @@ const RichTextEditor = ({ keyboardHeight, colors }: RichTextEditorProps) => {
    );
 
    // lazy load? and if it not loaded then use loading indicator(?);
+   // should this be refactored or packaged into a hook(?)
+   // TODO: find a way to speed up the time for this;
    useEffect(() => {
-      const message = {
-         type: 'keyboardHeight',
-         keyboardHeight: keyboardHeight,
-      };
-      sendMessage(message);
-   }, [keyboardHeight]);
+      sendMessage(createMessage('keyboardHeight', keyboardHeight));
+      sendMessage(createMessage('displayToolbar', isAnyNoteModalVisible));
+   }, [keyboardHeight, isAnyNoteModalVisible]);
 
    // if there is no network connection then... and also see the difference b/w
    // android and iOS for implementing changes

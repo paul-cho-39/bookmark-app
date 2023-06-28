@@ -4,6 +4,7 @@ import {
    NoteAppbarParams,
    NoteThemeParamKeys,
    PageParamKeys,
+   NotesHeightParams,
    PublishedNoteType,
 } from './notes';
 
@@ -60,4 +61,12 @@ export const FONT_SIZE = {
    },
 };
 
-export { Mode, PageParamKeys, NoteThemeParamKeys, PublishedNoteType, NoteAppbarParams, CONTENT };
+export {
+   Mode,
+   NotesHeightParams,
+   PageParamKeys,
+   NoteThemeParamKeys,
+   PublishedNoteType,
+   NoteAppbarParams,
+   CONTENT,
+};
