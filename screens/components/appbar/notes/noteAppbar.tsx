@@ -25,7 +25,7 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
    const { logIndex, id } = route.params.params;
    const params = { logIndex, id };
 
-   const bgColor = useBoundedStore((state) => state.notes[id][logIndex].meta?.bgColor);
+   const headerColor = useBoundedStore((state) => state.notes[id][logIndex].meta?.headerColor);
 
    const [mode, setMode] = useState<Mode>(Mode.SMALL);
 
@@ -64,7 +64,7 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
             style={[
                styles.headerContainer,
                headerStyle,
-               { backgroundColor: color },
+               { backgroundColor: headerColor },
                // { backgroundColor: '#2E8B57' },
                // { backgroundColor: colors.elevation.level4 },
             ]}

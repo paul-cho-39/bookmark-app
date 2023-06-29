@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput as NativeInput, Keyboard } from 'react-native';
 import { Text, Button, Chip, TextInput, IconButton as PaperIconButton } from 'react-native-paper';
-import { FONT_SIZE, ICONS, NoteAppbarParams } from '../../../../constants';
+import { FONT_SIZE, ICONS, NoteAppbarParams, NotesHeightParams } from '../../../../constants';
 import IconButton from '../../../../components/buttons/icons/iconButton';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
@@ -40,7 +40,14 @@ const Tags = ({ tagsData, inputHeight, params, colors }: AddTagsProps) => {
       setTags(tag);
    };
 
-   const scrollViewHeight = inputHeight >= 1 ? HEIGHT * 0.325 : HEIGHT * 0.45;
+   const renderNoTags = () => (
+      <Text style={styles.tagsNotFound} variant='bodyLarge'>
+         No Tags Found
+      </Text>
+   );
+
+   const scrollViewHeight =
+      inputHeight >= 1 ? NotesHeightParams.TagsInputScrollView : NotesHeightParams.TagsScrollView;
 
    return (
       <>
@@ -56,29 +63,28 @@ const Tags = ({ tagsData, inputHeight, params, colors }: AddTagsProps) => {
             style={[styles.container, { height: scrollViewHeight }]}
          >
             <View accessibilityRole='list' style={styles.chipsContainer}>
-               {tagsData && tagsData?.length < 1 && (
-                  <Text style={styles.tagsNotFound} variant='bodyLarge'>
-                     No Tags Found
-                  </Text>
-               )}
+               {tagsData && tagsData?.length < 1 && renderNoTags()}
                {tagsData?.map((tag, index) => (
                   <Chip
                      key={index}
+                     testID='tags-chips'
                      accessibilityLabel={`${tag} tag`}
                      accessibilityRole='button'
                      accessibilityHint='press the right icon to remove the tag and press the tag to edit.'
                      mode='outlined'
                      onClose={() => removeTags(tag)}
+                     onPress={() => editTags(tag)}
+                     style={styles.chips}
                      closeIcon={() => (
                         <PaperIconButton
                            icon={'window-close'}
+                           testID='tags-close-icon'
                            accessibilityRole='button'
                            accessibilityLabel={`delete ${tag}`}
-                           hitSlop={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                           style={styles.closeIcon}
+                           hitSlop={{ top: 5, right: 0, bottom: 5, left: 0 }}
                         />
                      )}
-                     onPress={() => editTags(tag)}
-                     style={styles.chips}
                   >
                      {tag}
                   </Chip>
@@ -88,17 +94,18 @@ const Tags = ({ tagsData, inputHeight, params, colors }: AddTagsProps) => {
          <View aria-hidden style={[styles.inputContainer]}>
             <Text variant='titleLarge'>#</Text>
             <TextInput
-               autoFocus
+               autoFocus={inputHeight >= 1}
+               testID='tags-input'
                aria-valuemax={60}
                maxLength={60}
                value={tags}
                blurOnSubmit={false}
+               onSubmitEditing={tagHandler}
+               style={[styles.input]}
                onChangeText={(text) => {
                   let newText = text.replace(/[^a-zA-Z0-9]/g, '');
                   setTags(newText);
                }}
-               onSubmitEditing={tagHandler}
-               style={[styles.input]}
             />
             <IconButton
                accessibilityLabel='add tag'
@@ -120,7 +127,6 @@ const styles = StyleSheet.create({
       overflow: 'scroll',
       flex: 1,
       // height: height * 0.4,
-      backgroundColor: 'grey',
    },
    chipsContainer: {
       flexDirection: 'row',
@@ -153,6 +159,10 @@ const styles = StyleSheet.create({
       position: 'absolute',
       zIndex: 5000,
       right: 25,
+   },
+   closeIcon: {
+      position: 'relative',
+      left: '30%',
    },
 });
 

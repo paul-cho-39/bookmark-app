@@ -31,12 +31,12 @@ const NoteTagHeader = ({ onPressTags, colors }: NoteTagHeaderParams) => {
          <BackButton
             name='arrow-back'
             color={colors.onSurface}
-            size={ICONS.MEDIUM}
+            size={ICONS.LARGE}
             onPress={onPressTags}
-            isHighlighted={true}
+            isHighlighted={false}
             activeOpacity={0.68}
             highlighterColor={colors.primary}
-            style={{ padding: 20 }}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
          />
       </View>
    );

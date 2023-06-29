@@ -9,21 +9,22 @@ import { readAsStringAsync } from 'expo-file-system';
 import html from './webView/quill';
 
 import LinkModal from './webView/linkModal';
-import { SCREEN_HEIGHT, height as HEIGHT } from '../../../library/helper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import useConnectStore from '../../../library/zustand/connectStore';
+import useBoundedStore from '../../../library/zustand/store';
 
 interface RichTextEditorProps {
    keyboardHeight: number;
    colors: MD3Colors;
 }
 
-// THE PROBELM W/ THE KEYBOARD IS THAT THE HEIGHT OF THE DOCUMENT
-// IS NOT THE SAME AS REACT-NATIVE APP SCREEN
-// AND THEREFORE THE SCREEN SIZE DIFFERS EVERY TIME
+// CONSIDER: this is editable Text Editor. If first created this is used
+// if later edited this will be used and it may be the case that zustand will be the main
+// state manager even for data(?);
 
 const RichTextEditor = ({ keyboardHeight, colors }: RichTextEditorProps) => {
    const isAnyNoteModalVisible = useConnectStore((state) => state.modal.note.isModalVisible);
+   // using logIndex and id retrieve the note;
+   // const bgColor = useBoundedStore((state) => state.notes[])
    const [isWebViewLoaded, setIsWebViewLoaded] = useState(false);
    const [visible, setVisible] = useState(false);
 

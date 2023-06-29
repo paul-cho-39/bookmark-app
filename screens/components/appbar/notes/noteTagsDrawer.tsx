@@ -1,53 +1,42 @@
-import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import useGetKeyboardHeight from '../../../../library/hooks/useGetKeyboardHeight';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import NoteTagHeader from './noteTagHeader';
 import Tags from './noteTags';
 import useBoundedStore from '../../../../library/zustand/store';
-import { NoteAppbarParams } from '../../../../constants';
+import { NoteAppbarParams, NotesHeightParams } from '../../../../constants';
 import { Modalize } from 'react-native-modalize';
-import { height } from '../../../../library/helper';
 import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
+import { shallow } from 'zustand/shallow';
 
-interface NoteTagsDrawerProps extends NoteAppbarParams {}
+interface NoteTagsDrawerProps extends NoteAppbarParams {
+   closeModal: () => void;
+}
 
 const NoteTagsDrawer = forwardRef<Modalize, NoteTagsDrawerProps>((props, ref) => {
    const { params, colors } = props;
    const { id, logIndex } = params;
-   const [init, setInit] = useState(false);
-   const tags = useBoundedStore((state) => state.notes[id][logIndex].tags);
+   const [tags, headerColor] = useBoundedStore(
+      (state) => [state.notes[id][logIndex].tags, state.notes[id][logIndex].meta?.headerColor],
+      shallow
+   );
 
-   // have to experiment for better experience with tags
    const keyboardHeight = useGetKeyboardHeight();
-
-   const onHanldeOpened = () => {
-      setNoteModalVisible('opened');
-      setTimeout(() => {
-         setInit(true);
-      }, 200);
-   };
-
-   const onHandleClosed = () => {
-      setNoteModalVisible('closed');
-      setInit(false);
-   };
-
    const tagsContainerBottom = keyboardHeight >= 1 ? keyboardHeight : 5;
-   const modalHeight = init && keyboardHeight >= 1 ? undefined : height * 0.65;
+   const modalHeight = keyboardHeight >= 1 ? undefined : NotesHeightParams.TagsModalHeight;
 
    return (
       <Modalize
          closeOnOverlayTap
-         threshold={50} // tags scroll should be priority
-         dragToss={0.5}
+         threshold={100} // tags scroll should be priority
+         dragToss={0.1}
          avoidKeyboardLikeIOS={true}
-         onOpened={onHanldeOpened}
-         modalHeight={init ? modalHeight : undefined}
+         modalHeight={modalHeight}
          closeAnimationConfig={{ timing: { duration: 50 } }}
-         onClose={onHandleClosed}
          ref={ref}
-         HeaderComponent={<NoteTagHeader onPressTags={() => ref.current.close()} colors={colors} />}
+         modalStyle={{ backgroundColor: headerColor }}
+         HeaderComponent={<NoteTagHeader onPressTags={props.closeModal} colors={colors} />}
          FooterComponent={
             <>
                <View
@@ -97,30 +86,3 @@ const styles = StyleSheet.create({
 });
 
 export default NoteTagsDrawer;
-
-// return (
-//    <BottomDrawer
-//       height={'65%'}
-//       isVisible={isDrawerVisible}
-//       onClose={closeDrawer}
-//       colors={colors}
-//       style={[styles.bottomDrawer]}
-//    >
-//       {/* create another component here */}
-//       <View collapsable accessibilityViewIsModal style={{ ...styles.container }}>
-//          <NoteTagHeader
-//             isInputFocused={isDrawerVisible}
-//             setIsDrawer={setDrawerVisible}
-//             colors={colors}
-//          />
-//          <Tags
-//             tagsData={tags}
-//             params={params}
-//             colors={colors}
-//             keyboardHeight={keyboardHeight}
-//             shouldAddTags={shouldAddTags}
-//             setShouldAddTags={setShouldAddTags}
-//          />
-//       </View>
-//    </BottomDrawer>
-// );

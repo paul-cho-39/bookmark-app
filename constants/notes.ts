@@ -1,6 +1,5 @@
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { BaseUserLogProps } from '../library/@types/timerData';
-import darkenColor from '../library/helper/darkenColor';
 import { height as HEIGHT, height } from '../library/helper';
 
 enum Mode {
@@ -10,6 +9,13 @@ enum Mode {
 enum PageParamKeys {
    FROM = 'pageFrom',
    TO = 'pageTo',
+}
+
+// not being used
+enum NoteHeaderIconTypes {
+   TAGS = 'tags',
+   THEME = 'theme',
+   DELETE = 'delete',
 }
 
 enum NoteThemeParamKeys {
@@ -33,7 +39,7 @@ enum NotesFontSize {
 const DARKEN_BY_DEFAULT = -8;
 
 enum NoteDarkColor {
-   Default = '#E3E2E6',
+   Default = '#1B1B1F',
    SeaGreen = '#2E8B57',
    Chocolate = '#D2691E',
    DarkGoldenrod = '#B8860B',
@@ -62,10 +68,17 @@ const CONTENT = {
    DEFAULT_TITLE: 'Title',
 };
 
+enum NoteMargins {
+   TagHeader = 0.05,
+}
+
+// THIS ONE IS NOT WORKING?
 enum NotesHeightParams {
+   _ScrollView = 0.45,
    QuillEditorHeight = 80,
-   NoteModalHeight = HEIGHT * 0.65,
-   NoteTagsScrollViewHeight = HEIGHT * 0.47,
+   TagsModalHeight = HEIGHT * 0.65,
+   TagsScrollView = HEIGHT * NotesHeightParams._ScrollView,
+   TagsInputScrollView = HEIGHT * (NotesHeightParams._ScrollView - NoteMargins.TagHeader * 2),
 }
 
 interface NoteAppbarParams {
@@ -77,6 +90,7 @@ export {
    Mode,
    PageParamKeys,
    NoteThemeParamKeys,
+   NoteHeaderIconTypes,
    PublishedNoteType,
    NotesFontSize,
    NoteDarkColor,

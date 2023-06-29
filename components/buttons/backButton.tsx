@@ -36,7 +36,6 @@ const BackButton = ({
                onPressOut={() => setPressed(false)}
                accessibilityLabel='back-button'
                accessibilityRole='button'
-               highlighterColor={highlighterColor as string}
                renderIcon={() => (
                   <IonIcons
                      name={name}

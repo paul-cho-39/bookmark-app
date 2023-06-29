@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
 
 import IconButton from '../../../../components/buttons/icons/iconButton';
@@ -10,19 +10,33 @@ import { ICONS, NoteAppbarParams } from '../../../../constants';
 import NoteTheme from './noteTheme';
 import { Modalize } from 'react-native-modalize';
 import { Portal } from 'react-native-paper';
+import { ref } from 'yup';
+import { NoteHeaderIconTypes } from '../../../../constants/notes';
+import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 
 const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
    // so this would be called at SEPARATE BACKBUTTON COMPONENT and WHEREEVER IT IS NEEDED
    const { useRealm, useObject, useQuery } = RealmContext;
-   const [isTagDrawerVisible, setTagDrawerVisible] = useState(false);
-   const [isThemeModalVisible, setThemeModalVisible] = useState(false);
 
    const tagModalRef = useRef<Modalize>(null);
+   const themeModalRef = useRef<Modalize>(null);
 
    useRenderCount('contents');
 
-   const openTagModal = () => {
-      if (tagModalRef && tagModalRef.current) tagModalRef.current.open();
+   const openModal = (ref: React.RefObject<Modalize>) => {
+      Keyboard.dismiss();
+
+      if (ref && ref.current) ref.current.open();
+
+      setNoteModalVisible('opened');
+   };
+
+   const closeTagModal = () => {
+      if (tagModalRef && tagModalRef.current) tagModalRef.current.close();
+
+      setTimeout(() => {
+         setNoteModalVisible('closed');
+      }, 100);
    };
 
    return (
@@ -30,14 +44,15 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
          <View style={styles.iconContainer}>
             {/* add more icons here */}
             <IconButton
-               onPress={openTagModal}
+               onPress={() => openModal(tagModalRef)}
                style={{}}
                renderIcon={() => (
                   <AntDesign name='tagso' color={colors.onSurface} size={ICONS.LARGE} />
                )}
             />
             <IconButton
-               onPress={() => setThemeModalVisible(true)}
+               // onPress={() => setThemeModalVisible(true)}
+               onPress={() => openModal(themeModalRef)}
                style={[]}
                renderIcon={() => (
                   <AntDesign name='appstore-o' color={colors.onSurface} size={ICONS.LARGE} />
@@ -46,14 +61,16 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
          </View>
 
          <Portal>
-            <NoteTagsDrawer ref={tagModalRef} colors={colors} params={params} />
+            <NoteTagsDrawer
+               ref={tagModalRef}
+               colors={colors}
+               params={params}
+               closeModal={closeTagModal}
+            />
          </Portal>
-         <NoteTheme
-            params={params}
-            colors={colors}
-            isVisible={isThemeModalVisible}
-            setIsVisible={setThemeModalVisible}
-         />
+         <Portal>
+            <NoteTheme ref={themeModalRef} params={params} colors={colors} />
+         </Portal>
       </>
    );
 };
@@ -66,4 +83,4 @@ const styles = StyleSheet.create({
    },
 });
 
-export default React.memo(NoteIconContents);
+export default NoteIconContents;

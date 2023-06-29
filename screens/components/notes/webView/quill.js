@@ -1,10 +1,7 @@
-// bottom: 0;
-// top: 0;
-// dark mode to this color
-// background-color: #dcdcdc;
-{
-   /* <a href="https://google.com">Google.com</a> */
-}
+// TODO: for styling
+// 1) when "enter" the format should be turned off; 2) when selection turned on
+// 2) increase the height of the toolbar
+// 3)
 
 const html = `
 <!DOCTYPE html>
@@ -188,7 +185,8 @@ const html = `
       const message = JSON.parse(event.data);
       switch(message.type) {
         case 'keyboardHeight':
-          changeToolbarHeight(message.keyboardHeight, 50);
+          // changeToolbarHeight(message.keyboardHeight, 50);
+          changeToolbarHeight(message.value, 50);
           break;
         case 'theme':
           changeThemeMode(message);

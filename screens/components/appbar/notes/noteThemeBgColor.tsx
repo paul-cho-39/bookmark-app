@@ -14,6 +14,8 @@ const ColorGrid = ({ selected, handleSwitchColor }: ColorGridProps) => {
    const [pressed, setPressed] = useState(false);
    const noteThemeColors = Object.values(NoteLightColor);
 
+   const renderCheckText = () => <Text style={styles.checkmark}>✓</Text>;
+
    return (
       <FlatList
          data={noteThemeColors}
@@ -27,7 +29,7 @@ const ColorGrid = ({ selected, handleSwitchColor }: ColorGridProps) => {
                onPressOut={() => setPressed(false)}
                onPress={() => handleSwitchColor(item)}
             >
-               {item === selected && <Text style={styles.checkmark}>✓</Text>}
+               {item === selected && renderCheckText()}
             </TouchableOpacity>
          )}
       />
@@ -57,8 +59,3 @@ const styles = StyleSheet.create({
 });
 
 export default ColorGrid;
-
-// picking a color(?) - how would I pick a color?
-// if the color is picked then
-// cancel and save button together
-//

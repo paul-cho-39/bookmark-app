@@ -5,6 +5,9 @@ import {
    TouchableNativeFeedbackProps,
    Platform,
    TouchableNativeFeedback,
+   View,
+   StyleProp,
+   ViewStyle,
 } from 'react-native';
 
 export interface IconButtonProps extends TouchableOpacityProps {
@@ -31,28 +34,24 @@ const IconButton: React.FC<IconButtonProps> = ({
    );
 };
 
-// this is for clicking highlighted button
+// HIGHLIGHTED ICON BUTTON same implementation but with highlight color on background
 type TouchableIconButtonProps = {
-   highlighterColor: string;
+   style?: StyleProp<ViewStyle>;
 } & IconButtonProps &
    TouchableNativeFeedbackProps;
 
 export const TouchableIconButton: React.FC<TouchableIconButtonProps> = ({
    renderIcon,
-   backgroundColor,
-   highlighterColor,
    children,
+   style,
    ...rest
 }) => {
-   const Touchable: any = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+   const Touchable: React.ComponentType<TouchableOpacityProps> =
+      Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
    return (
-      <Touchable
-         useForeground={TouchableNativeFeedback.canUseNativeForeground()}
-         style={[{ backgroundColor }, rest.style]}
-         {...rest}
-      >
-         {renderIcon()}
+      <Touchable useForeground={TouchableNativeFeedback.canUseNativeForeground()} {...rest}>
+         <View style={[style]}>{renderIcon()}</View>
       </Touchable>
    );
 };
