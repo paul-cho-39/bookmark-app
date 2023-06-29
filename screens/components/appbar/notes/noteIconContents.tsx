@@ -10,8 +10,6 @@ import { ICONS, NoteAppbarParams } from '../../../../constants';
 import NoteTheme from './noteTheme';
 import { Modalize } from 'react-native-modalize';
 import { Portal } from 'react-native-paper';
-import { ref } from 'yup';
-import { NoteHeaderIconTypes } from '../../../../constants/notes';
 import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 
 const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
@@ -31,8 +29,8 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
       setNoteModalVisible('opened');
    };
 
-   const closeTagModal = () => {
-      if (tagModalRef && tagModalRef.current) tagModalRef.current.close();
+   const closeModal = () => {
+      // if (tagModalRef && tagModalRef.current) tagModalRef.current.close();
 
       setTimeout(() => {
          setNoteModalVisible('closed');
@@ -65,11 +63,16 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
                ref={tagModalRef}
                colors={colors}
                params={params}
-               closeModal={closeTagModal}
+               onCloseModal={closeModal}
             />
          </Portal>
          <Portal>
-            <NoteTheme ref={themeModalRef} params={params} colors={colors} />
+            <NoteTheme
+               ref={themeModalRef}
+               params={params}
+               onCloseModal={closeModal}
+               colors={colors}
+            />
          </Portal>
       </>
    );

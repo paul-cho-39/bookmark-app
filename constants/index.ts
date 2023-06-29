@@ -6,6 +6,7 @@ import {
    PageParamKeys,
    NotesHeightParams,
    PublishedNoteType,
+   NoteModalParams,
 } from './notes';
 
 export const IMAGES = {
@@ -69,4 +70,5 @@ export {
    PublishedNoteType,
    NoteAppbarParams,
    CONTENT,
+   NoteModalParams,
 };

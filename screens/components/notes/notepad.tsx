@@ -1,20 +1,19 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { NoteAppbarParams } from '../../../constants';
 
-interface NotepadProps {
+export interface NotepadProps extends Omit<NoteAppbarParams, 'colors'> {
    keyboardHeight: number;
-   colors: MD3Colors;
-   logIndex: number;
 }
 
 const RichTextEditor = React.lazy(() => import('./richEditor'));
 
-const Notepad = ({ keyboardHeight, colors, logIndex }: NotepadProps) => {
+const Notepad = ({ keyboardHeight, params }: NotepadProps) => {
    return (
       <>
          <Suspense fallback={<Text>Loading Editor...</Text>}>
-            <RichTextEditor colors={colors} keyboardHeight={keyboardHeight} />
+            <RichTextEditor params={params} keyboardHeight={keyboardHeight} />
          </Suspense>
       </>
    );

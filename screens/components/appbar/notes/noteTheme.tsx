@@ -1,11 +1,11 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { SegmentedButtons, Text } from 'react-native-paper';
+import { SegmentedButtons, Text, useTheme } from 'react-native-paper';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import {
    DARKEN_BY_DEFAULT,
-   NoteAppbarParams,
    NoteDarkColor,
    NoteLightColor,
+   NoteModalParams,
 } from '../../../../constants/notes';
 import useBoundedStore from '../../../../library/zustand/store';
 import { setNoteColor } from '../../../../library/zustand/logic/bounded-logic/noteThemeLogic';
@@ -13,23 +13,20 @@ import { Modalize } from 'react-native-modalize';
 import useSettingsStore from '../../../../library/zustand/settingsStore';
 import darkenColor from '../../../../library/helper/darkenColor';
 
-interface NoteThemeProps extends NoteAppbarParams {}
-
 export type NoteColors = NoteLightColor | NoteDarkColor;
 
-const NoteTheme = forwardRef<Modalize, NoteThemeProps>((props, ref) => {
+const NoteTheme = forwardRef<Modalize, NoteModalParams>((props, ref) => {
    const { params, colors } = props;
    const { id, logIndex } = params;
 
+   const theme = useTheme();
    const colorObj = useBoundedStore((state) => state.notes[id][logIndex].meta);
    const isDarkMode = useSettingsStore(
       (state) => state.userPreference.userGeneralSettings.display.isDarkMode
    );
 
    const noteColor = isDarkMode ? NoteDarkColor : NoteLightColor;
-   const noteThemeColors = Object.values(noteColor).map((color) =>
-      darkenColor(color, DARKEN_BY_DEFAULT)
-   );
+   const noteThemeColors = Object.values(noteColor).map((color) => color.toLowerCase());
 
    const [value, setValue] = useState('background');
    const [isPanGestureEnabled, setPanGestureEnabled] = useState(true);
@@ -53,26 +50,46 @@ const NoteTheme = forwardRef<Modalize, NoteThemeProps>((props, ref) => {
       }, 150);
    };
 
-   const renderCheckText = () => <Text style={styles.checkmark}>✓</Text>;
+   const renderCheckText = () => (
+      <Text style={[styles.checkmark, { color: colors.primary }]}>✓</Text>
+   );
 
    const renderTitle = () => (
       <SegmentedButtons
          value={value}
          onValueChange={setValue}
          density='small'
-         style={[styles.segmentedButtons, { backgroundColor: colors.primaryContainer }]}
+         style={[
+            styles.segmentedButtons,
+            // { backgroundColor: colors.primaryContainer }
+         ]}
+         theme={{
+            ...theme,
+            roundness: 5,
+            animation: {
+               defaultAnimationDuration: 100,
+            },
+         }}
          buttons={[
             {
                value: 'background',
                label: 'Background',
-               checkedColor: colors.onPrimaryContainer,
                showSelectedCheck: true,
+               style: [
+                  {
+                     backgroundColor: value === 'background' ? colors.onPrimary : 'transparent',
+                  },
+               ],
             },
             {
                value: 'theme',
                label: 'Theme',
-               checkedColor: colors.onPrimaryContainer,
                showSelectedCheck: true,
+               style: [
+                  {
+                     backgroundColor: value === 'theme' ? colors.onPrimary : 'transparent',
+                  },
+               ],
             },
          ]}
       />
@@ -91,7 +108,7 @@ const NoteTheme = forwardRef<Modalize, NoteThemeProps>((props, ref) => {
                   activeOpacity={0.85}
                   style={[
                      styles.circle,
-                     { backgroundColor: item },
+                     { backgroundColor: darkenColor(item, DARKEN_BY_DEFAULT) },
                      item === colorObj?.bgColor && pressed && styles.pressed,
                   ]}
                   onPressIn={() => handlePanGesture('disable')}
@@ -101,15 +118,12 @@ const NoteTheme = forwardRef<Modalize, NoteThemeProps>((props, ref) => {
                   }}
                   onPress={() => handleSwitchColor(item)}
                >
-                  <Text>{item}</Text>
-                  {item === colorObj?.bgColor && renderCheckText()}
+                  {darkenColor(item, DARKEN_BY_DEFAULT) === colorObj?.bgColor && renderCheckText()}
                </TouchableOpacity>
             </TouchableOpacity>
          )}
       </>
    );
-
-   console.log('the new color is: ', colorObj?.bgColor);
 
    return (
       <Modalize
@@ -120,6 +134,7 @@ const NoteTheme = forwardRef<Modalize, NoteThemeProps>((props, ref) => {
          withHandle={false}
          ref={ref}
          modalHeight={300}
+         onClosed={props.onCloseModal}
          HeaderComponent={renderTitle()}
          modalStyle={{ backgroundColor: colorObj?.headerColor }}
          flatListProps={{
@@ -150,13 +165,14 @@ const styles = StyleSheet.create({
       height: 45,
    },
    segmentedButtons: {
-      width: '75%',
+      borderColor: 'transparent',
+      marginVertical: 30,
    },
 
    // checking?
    circle: {
-      width: 50,
-      height: 50,
+      width: 65,
+      height: 65,
       borderRadius: 50, // half of your width and height
       margin: 10,
       justifyContent: 'center',
@@ -170,40 +186,8 @@ const styles = StyleSheet.create({
       borderWidth: 1,
    },
    checkmark: {
-      color: 'black', // adjust color as needed
       fontSize: 24, // adjust size as needed
    },
 });
 
 export default NoteTheme;
-
-// <AnimatedModal
-//    title={
-//       <SegmentedButtons
-//          value={value}
-//          onValueChange={setValue}
-//          density='small'
-//          style={{ width: '75%' }}
-//          buttons={[
-//             {
-//                value: 'background',
-//                label: 'Background',
-//                showSelectedCheck: true,
-//             },
-//             {
-//                value: 'theme',
-//                label: 'Theme',
-//                showSelectedCheck: true,
-//             },
-//          ]}
-//       />
-//    }
-//    displayDivider={false}
-//    visible={isVisible}
-//    setVisible={setIsVisible}
-//    animationType='fade'
-//    containerStyle={styles.container}
-//    titleStyle={styles.title}
-// >
-//    <View accessibilityElementsHidden>{value === 'background' && <ColorGrid selected={bgColor}/>}</View>
-// </AnimatedModal>

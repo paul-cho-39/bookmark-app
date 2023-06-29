@@ -15,15 +15,13 @@ interface AddNotesProp {}
 const Notes = ({ navigation, route }: NotesNavigationProp) => {
    const { colors } = useTheme();
    const keyboardHeight = useGetKeyboardHeight();
-   const { logIndex } = route.params.params;
-
-   // testing here
-   const [id, noteObj] = useBoundedStore((state) => [state.notes.id, state.notes]);
+   const { logIndex, id } = route.params.params;
+   const params = { id, logIndex };
 
    return (
       <NoteLayout colors={colors}>
          {/* <ParentComponent /> */}
-         <Notepad colors={colors} keyboardHeight={keyboardHeight} logIndex={logIndex} />
+         <Notepad keyboardHeight={keyboardHeight} params={params} />
       </NoteLayout>
    );
 };

@@ -86,6 +86,10 @@ interface NoteAppbarParams {
    colors: MD3Colors;
 }
 
+interface NoteModalParams extends NoteAppbarParams {
+   onCloseModal: () => void;
+}
+
 export {
    Mode,
    PageParamKeys,
@@ -99,4 +103,5 @@ export {
    CONTENT,
    DARKEN_BY_DEFAULT,
    NotesHeightParams,
+   NoteModalParams,
 };

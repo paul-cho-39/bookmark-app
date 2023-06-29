@@ -5,16 +5,12 @@ import { StyleSheet, View } from 'react-native';
 import NoteTagHeader from './noteTagHeader';
 import Tags from './noteTags';
 import useBoundedStore from '../../../../library/zustand/store';
-import { NoteAppbarParams, NotesHeightParams } from '../../../../constants';
+import { NoteModalParams, NotesHeightParams } from '../../../../constants';
 import { Modalize } from 'react-native-modalize';
 import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 import { shallow } from 'zustand/shallow';
 
-interface NoteTagsDrawerProps extends NoteAppbarParams {
-   closeModal: () => void;
-}
-
-const NoteTagsDrawer = forwardRef<Modalize, NoteTagsDrawerProps>((props, ref) => {
+const NoteTagsDrawer = forwardRef<Modalize, NoteModalParams>((props, ref) => {
    const { params, colors } = props;
    const { id, logIndex } = params;
    const [tags, headerColor] = useBoundedStore(
@@ -35,8 +31,9 @@ const NoteTagsDrawer = forwardRef<Modalize, NoteTagsDrawerProps>((props, ref) =>
          modalHeight={modalHeight}
          closeAnimationConfig={{ timing: { duration: 50 } }}
          ref={ref}
+         onClosed={props.onCloseModal}
          modalStyle={{ backgroundColor: headerColor }}
-         HeaderComponent={<NoteTagHeader onPressTags={props.closeModal} colors={colors} />}
+         HeaderComponent={<NoteTagHeader onPressTags={props.onCloseModal} colors={colors} />}
          FooterComponent={
             <>
                <View

@@ -189,7 +189,7 @@ const html = `
           changeToolbarHeight(message.value, 50);
           break;
         case 'theme':
-          changeThemeMode(message);
+          changeThemeMode(message.value);
           break;
         case 'link':
           addLink(message.url);
@@ -259,18 +259,16 @@ const html = `
     }
 
     var changeThemeMode = function(message){
-      const { theme, bgColor } = message;
+      const { isDarkMode, bgColor } = message;
       const editorContainer = document.querySelector('.ql-container');
-      const colorToggler = document.getElementById("ql-color-toggler");
-      if (theme === "dark") {
+      const toolbar = _getToolbar();
+      if (isDarkMode) {
         editorContainer.classList.add('dark-mode');
-        colorToggler.value = "yellow";
-        editorContainer.style.color = "white"
+        editorContainer.style.color = "white";
       } else {
         // Disable dark mode
         editorContainer.classList.remove('dark-mode');
-        colorToggler.value = "green";
-        editorContainer.style.color = "black"
+        editorContainer.style.color = "black";
       }
       // Set background color
       document.body.style.backgroundColor = bgColor;
