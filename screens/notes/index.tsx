@@ -1,32 +1,24 @@
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { Text, TextInput, useTheme } from 'react-native-paper';
 import NoteLayout from '../components/notes/noteLayout';
-import { height as HEIGHT, width as WIDTH } from '../../library/helper';
 import useGetKeyboardHeight from '../../library/hooks/useGetKeyboardHeight';
-import { useFocusEffect } from '@react-navigation/native';
-import useBoundedStore from '../../library/zustand/store';
+
 import { NotesNavigationProp } from '../../library/@types/navigation';
 import Notepad from '../components/notes/notepad';
-import { useEffect } from 'react';
 // when the modal is being loaded have to show the sign
 
 interface AddNotesProp {}
 
 const Notes = ({ navigation, route }: NotesNavigationProp) => {
-   const { colors } = useTheme();
    const keyboardHeight = useGetKeyboardHeight();
    const { logIndex, id } = route.params.params;
    const params = { id, logIndex };
 
    return (
-      <NoteLayout colors={colors}>
-         {/* <ParentComponent /> */}
+      <NoteLayout>
          <Notepad keyboardHeight={keyboardHeight} params={params} />
       </NoteLayout>
    );
 };
 
-const styles = StyleSheet.create({});
 // get the height of the header && the height of the keyboard and also the sides(?);
 
 export default Notes;

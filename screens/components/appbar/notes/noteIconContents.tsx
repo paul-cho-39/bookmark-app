@@ -12,14 +12,14 @@ import { Modalize } from 'react-native-modalize';
 import { Portal } from 'react-native-paper';
 import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 
-const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
+const NoteIconContents = ({ params, colors, style }: NoteAppbarParams) => {
    // so this would be called at SEPARATE BACKBUTTON COMPONENT and WHEREEVER IT IS NEEDED
    const { useRealm, useObject, useQuery } = RealmContext;
 
    const tagModalRef = useRef<Modalize>(null);
    const themeModalRef = useRef<Modalize>(null);
 
-   useRenderCount('contents');
+   // useRenderCount('CONTENTS');
 
    const openModal = (ref: React.RefObject<Modalize>) => {
       Keyboard.dismiss();
@@ -30,8 +30,6 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
    };
 
    const closeModal = () => {
-      // if (tagModalRef && tagModalRef.current) tagModalRef.current.close();
-
       setTimeout(() => {
          setNoteModalVisible('closed');
       }, 100);
@@ -39,7 +37,7 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
 
    return (
       <>
-         <View style={styles.iconContainer}>
+         <View style={[styles.iconContainer, style]}>
             {/* add more icons here */}
             <IconButton
                onPress={() => openModal(tagModalRef)}
@@ -80,9 +78,9 @@ const NoteIconContents = ({ params, colors }: NoteAppbarParams) => {
 
 const styles = StyleSheet.create({
    iconContainer: {
-      width: '50%', // width should be subtracted from the title
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
+      // width: '50%', // width should be subtracted from the title
+      // flexDirection: 'row',
+      // justifyContent: 'space-evenly',
    },
 });
 

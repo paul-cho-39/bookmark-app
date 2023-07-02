@@ -1,7 +1,7 @@
 // TODO: for styling
 // 1) when "enter" the format should be turned off; 2) when selection turned on
 // 2) increase the height of the toolbar
-// 3)
+// 3) if (darkMode) it should load faster
 
 const html = `
 <!DOCTYPE html>
@@ -15,35 +15,36 @@ const html = `
   <style>
       body {
         background-color: white;
-        margin: 0 0 0 0;
-        padding: 1 1 1 1;
+        margin: 0 1 0 1;
         height: 100vh;
+        overflow: hidden; 
       }
       #editor {
-        height: 100%;
-        width: 100%;
+        height: auto;
+        min-height: 150px;
         border-width: 0;
-        overflow-y: auto;
+        overflow-y: visible;
       }
       #toolbar  {
         position: absolute;
-        overflow-x: hidden;
+        overflow-x: scroll;
         width: 100%;
-        border-left-width: 0;
-        border-right-width: 0;
-        border-bottom-width: 0;
-        background-color: transparent;
+        border-width: 0 0 0;
+        border-top: 1.3px solid;
+        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+        background-color: grey;
+        z-index: 5000;
       }
       .toolbar___container {
-        display: flex; 
+        display: none; 
         align-items: stretch; 
         justify-content: space-evenly;
       }
       .ql-container {
-        font-size: 16px;
+        font-size: 18px;
       }
       .dark-mode.ql-container {
-        font-size: 16px;
+        font-size: 18px;
         color: white !important;
       }
       .custom-icon {
@@ -106,7 +107,6 @@ const html = `
     let _isReady = false;
     let _lastKnownRange = null;
     let _tempDelta = null;
-    let _urlInput;
 
     var quill = new Quill('#editor', {
         theme: 'snow',
@@ -170,9 +170,14 @@ const html = `
       return JSON.stringify({ type: type, option })
     }
 
-    var _getToolbar = function() {
+    var _getDocument = function(id) {
+      return document.getElementById(id);
+    }
+
+    var _getToolbar = function(id) {
       return document.getElementById("toolbar");
     }
+
 
     document.addEventListener('DOMContentLoaded', function() {
       const message = _stringifyMessage('ready', true);
@@ -185,14 +190,13 @@ const html = `
       const message = JSON.parse(event.data);
       switch(message.type) {
         case 'keyboardHeight':
-          // changeToolbarHeight(message.keyboardHeight, 50);
           changeToolbarHeight(message.value, 50);
           break;
         case 'theme':
           changeThemeMode(message.value);
           break;
         case 'link':
-          addLink(message.url);
+          addLink(message.value);
           break;
         case 'pressed':
           _sendMessage(_stringifyMessage('noteData', _tempDelta))
@@ -207,10 +211,10 @@ const html = `
 
     var toggleToolbar = function(shouldHide) {
       const toolbar = _getToolbar();
-      if (shouldHide) {
+      if (shouldHide.visible) {
         toolbar.style.display = 'none';      
       }
-      if (!shouldHide) {
+      if (!shouldHide.visible) {
         toolbar.style.display = 'flex'
       }
     }
@@ -230,8 +234,11 @@ const html = `
 
 
     var changeToolbarHeight = function(height, offsetHeight=30) {
-      const toolbar = document.getElementById("toolbar");
-      const editor = document.getElementById("editor");
+      // const toolbar = _getToolbar();
+      // const editor = document.getElementById("editor");
+
+      const toolbar = _getDocument('toolbar');
+      const editor = _getDocument('editor');
       const _absoluteHeight = document.body.scrollHeight;
       let initialHeight;
 
@@ -262,6 +269,13 @@ const html = `
       const { isDarkMode, bgColor } = message;
       const editorContainer = document.querySelector('.ql-container');
       const toolbar = _getToolbar();
+      
+      if (_isReady && message.displayEditor) {
+        setTimeout(() => {
+          toolbar.style.display = "flex";
+        }, 350);
+      }
+
       if (isDarkMode) {
         editorContainer.classList.add('dark-mode');
         editorContainer.style.color = "white";
@@ -428,83 +442,3 @@ const html = `
 `;
 
 export default html;
-
-// // class Highlighter extends Inline {
-// //   static create(value) {
-// //     let node = super.create();
-// //     node.style.color = value;
-// //     return node;
-// //   }
-
-// //   static formats(node) {
-// //     return node.style.color;
-// //   }
-
-// //   format(name, value) {
-// //     if (name === 'highlighter' && value) {
-// //       this.domNode.style.color = value;
-// //     } else {
-// //       super.format(name, value);
-// //     }
-// //   }
-// // }
-
-// // Highlighter.blotName = 'highlighter';
-// // Highlighter.tagName = 'span';
-
-// // // <------------------- register ------------------->
-// Quill.register(Highlighter);
-// Quill.register(Quote);
-
-// let _clicksCount = 0;
-// let highlightButton = document.getElementById('highlight-button');
-
-// highlightButton.addEventListener('click', function() {
-//   let normal = '#000000';
-//   let highlighter = '#e3963e';
-//   var range = quill.getSelection();
-//   if (range) {
-//     if (range.length == 0) {
-//       var format = quill.getFormat(range.index);
-//       let rgbColor = format.highlighter;
-//       let color = rgbColor && rgbToHex(rgbColor);
-//       if (!rgbColor) {
-//         quill.format('highlighter', highlighter);
-//       }
-//       if (color && color === highlighter) {
-//         quill.format('highlighter', normal);
-//         // forceClick();
-//       } else {
-//         quill.format('highlighter', highlighter);
-//         // forceClick();
-//       }
-//     }
-//   }
-
-//   function forceClick() {
-//     if (_clicksCount === 0) {
-//       _clicksCount++;
-//       highlightButton.click();
-//     } else {
-//       _clicksCount = 0;  // reset the count
-//     }
-//   }
-
-//   function rgbToHex(rgb) {
-//     let sep = rgb.indexOf(",") > -1 ? "," : " ";
-//     rgb = rgb.substr(4).split(")")[0].split(sep);
-
-//     let r = (+rgb[0]).toString(16),
-//         g = (+rgb[1]).toString(16),
-//         b = (+rgb[2]).toString(16);
-
-//     if (r.length == 1)
-//         r = "0" + r;
-//     if (g.length == 1)
-//         g = "0" + g;
-//     if (b.length == 1)
-//         b = "0" + b;
-
-//     return "#" + r + g + b;
-//   }
-// });

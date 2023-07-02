@@ -1,6 +1,7 @@
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { BaseUserLogProps } from '../library/@types/timerData';
 import { height as HEIGHT, height } from '../library/helper';
+import { StyleProp, ViewStyle } from 'react-native';
 
 enum Mode {
    SMALL = 'small',
@@ -84,6 +85,7 @@ enum NotesHeightParams {
 interface NoteAppbarParams {
    params: Omit<BaseUserLogProps, 'uid'>;
    colors: MD3Colors;
+   style?: StyleProp<ViewStyle>;
 }
 
 interface NoteModalParams extends NoteAppbarParams {

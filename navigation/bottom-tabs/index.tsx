@@ -3,8 +3,9 @@ import LibraryScreen from '../../screens/library/index';
 import StatsScreen from '../../screens/stats/index';
 import IonIcons from '@expo/vector-icons/Ionicons';
 import { TabsParamList } from '../../library/@types/navigation';
-import HomeNavigation from '../home/homeScreen';
+import HomeNavigation from '../home/mainHome';
 import { useTheme } from 'react-native-paper';
+import LibraryNavigation from '../library/mainLibrary';
 
 const Tabs = createBottomTabNavigator<TabsParamList>();
 const BottomTabs = () => {
@@ -34,7 +35,7 @@ const BottomTabs = () => {
          />
          <Tabs.Screen
             name='Library'
-            component={LibraryScreen}
+            component={LibraryNavigation}
             options={{
                tabBarIcon: ({ focused, color, size }) => (
                   <IonIcons

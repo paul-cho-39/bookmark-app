@@ -8,7 +8,7 @@ import { width as WIDTH, height as HEIGHT } from '../../../../library/helper';
 type OmittedTypes = 'title' | 'cocontainerStyle' | 'visible' | 'setVisible';
 
 interface LinkModal extends Omit<ModalProps, OmittedTypes> {
-   sendMessage: (mesage: Record<string, unknown>) => void | undefined;
+   sendMessage: (type: string, value: unknown) => void | undefined;
    injectJS: (script: string) => void | undefined;
    visible: boolean;
    setVisible: (visible: boolean) => void;
@@ -22,8 +22,7 @@ const LinkModal = ({ visible, setVisible, sendMessage, injectJS, ...props }: Lin
    const addUrl = () => {
       if (!domain) return;
       if (domain) {
-         const url = { type: 'link', url: domain };
-         sendMessage(url);
+         sendMessage('link', domain);
          // set visible to refocus on webView
          setVisible(false);
       }

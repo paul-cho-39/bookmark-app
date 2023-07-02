@@ -83,14 +83,22 @@ const setStopModalVisible = (value: boolean) => {
    if (!value) {
       resumeTimer();
    }
-   _setModalVisibility('timer', 'isStopTimeVisible', value);
+   _setModalVisibility('timer', 'isStopTimeVisible');
 };
 
-const setNoteModalVisible = (type: 'opened' | 'closed') => {
-   const isAlreadyVisible = useConnectStore.getState().modal.note.isModalVisible;
-   type === 'opened'
-      ? !isAlreadyVisible && _setModalVisibility('note', 'isModalVisible', true)
-      : isAlreadyVisible && _setModalVisibility('note', 'isModalVisible', false);
+const setNoteModalVisible = (type: 'opened' | 'closed', accessKeyboard?: boolean) => {
+   const modalState =
+      type === 'opened'
+         ? {
+              visible: true,
+              dismissKeyboard: typeof accessKeyboard === 'undefined' ? true : accessKeyboard,
+           }
+         : { visible: false, dismissKeyboard: false };
+   useConnectStore.setState(
+      produce((draft: ConnectorStoreProps) => {
+         draft.modal.note.isModalVisible = modalState;
+      })
+   );
 };
 
 export {

@@ -17,8 +17,6 @@ import { setUserTimeZone } from './library/zustand/logic/timer-store-logic';
 
 import * as Localization from 'expo-localization';
 import RealmContext from './library/realm/';
-import Realm from 'realm';
-import { RealmConfig } from './library/realm/schema';
 import useNetworkStatus from './library/hooks/useNetworkStatus';
 
 const queryClient = new QueryClient({
@@ -101,3 +99,4 @@ function App() {
 }
 
 export default Platform.OS === 'android' ? gestureHandlerRootHOC(App) : App;
+// export default gestureHandlerRootHOC(App);

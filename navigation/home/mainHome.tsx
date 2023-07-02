@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { HomeParam } from '../../library/@types/navigation';
+import { HomeParamsList } from '../../library/@types/navigation';
 import HomeScreen from '../../screens/home';
 import SearchBar from '../../screens/components/appbar/search/searchbar';
 
@@ -8,7 +8,7 @@ import SearchScreen from '../../screens/search';
 import BackButton from '../../components/buttons/backButton';
 import { useTheme } from 'react-native-paper';
 
-const HomeStack = createNativeStackNavigator<HomeParam>();
+const HomeStack = createNativeStackNavigator<HomeParamsList>();
 
 const HomeNavigation = () => {
    const { colors } = useTheme();

@@ -31,10 +31,11 @@ const initialState: ConnectorStoreProps = {
          isStopTimeVisible: false,
       },
       note: {
-         isModalVisible: false,
-         isAddNoteVisible: false,
-         isAddTagsVisible: false,
          isUploadNotesVisible: false,
+         isModalVisible: {
+            visible: false,
+            dismissKeyboard: false,
+         },
       },
    },
 };

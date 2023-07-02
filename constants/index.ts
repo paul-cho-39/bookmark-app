@@ -16,10 +16,10 @@ export const IMAGES = {
    SEARCH_IMAGE_WIDTH: 70,
 };
 
-export const HEADERS = {
-   DEFAULT: 56,
-   EDITABLE: 205,
-};
+export enum HEADERS {
+   DEFAULT = 56,
+   EDITABLE = 205,
+}
 
 export const ICONS = {
    EXTRA_SMALL: 12,

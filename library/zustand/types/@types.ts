@@ -35,10 +35,11 @@ export interface ConnectorStoreProps {
          isStopTimeVisible: boolean;
       };
       note: {
-         isModalVisible: boolean;
-         isAddNoteVisible: boolean;
-         isAddTagsVisible: boolean;
          isUploadNotesVisible: boolean;
+         isModalVisible: {
+            visible: boolean;
+            dismissKeyboard: boolean;
+         };
       };
    };
 }

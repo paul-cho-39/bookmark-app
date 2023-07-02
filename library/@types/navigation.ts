@@ -17,8 +17,8 @@ type MainNavigator = {
 };
 
 type TabsParamList = {
-   Home: NavigatorScreenParams<HomeParam>;
-   Library: undefined;
+   Home: NavigatorScreenParams<HomeParamsList>;
+   Library: NavigatorScreenParams<LibraryParamsList>;
    Stats: undefined;
 };
 
@@ -35,12 +35,16 @@ type LoginParamsList = {
    PasswordRecovery: undefined;
 };
 
-type HomeParam = {
+type HomeParamsList = {
    Main: undefined;
    Search: undefined;
    AddBook: { uid: string; library: Library; bookInfo: BasicBookInfo };
    Goals: { uid: string };
    LogLists: { uid: string };
+};
+
+type LibraryParamsList = {
+   MainLibrary: undefined;
 };
 
 // Login navigation props
@@ -51,15 +55,16 @@ type LoginProps = NativeStackScreenProps<LoginParamsList, 'Login'>;
 
 // Home props
 // this can and likely and will be likely to change by wrapping w/ "Composite"
-type AddBookRouteProps = RouteProp<HomeParam, 'AddBook'>;
-type AddBookNavigationProp = NativeStackScreenProps<HomeParam, 'AddBook'>;
+type AddBookRouteProps = RouteProp<HomeParamsList, 'AddBook'>;
+type AddBookNavigationProp = NativeStackScreenProps<HomeParamsList, 'AddBook'>;
 type AddBookScreenProps = {
    navigation: AddBookNavigationProp['navigation'];
    route: AddBookRouteProps;
 };
-type MainHomeProps = NativeStackScreenProps<HomeParam, 'Main'>;
+type MainHomeProps = NativeStackScreenProps<HomeParamsList, 'Main'>;
+type LibraryProps = NativeStackScreenProps<LibraryParamsList, 'MainLibrary'>;
 // Home - Search
-type SearchProps = NativeStackScreenProps<HomeParam, 'Search'>;
+type SearchProps = NativeStackScreenProps<HomeParamsList, 'Search'>;
 type BookScreenNavigationProp = CompositeScreenProps<SearchProps, AddBookNavigationProp>;
 
 // Timer props
@@ -82,10 +87,7 @@ export type {
    RecoveryProps,
    MainHomeProps,
    SearchProps,
-   LoginParamsList,
    BookScreenNavigationProp,
-   HomeParam,
-   TimerParamsList,
    AddBookNavigationProp,
    AddBookScreenProps,
    TimerScreenRouteProps,
@@ -93,4 +95,9 @@ export type {
    MainTimerNavigationProp,
    MainNavigatorTimerNavgiationProp,
    NotesNavigationProp,
+   LibraryProps,
+   LoginParamsList,
+   LibraryParamsList,
+   HomeParamsList,
+   TimerParamsList,
 };

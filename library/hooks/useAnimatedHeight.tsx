@@ -4,15 +4,13 @@ import Animated, {
    useAnimatedStyle,
    withTiming,
    interpolate,
-   withSpring,
 } from 'react-native-reanimated';
-import { Mode } from '../../screens/components/appbar/notes/noteAppbar';
 import { useEffect } from 'react';
-import { HEADERS } from '../../constants';
+import { HEADERS, Mode } from '../../constants';
 
-// TODO: change NAME!
 function useAnimatedHeight<T extends Mode>(value: T) {
    const modeAnim = useSharedValue(value === 'small' ? 0 : 1);
+
    useEffect(() => {
       modeAnim.value = withTiming(value === 'small' ? 0 : 1, {
          duration: 200,

@@ -44,15 +44,15 @@ const _setModalVisibility = <T extends keyof ParentModalType, K extends ChildMod
 };
 
 // kind of middleware behavior where all the logic is applied to all notes
-const _setNoteVisibility = (property: keyof ParentModalType['note'], value: boolean) => {
-   const timer = useBoundedStore.getState().timer;
-   if (timer && value) {
-      pauseTimer();
-   }
-   if (timer && !value) {
-      resumeTimer();
-   }
-   _setModalVisibility('note', property, value);
-};
+// const _setNoteVisibility = (property: keyof ParentModalType['note'], value: boolean) => {
+//    const timer = useBoundedStore.getState().timer;
+//    if (timer && value) {
+//       pauseTimer();
+//    }
+//    if (timer && !value) {
+//       resumeTimer();
+//    }
+//    _setModalVisibility('note', property, value);
+// };
 
 export { _setModalVisibility };

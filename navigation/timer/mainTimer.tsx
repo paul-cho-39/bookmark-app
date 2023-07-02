@@ -38,6 +38,9 @@ const TimerStack = () => {
                title: 'Timer',
                headerShown: true,
                headerTitleAlign: 'center',
+               animation: 'simple_push',
+               animationTypeForReplace: 'pop',
+               animationDuration: 350,
                headerRight: ({ ...rest }) => (
                   <TimerHeaderIcons
                      colors={colors}
@@ -53,6 +56,8 @@ const TimerStack = () => {
             options={{
                headerTitle: 'Timer Settings',
                contentStyle: { paddingHorizontal: 10 },
+               animation: 'none',
+               gestureEnabled: false,
             }}
          />
          {/* :TODO write "SAVE" button */}
@@ -60,9 +65,11 @@ const TimerStack = () => {
             name='Notes'
             component={Notes}
             options={({ navigation, route }) => ({
-               animation: 'fade',
+               animation: 'simple_push',
+               animationTypeForReplace: 'push',
+               animationDuration: 350,
                navigationBarHidden: false,
-               contentStyle: { backgroundColor: colors.surface, marginHorizontal: 0 },
+               contentStyle: { backgroundColor: colors.surface },
                header: (props) => (
                   <NoteAppbar colors={colors} navigation={navigation} route={route} />
                ),

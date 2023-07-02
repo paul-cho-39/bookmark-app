@@ -28,7 +28,7 @@ const NoteTheme = forwardRef<Modalize, NoteModalParams>((props, ref) => {
    const noteColor = isDarkMode ? NoteDarkColor : NoteLightColor;
    const noteThemeColors = Object.values(noteColor).map((color) => color.toLowerCase());
 
-   const [value, setValue] = useState('background');
+   const [value, setValue] = useState('background'); // segmentedButton values
    const [isPanGestureEnabled, setPanGestureEnabled] = useState(true);
    const [pressed, setPressed] = useState(false);
 
@@ -173,16 +173,15 @@ const styles = StyleSheet.create({
    circle: {
       width: 65,
       height: 65,
-      borderRadius: 50, // half of your width and height
+      borderRadius: 50,
       margin: 10,
       justifyContent: 'center',
       alignItems: 'center',
    },
    pressed: {
-      width: 55,
-      height: 55,
+      width: 67,
+      height: 67,
       borderRadius: 50,
-      borderColor: 'grey', // change as needed
       borderWidth: 1,
    },
    checkmark: {
