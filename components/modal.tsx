@@ -6,7 +6,6 @@ import {
    ViewStyle,
    LayoutChangeEvent,
    StyleSheet,
-   ViewProps,
    TextStyle,
    AccessibilityInfo,
 } from 'react-native';
@@ -43,7 +42,8 @@ const CustomModal = ({
    children,
    containerStyle,
 }: ModalProps) => {
-   const { colors } = useTheme();
+   const theme = useTheme();
+   const { colors } = theme;
    const backgroundColor = !color ? colors.surface : color;
    const [_modalLayout, setModalLayout] = useState({ height: 0, width: 0 });
    const { style: scaleStyle, eventHandlers, isPressedIn } = useTouchResize(0.8);
@@ -85,6 +85,14 @@ const CustomModal = ({
                visible={visible}
                onDismiss={hideModal}
                contentContainerStyle={[containerStyle, { backgroundColor: backgroundColor }]}
+               theme={{
+                  ...theme,
+                  colors: {
+                     ...colors,
+                     background: 'none',
+                     surface: 'none',
+                  },
+               }}
             >
                <View style={[styles.titleContainer]}>
                   {headerLeft}

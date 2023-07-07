@@ -31,7 +31,7 @@ const PageInput = ({ params, setPage, style, ...props }: PageInputProps) => {
    }
 
    const value = convertToString(page);
-   const label = keys === PageParamKeys.TO ? 'To: ' : 'From: ';
+   const label = keys === 'pageTo' ? 'To: ' : 'From: ';
 
    return (
       <View style={[style, styles.container]}>

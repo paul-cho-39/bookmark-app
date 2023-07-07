@@ -1,5 +1,4 @@
-const useAdjustHiddenStyle = (ref: any, widthOffset: number) => {
-   const WIDTH = 4;
+const useAdjustHiddenStyle = (ref: any, width: number = 4, widthOffset: number = 2.5) => {
    const dispatchStyling = {
       _setStyle: (style: Record<string, string | number>) => {
          if (ref && ref.current) {
@@ -7,10 +6,10 @@ const useAdjustHiddenStyle = (ref: any, widthOffset: number) => {
          }
       },
       activated: () => {
-         dispatchStyling._setStyle({ width: `${WIDTH + widthOffset}%` });
+         dispatchStyling._setStyle({ width: `${width + widthOffset}%` });
       },
       cancelled: () => {
-         dispatchStyling._setStyle({ width: `${WIDTH}%` });
+         dispatchStyling._setStyle({ width: `${width}%` });
       },
    };
 

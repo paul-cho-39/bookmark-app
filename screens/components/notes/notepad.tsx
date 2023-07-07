@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, GestureResponderEvent, TextInput } from 'react-native';
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { NoteAppbarParams } from '../../../constants';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import useSwipeToGoBackGesture from '../../../library/hooks/useSwipeToGoBackGesture';
-import { runOnJS, useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
-import { width } from '../../../library/helper';
+import useAdjustHiddenStyle from '../../../library/hooks/useAdjustHiddenStyle';
+import WebView from 'react-native-webview';
+import { useFocusEffect } from '@react-navigation/native';
 
 export interface NotepadProps extends Omit<NoteAppbarParams, 'colors'> {
    keyboardHeight: number;
@@ -13,84 +12,53 @@ export interface NotepadProps extends Omit<NoteAppbarParams, 'colors'> {
 const RichTextEditor = React.lazy(() => import('./richEditor'));
 
 const Notepad = ({ keyboardHeight, params }: NotepadProps) => {
-   const [enabler, setEnabler] = useState(false);
-   const active = useSharedValue(false);
+   const webViewRef = useRef<WebView>(null);
+   const textInputRef = useRef<TextInput>(null);
+   const viewRef = useRef<View>(null);
 
-   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-   const handleEnd = (duration: number) => {
-      timerRef.current = setTimeout(() => {
-         active.value = false;
-      }, duration);
+   const messengers = {
+      sendMessage: (type: string, value: unknown) =>
+         webViewRef.current?.postMessage(JSON.stringify({ type, value })),
+      injectJS: (script: string) => webViewRef.current?.injectJavaScript(script),
+      // MOVE THIS LOGIC INSIDE RICH EDITOR
+      toggleQuillInput: (type: 'blur' | 'focus') => {
+         type === 'focus'
+            ? messengers.injectJS('document.querySelector("#editor .ql-editor").focus();')
+            : messengers.injectJS('document.querySelector("#editor .ql-editor").blur();');
+      },
    };
 
-   useEffect(() => {
-      return () => {
-         // Clear the timer when the component unmounts
-         if (timerRef.current) {
-            clearTimeout(timerRef.current);
-         }
-      };
-   }, [timerRef.current]);
+   // PASS THIS TO RICH TEXT EDITOR
+   const initiateQuill = () => {
+      setTimeout(() => {
+         webViewRef.current?.requestFocus();
+         messengers.toggleQuillInput('focus');
+      }, 100);
+   };
 
-   const gesture = Gesture.Pan()
-      .activeOffsetX(5)
-      .onStart((event) => {
-         if (event.absoluteX <= 40 || event.absoluteX >= width - 40) {
-            active.value = true;
-         }
-      })
-      .onEnd((event) => {
-         if (event.state === 5) {
-            // active.value = false;
-            runOnJS(handleEnd)(300);
-         }
-         console.log('ENDED / CANCELLED?');
-      })
-      .onTouchesCancelled(() => {
-         console.log('CANCELLED');
-         runOnJS(handleEnd)(1500);
-      });
-
-   // const touch = Gesture.Tap()
-   //    .enabled(enabler)
-   //    .numberOfTaps(2)
-   //    .onStart(() => {
-   //       console.log('turned on');
-   //       active.value = true;
-   //    })
-   //    .onEnd(() => {
-   //       console.log('ENDED**********');
-   //       active.value = false;
-   //    });
-
-   // useAnimatedReaction(
-   //    () => active.value,
-   //    (isActive) => {
-   //       if (isActive) {
-   //          console.log('-----TURNING OFF---------');
-   //          runOnJS(_sendMessage)('editorToggler', true);
-   //       } else {
-   //          console.log('TURNON!');
-   //          runOnJS(_sendMessage)('editorToggler', false);
-
-   //          // Send message to WebView to enable Quill
-   //       }
-   //    },
-   //    [active.value]
-   // );
+   // MOVE THIS LOGIC INSIDE RICHTEXTEDITOR
+   useFocusEffect(
+      useCallback(() => {
+         console.log('#1): FOCUSING');
+         initiateQuill();
+      }, [])
+   );
 
    return (
-      <View style={styles.container}>
+      <View style={[styles.container]}>
          <Suspense fallback={<Text>Loading Editor...</Text>}>
+            {/* TODO: what would be good for notes for loading? */}
             <RichTextEditor
+               ref={webViewRef}
                params={params}
                keyboardHeight={keyboardHeight}
-               onTouchStart={}
-               onTouchEnd={}
-               onTouchCancel={}
+               messengers={messengers}
+               style={styles.webview}
             />
          </Suspense>
+         <View ref={viewRef} style={[styles.hiddenView, styles.left]} />
+         <View ref={viewRef} style={[styles.hiddenView, styles.right]} />
+         <TextInput autoFocus ref={textInputRef} style={styles.hiddenInput} />
       </View>
    );
 };
@@ -99,6 +67,71 @@ const styles = StyleSheet.create({
    container: {
       flex: 1,
    },
+   webview: {
+      flex: 0,
+      position: 'absolute',
+      height: '100%',
+      width: '100%',
+      zIndex: 1,
+   },
+   hiddenView: {
+      height: '100%',
+      width: '4%',
+      position: 'absolute',
+      zIndex: 0,
+   },
+   hiddenInput: {
+      height: 0,
+      position: 'absolute',
+      top: -100,
+      left: 0,
+      opacity: 0,
+   },
+   left: {
+      left: 0,
+      backgroundColor: 'transparent',
+   },
+   right: {
+      right: 0,
+      backgroundColor: 'transparent',
+   },
 });
 
 export default Notepad;
+
+// might not even need this:
+// // may have to pass this as a prop;
+// const handleTouchStart = (event: GestureResponderEvent) => {
+//    if (event.nativeEvent.pageX < 20) {
+//       console.log('handled');
+//       setActive({
+//          ...active,
+//          status: true,
+//       });
+//       dispatchStyling.activated();
+//    }
+
+//    if (keyboardHeight <= 0) {
+//       webViewRef.current?.requestFocus();
+//       messengers.toggleQuillInput('focus');
+//    }
+// };
+
+// const hanldeTouchEnd = (event: GestureResponderEvent) => {
+//    if (!active.status) return;
+//    if (active.status && !active.cancelled) {
+//       dispatchStyling.cancelled();
+
+//       console.log('CANCELLED');
+//       setActive({
+//          ...active,
+//          status: false,
+//       });
+//    }
+// };
+
+// const handleCancelled = () => {
+//    if (active.status) {
+//       dispatchStyling.activated();
+//    }
+// };

@@ -7,14 +7,13 @@ import { width as WIDTH, height as HEIGHT } from '../../../../library/helper';
 
 type OmittedTypes = 'title' | 'cocontainerStyle' | 'visible' | 'setVisible';
 
-interface LinkModal extends Omit<ModalProps, OmittedTypes> {
+export interface ModalEditorType extends Omit<ModalProps, OmittedTypes> {
    sendMessage: (type: string, value: unknown) => void | undefined;
-   injectJS: (script: string) => void | undefined;
    visible: boolean;
    setVisible: (visible: boolean) => void;
 }
 
-const LinkModal = ({ visible, setVisible, sendMessage, injectJS, ...props }: LinkModal) => {
+const LinkModal = ({ visible, setVisible, sendMessage, ...props }: ModalEditorType) => {
    // provide logic for sending the input from here
    const [domain, setDomain] = useState('');
    const inputRef = useRef<InputRef | null>(null);
@@ -41,8 +40,8 @@ const LinkModal = ({ visible, setVisible, sendMessage, injectJS, ...props }: Lin
          visible={visible}
          setVisible={setVisible}
          title='Add a link'
-         containerStyle={styles.modalContainer}
          displayDivider={false}
+         containerStyle={styles.modalContainer}
          titleStyle={styles.modalTitle}
          {...props}
       >

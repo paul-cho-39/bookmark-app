@@ -13,7 +13,7 @@ const EdiableContentsWrapper = (props: EdiableContentsWrapper) => {
    const { id, logIndex } = props.params;
 
    const title = useBoundedStore((state) => state.notes[id][logIndex].attr.title);
-   if (mode === Mode.SMALL) {
+   if (mode === 'small') {
       return (
          <Text variant='titleLarge' style={{ paddingHorizontal: 45 }} onPress={handleTitlePress}>
             {!title ? CONTENT.DEFAULT_TITLE : title}

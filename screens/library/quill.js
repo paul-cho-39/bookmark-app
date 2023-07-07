@@ -179,3 +179,6 @@ const quillHtml = `
 `;
 
 export default quillHtml;
+
+// should not be onClick but rather if it is activated
+// without 'clicking' is there a better way for this?

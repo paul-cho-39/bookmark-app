@@ -1,37 +1,38 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-   TextInput,
-   StyleSheet,
-   View,
-   Platform,
-   Linking,
-   Keyboard,
-   BackHandler,
-} from 'react-native';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
+import { Platform, Linking, Keyboard, BackHandler } from 'react-native';
 import { WebView, WebViewProps } from 'react-native-webview';
 import { WebViewEvent, WebViewMessageEvent } from 'react-native-webview/lib/WebViewTypes';
-import { useFocusEffect } from '@react-navigation/native';
 
 import html from './webView/quill';
 
-import LinkModal from './webView/linkModal';
 import useConnectStore from '../../../library/zustand/connectStore';
 import useBoundedStore from '../../../library/zustand/store';
 import { NotepadProps } from './notepad';
 import useSettingsStore from '../../../library/zustand/settingsStore';
-import { SharedValue, runOnJS, useAnimatedReaction } from 'react-native-reanimated';
+import useModalManager from '../../../library/hooks/useModalManager';
+import ModalManager from './webView/modalManager';
 
 // CONSIDER: this is editable Text Editor. If first created this is used
 // if later edited this will be used and it may be the case that zustand will be the main
 // state manager even for data(?);
 
-// interface RichTextEditorProps extends NotepadProps {
-//    active: SharedValue<boolean>;
-// }
+type Messengers = {
+   sendMessage: <T>(type: string, value: T) => void | undefined;
+   injectJS: (script: string) => void | undefined;
+   toggleQuillInput: (type: 'blur' | 'focus') => void;
+};
 
-type RichTextEditorProps = NotepadProps & WebViewProps;
+type RichTextEditorProps = {
+   messengers: Messengers;
+} & NotepadProps &
+   WebViewProps;
 
-const RichTextEditor = ({ params, keyboardHeight, ...props }: RichTextEditorProps) => {
+type MessageKeyWithBody = 'modal' | 'link';
+type MessageKeyWithoutBody = 'ready';
+
+const RichTextEditor = forwardRef<WebView, RichTextEditorProps>((props, ref) => {
+   const { params, keyboardHeight, messengers, ...rest } = props;
+   const { sendMessage, injectJS, toggleQuillInput } = messengers;
    const isDarkMode = useSettingsStore(
       (state) => state.userPreference.userGeneralSettings.display.isDarkMode
    );
@@ -41,100 +42,77 @@ const RichTextEditor = ({ params, keyboardHeight, ...props }: RichTextEditorProp
    );
 
    const isAndroid = Platform.OS === 'android';
-   const [isWebViewLoaded, setIsWebViewLoaded] = useState(false);
-   const [isLinkModalVisible, setLinkModalVisible] = useState(false);
+   const [_isWebViewLoaded, setIsWebViewLoaded] = useState(false);
 
-   const webviewRef = useRef<WebView>(null);
-   const hiddenInputRef = useRef<TextInput | null>(null);
+   const { modals, modalIncomingMessageHandlers } = useModalManager(isDarkMode);
 
-   // ----- helper function -----
-   const _sendMessage = (type: string, value: unknown) =>
-      webviewRef.current?.postMessage(JSON.stringify({ type, value }));
-
-   const injectJS = (script: string) => webviewRef.current?.injectJavaScript(script);
-
-   const foucusHiddenInput = () => {
-      console.log('input is being focused');
-      hiddenInputRef.current && hiddenInputRef.current?.focus();
+   const messageHandlersWithBody: Record<
+      MessageKeyWithBody,
+      (message: Record<string, any>) => void
+   > = {
+      modal: (message) => {
+         const modalHandler = modalIncomingMessageHandlers[message.body?.name as string];
+         if (modalHandler && message.body?.selected) {
+            modalHandler(message.body?.selected);
+         } else modalHandler();
+      },
+      link: (message) => {
+         if (message.body && message?.body) Linking.openURL(message.body.url as string);
+      },
    };
 
-   const toggleQuillInput = (type: 'blur' | 'focus') => {
-      type === 'focus'
-         ? injectJS('document.querySelector("#editor .ql-editor").focus();')
-         : injectJS('document.querySelector("#editor .ql-editor").blur();');
-   };
-
-   const initiateQuill = () => {
-      foucusHiddenInput();
-      console.log('FOCUSING ON QUILL');
-      setTimeout(() => {
-         webviewRef.current?.requestFocus();
+   const messageHandlersWithoutBody: Record<MessageKeyWithoutBody, () => void> = {
+      ready: () => {
+         const body = {
+            isDarkMode: isDarkMode,
+            bgColor: bgColor,
+            displayEditor: true,
+         };
+         sendMessage('theme', body);
          toggleQuillInput('focus');
-      }, 100);
+      },
    };
 
    // MAIN MESSAGE HERE
-
    const incomingMessage = (event: WebViewMessageEvent) => {
-      // console.log(event.nativeEvent.data);
       const message = JSON.parse(event.nativeEvent.data);
-      switch (message.type) {
-         case 'ready':
-            const body = {
-               isDarkMode: isDarkMode,
-               bgColor: bgColor,
-               displayEditor: true,
-            };
-            _sendMessage('theme', body);
-            initiateQuill();
-            break;
-         case 'link':
-            Linking.openURL(message.option);
-            break;
-         case 'modal':
-            setLinkModalVisible(true);
-            break;
-         default:
-            break;
+
+      const handlerWithoutBody = messageHandlersWithoutBody[message.type as MessageKeyWithoutBody];
+      if (handlerWithoutBody) {
+         handlerWithoutBody();
+         return;
       }
+
+      const handlerWithBody = messageHandlersWithBody[message.type as MessageKeyWithBody];
+      if (handlerWithBody && message.body) {
+         handlerWithBody(message);
+         return;
+      }
+
+      console.warn('Unhandled message type:', message.type);
    };
 
-   useFocusEffect(
-      useCallback(() => {
-         if (!isLinkModalVisible) {
-            foucusHiddenInput();
-            initiateQuill();
-         }
-      }, [isLinkModalVisible])
-   );
+   // change this logic when all modal is added;
+   // move this logic to modalManager;
+   // useEffect(() => {
+   //    if (!isLinkModalVisible) setFocus();
+   // }, [isLinkModalVisible]);
 
-   // lazy load? and if it not loaded then use loading indicator(?);
-   // should this be refactored or packaged into a hook(?)
-   // TODO: find a way to speed up the time for this;
    useEffect(() => {
       if (
          isAnyNoteModalVisible.visible &&
          isAnyNoteModalVisible.dismissKeyboard &&
          Keyboard.isVisible()
       ) {
-         Keyboard.dismiss();
          toggleQuillInput('blur');
       }
 
-      _sendMessage('displayToolbar', isAnyNoteModalVisible);
-      _sendMessage('theme', { isDarkMode, bgColor });
+      sendMessage('displayToolbar', isAnyNoteModalVisible);
+      sendMessage('theme', { isDarkMode, bgColor });
    }, [isAnyNoteModalVisible, bgColor]);
 
    useEffect(() => {
-      if (keyboardHeight <= 0) {
-         // _sendMessage('editorToggler', true);
-         console.log('1) KEYBOARD VISIBLE ---------------');
-      }
-      if (keyboardHeight > 0) {
-         // setEnabler(false);
-      }
-
-      _sendMessage('keyboardHeight', keyboardHeight);
+      sendMessage('keyboardHeight', keyboardHeight);
    }, [keyboardHeight]);
 
    // ---------------------TESTING-------------------------
@@ -146,17 +124,20 @@ const RichTextEditor = ({ params, keyboardHeight, ...props }: RichTextEditorProp
    if (isAndroid) {
       return (
          <>
-            <TextInput ref={hiddenInputRef} style={styles.hiddenInput} />
             <WebView
-               ref={webviewRef}
+               ref={ref}
+               scalesPageToFit
+               scrollEnabled={false}
+               allowFileAccess={true}
                originWhitelist={['*']}
                javaScriptEnabled={true}
                domStorageEnabled={true}
                source={{ html }}
-               allowFileAccess={true}
                allowUniversalAccessFromFileURLs={true}
                onMessage={incomingMessage}
-               onLoad={() => setIsWebViewLoaded(true)}
+               onLoad={() => {
+                  setIsWebViewLoaded(true);
+               }}
                onShouldStartLoadWithRequest={(request) => {
                   const url = JSON.parse(request.url);
                   if (request.url !== html) {
@@ -165,15 +146,13 @@ const RichTextEditor = ({ params, keyboardHeight, ...props }: RichTextEditorProp
                   }
                   return true;
                }}
-               style={[styles.webview]}
-               {...props}
+               {...rest}
             />
-            {/* TODO: set this in another component(?) */}
-            <LinkModal
-               visible={isLinkModalVisible}
-               setVisible={setLinkModalVisible}
-               sendMessage={_sendMessage}
-               injectJS={injectJS}
+            <ModalManager
+               modals={modals}
+               sendMessage={sendMessage}
+               keyboardHeight={keyboardHeight}
+               isDarkMode={isDarkMode}
             />
          </>
       );
@@ -185,7 +164,7 @@ const RichTextEditor = ({ params, keyboardHeight, ...props }: RichTextEditorProp
             scalesPageToFit
             scrollEnabled={false}
             testID='enhanced-editor'
-            ref={webviewRef}
+            ref={ref}
             source={{ html }}
             javaScriptEnabled={true}
             onMessage={incomingMessage}
@@ -195,27 +174,9 @@ const RichTextEditor = ({ params, keyboardHeight, ...props }: RichTextEditorProp
                const { nativeEvent } = syntheticEvent;
                console.log('WebView error: ', nativeEvent);
             }}
-            style={[styles.webview, { backgroundColor: bgColor }]}
          />
       </>
    );
-};
-
-const styles = StyleSheet.create({
-   webview: {
-      flex: 0,
-      position: 'absolute',
-      height: '100%',
-      width: '100%',
-      zIndex: 1,
-   },
-   hiddenInput: {
-      height: 0,
-      position: 'absolute',
-      top: -100,
-      left: 0,
-      opacity: 0,
-   },
 });
 
 export default RichTextEditor;

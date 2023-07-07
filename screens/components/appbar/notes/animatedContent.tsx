@@ -17,13 +17,13 @@ interface AnimatedContentProps extends NoteAppbarParams {
 }
 
 const AnimatedContent = ({ colors, goBack, params, style }: AnimatedContentProps) => {
-   const [mode, setMode] = useState<Mode>(Mode.SMALL);
+   const [mode, setMode] = useState<Mode>('small');
    const { headerStyle, titleStyle } = useAnimatedHeight(mode);
 
    const toggleOrGoBack = () => {
-      if (mode === Mode.LARGE) {
+      if (mode === 'large') {
          setNoteModalVisible('closed', false);
-         setMode(Mode.SMALL);
+         setMode('small');
          return true;
       }
       return false;
@@ -33,7 +33,7 @@ const AnimatedContent = ({ colors, goBack, params, style }: AnimatedContentProps
       const isOpened = toggleOrGoBack();
       if (!isOpened) {
          setNoteModalVisible('opened', false);
-         setMode(Mode.LARGE);
+         setMode('large');
       }
    };
 

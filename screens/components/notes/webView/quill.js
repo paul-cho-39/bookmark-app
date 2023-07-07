@@ -21,7 +21,7 @@ const html = `
       }
       #editor {
         height: auto;
-        min-height: 150px;
+        // min-height: 150px;
         border-width: 0;
         overflow-y: visible;
       }
@@ -32,7 +32,7 @@ const html = `
         border-width: 0 0 0;
         border-top: 1.3px solid;
         box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
-        background-color: grey;
+        background-color: white;
         z-index: 5000;
       }
       .toolbar___container {
@@ -48,10 +48,14 @@ const html = `
         color: white !important;
       }
       .custom-icon {
-        width: 17px;
-        height: 17px;
+        width: 24px;
+        height: 100%;
         background-size: contain;
         background-repeat: no-repeat;
+      }
+      .ql-snow.ql-toolbar button {
+        width: 24px;
+        height: 30px;
       }
       .headers-indicator {
         text-align: center;
@@ -61,6 +65,47 @@ const html = `
         font-weight: bold;
         color: #06c;
       }
+
+    // BUTTONS FOR USUALLY WHEN CLICKING EXCEPT WORD-CHANGE
+    // LEFT OUT "ql-picker" should be used for picking colors
+      // .ql-snow.ql-toolbar button:focus .ql-fill,
+      // .ql-snow .ql-toolbar button:focus .ql-fill,
+      // .ql-snow.ql-toolbar button.ql-active .ql-fill,
+      // .ql-snow .ql-toolbar button.ql-active .ql-fill,
+      // .ql-snow.ql-toolbar button:focus .ql-stroke.ql-fill,
+      // .ql-snow .ql-toolbar button:focus .ql-stroke.ql-fill,
+      // .ql-snow.ql-toolbar button.ql-active .ql-stroke.ql-fill,
+      // .ql-snow .ql-toolbar button.ql-active .ql-stroke.ql-fill,
+      //   fill: red;
+      // }
+      // .ql-snow.ql-toolbar button:focus .ql-stroke,
+      // .ql-snow .ql-toolbar button:focus .ql-stroke,
+      // .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+      // .ql-snow .ql-toolbar button.ql-active .ql-stroke,
+      // .ql-snow.ql-toolbar button:focus .ql-stroke-miter,
+      // .ql-snow .ql-toolbar button:focus .ql-stroke-miter,
+      // .ql-snow.ql-toolbar button.ql-active .ql-stroke-miter,
+      // .ql-snow .ql-toolbar button.ql-active .ql-stroke-miter,
+      //   stroke: red;
+      // }
+
+      // // WHENEVER IT IS NOT ACTIVE/HOVERED/FOCUSED
+      // .ql-snow .ql-stroke {
+      //   fill: none;
+      //   stroke: #5b5b5b;
+      //   stroke-width: 1.5;
+      // }
+      // .ql-snow .ql-stroke-miter {
+      //   fill: none;
+      //   stroke: #5b5b5b;
+      //   stroke-miterlimit: 6
+      //   stroke-width: 1;
+      // }
+      // .ql-snow .ql-fill,
+      // .ql-snow .ql-stroke.ql-fill {
+      //   fill: #5b5b5b;
+      // }
+
 
   </style>
 </head>
@@ -77,7 +122,8 @@ const html = `
         <button class="ql-list" value='ordered'></button>
         <button class="ql-list" value='bullet'></button>
         <button class="ql-indent" value="+1"></button>
-        <button class='ql-color' value='orange'></button>
+        <button class='custom__color' id='custom-color'>C</button>
+        <button class='custom__color' id='custom-bg-color'>H</button>
         <button class="ql-blockquote"></button>
         <button id="reference-button">
           <img class="custom-icon" src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iNDgiPjxwYXRoIGQ9Ik04MjAtODB2LTgwMGg2MHY4MDBoLTYwWk0zMjAtMjkwdi0xMDBoNDAwdjEwMEgzMjBaTTgwLTU3MHYtMTAwaDY0MHYxMDBIODBaIi8+PC9zdmc+') alt="reference" />
@@ -107,6 +153,7 @@ const html = `
     let _isReady = false;
     let _lastKnownRange = null;
     let _tempDelta = null;
+    let _isModalVisible = false;
 
     var quill = new Quill('#editor', {
         theme: 'snow',
@@ -126,8 +173,10 @@ const html = `
                   if (formats['align'] === 'right' ) {
                     this.quill.format('align', false);
                   }
-                  if (formats['blockquote']) {
-                    this.quill.format('blockquote', false);
+                  // this is a workaround from quill TEST whether there is a bug
+                  if (formats['color'] || formats['background']) {
+                    const currentColor = formats.color;
+                    this.quill.insertText(context.offset, '', color, currentColor);
                   }
                   return true;
                 }
@@ -152,7 +201,7 @@ const html = `
                     this.quill.deleteText(textIndex, reference.length);
                     this.quill.format('align', false);
                   }
-
+                  
                   return true;
                 }
               }
@@ -162,12 +211,11 @@ const html = `
         placeholder: 'Notes...',
     });
 
-    var _sendMessage = function(message) {
+    var _sendMessage = function(type, body = null) {
+      const message = body
+          ? JSON.stringify({ type, body })
+          : JSON.stringify({ type });
       window.ReactNativeWebView.postMessage(message);
-    }
-
-    var _stringifyMessage = function(type, option) {
-      return JSON.stringify({ type: type, option })
     }
 
     var _getDocument = function(id) {
@@ -178,11 +226,8 @@ const html = `
       return document.getElementById("toolbar");
     }
 
-
     document.addEventListener('DOMContentLoaded', function() {
-      const message = _stringifyMessage('ready', true);
-      _sendMessage(message);
-
+      _sendMessage('ready');
       _isReady = true
     });
 
@@ -198,19 +243,33 @@ const html = `
         case 'link':
           addLink(message.value);
           break;
-        case 'pressed':
-          _sendMessage(_stringifyMessage('noteData', _tempDelta))
-          break;
         case 'displayToolbar':
           toggleToolbar(message.value);
           break;
+        case 'textColor': 
+          changeTextColor(message.value);
+          break;
+        // case 'pressed':
+        //   _sendMessage('noteData', _tempDelta);
+        //   break;
         default:
           break;
        }
     });
 
+    var changeTextColor = function(data) {
+      const { color, colorType } = data;
+      var range = quill.getSelection();
+      if (range.length > 0) {
+        quill.formatText(range.index, range.length, colorType, color);
+      } else {
+        // quill.insertText(range.index, '', colorType, color);
+        quill.format(colorType, color);
+      }
+    }
+
     var toggleToolbar = function(shouldHide) {
-      const toolbar = _getToolbar();
+      const toolbar = _getDocument('toolbar');
       if (shouldHide.visible) {
         toolbar.style.display = 'none';      
       }
@@ -234,9 +293,6 @@ const html = `
 
 
     var changeToolbarHeight = function(height, offsetHeight=30) {
-      // const toolbar = _getToolbar();
-      // const editor = document.getElementById("editor");
-
       const toolbar = _getDocument('toolbar');
       const editor = _getDocument('editor');
       const _absoluteHeight = document.body.scrollHeight;
@@ -268,7 +324,7 @@ const html = `
     var changeThemeMode = function(message){
       const { isDarkMode, bgColor } = message;
       const editorContainer = document.querySelector('.ql-container');
-      const toolbar = _getToolbar();
+      const toolbar = _getDocument('toolbar');
       
       if (_isReady && message.displayEditor) {
         setTimeout(() => {
@@ -293,8 +349,8 @@ const html = `
       link.target = '_self';
       link.addEventListener('click', function(event) {
         event.preventDefault(); 
-        const postMessage = _stringifyMessage("link", event.target.href)
-        _sendMessage(postMessage);
+        const body = { "url": event.target.href };
+        _sendMessage("link", body);
       });
     });
 
@@ -304,8 +360,9 @@ const html = `
 
 // TODO: check the condition and this is likely usable so find a better means to maintain code
   quill.on('text-change', function(delta, oldDelta, source) {
-    if (source === 'user') {
-      changeDelta = delta;
+    if (_isModalVisible) {
+      _sendMessage('modal', { name: "toggleModals" })
+      _isModalVisible = false;
     }
   }); 
 
@@ -359,6 +416,8 @@ const html = `
   let undoButton = document.getElementById('undo-button');
   let redoButton = document.getElementById('redo-button');
   let customLink = document.getElementById('custom-link');
+  let customColor = document.getElementById('custom-color');
+  let customBgTextColor = document.getElementById('custom-bg-color');
 
   quoteButton.addEventListener('click', function() {
     let range = quill.getSelection();
@@ -396,27 +455,33 @@ const html = `
 
     let subset = this.querySelector('.headers-indicator');
 
-    if (format.header === 1) {
-      quill.format('header', 2);
-      subset.textContent = 2;
-    } else if (format.header === 2) {
-      quill.format('header', false);
-      subset.textContent = null;
-      changeIcon(false);
-    } else {
-      quill.format('header', 1);
-      subset.textContent = 1;
-      changeIcon(true);
-    }
-
-    function changeIcon(isActive) {
-      const icon = document.getElementById("headers-button-icon");
-      if (isActive) {
-        icon.setAttribute("src", activeSrc);
+    function setFormatAndIcon(format) {
+      let header, isActive;
+  
+      if (format.header === 2) {
+          header = 3;
+          isActive = true;
+      } else if (format.header === 3) {
+          header = false;
+          isActive = false;
       } else {
-        icon.setAttribute("src", inactiveSrc);
+          header = 2;
+          isActive = true;
       }
-    }
+  
+      quill.format('header', header);
+      subset.textContent = header || null;
+      changeIcon(isActive);
+  }
+  
+  // Change the icon based on whether it's active
+  function changeIcon(isActive) {
+      const icon = document.getElementById("headers-button-icon");
+      icon.setAttribute("src", isActive ? ICONS.active : ICONS.inactive);
+  }
+  
+  // Call the setFormatAndIcon function
+  setFormatAndIcon(quill.getFormat());
   });
 
   customLink.addEventListener('click', function() {
@@ -424,8 +489,9 @@ const html = `
     if (range) {
       _lastKnownRange = range; 
     };
-    const postMessage = _stringifyMessage("modal")
-    _sendMessage(postMessage);
+    const body = { name: 'linkModal' };
+    _sendMessage("modal", body);
+    // _sendMessage("linkModal");
   });
 
   undoButton.addEventListener('click', function () {
@@ -434,6 +500,37 @@ const html = `
   
   redoButton.addEventListener('click', function () {
     quill.history.redo();
+  });
+
+// <------------------- modal logic ------------------->
+  function handleColorOnClick(colorType) {
+    let selectedColor;
+    const modalName = colorType === 'color' ? 'colorModal' : 'textBackgroundModal';
+
+    if (_isModalVisible) _sendMessage('modal', { name: "toggleModals" });
+
+    var range = quill.getSelection();
+    if (range) {
+      const formats = quill.getFormat(range);
+      if (typeof formats[colorType] === 'undefined') {
+        selectedColor = "none";
+      } else {
+        selectedColor = formats[colorType];
+      }
+    }
+    quill.focus();
+    _isModalVisible = true;
+
+    const body = { name: modalName, selected: selectedColor }
+    _sendMessage('modal', body );
+  };
+
+  customColor.addEventListener('click', function() {
+    handleColorOnClick('color');
+  });
+
+  customBgTextColor.addEventListener('click', function() {
+    handleColorOnClick('background');
   });
 
   </script>

@@ -3,31 +3,30 @@ import { BaseUserLogProps } from '../library/@types/timerData';
 import { height as HEIGHT, height } from '../library/helper';
 import { StyleProp, ViewStyle } from 'react-native';
 
-enum Mode {
-   SMALL = 'small',
-   LARGE = 'large',
-}
-enum PageParamKeys {
-   FROM = 'pageFrom',
-   TO = 'pageTo',
-}
+const DARKEN_BY_DEFAULT = -8;
+
+const ModeEnum = {
+   small: 'small',
+   large: 'large',
+} as const;
+type Mode = (typeof ModeEnum)[keyof typeof ModeEnum];
+
+const PageParamKeysEnum = {
+   from: 'pageFrom',
+   to: 'pageTo',
+} as const;
+type PageParamKeys = (typeof PageParamKeysEnum)[keyof typeof PageParamKeysEnum];
 
 // not being used
-enum NoteHeaderIconTypes {
-   TAGS = 'tags',
-   THEME = 'theme',
-   DELETE = 'delete',
-}
+const NoteHeaderIconEnum = {
+   tags: 'tags',
+   theme: 'theme',
+   delete: 'delete',
+} as const;
+type NoteHeaderIconTypes = (typeof NoteHeaderIconEnum)[keyof typeof NoteHeaderIconEnum];
 
-enum NoteThemeParamKeys {
-   BACKGROUND = 'background',
-   THEME = 'theme',
-}
-
-enum PublishedNoteType {
-   PUBLIC = 'PUBLIC NOTE',
-   PRIVATE = 'PRIVATE NOTE',
-}
+type NoteThemeParamKeys = 'background' | 'theme';
+type PublishedNoteType = 'PUBLIC NOTE' | 'PRIVATE NOTE';
 
 enum NotesFontSize {
    ExtraSmall = 10,
@@ -37,18 +36,16 @@ enum NotesFontSize {
    ExtraLarge = 24,
 }
 
-const DARKEN_BY_DEFAULT = -8;
-
 enum NoteDarkColor {
    Default = '#1B1B1F',
-   SeaGreen = '#2E8B57',
-   Chocolate = '#D2691E',
-   DarkGoldenrod = '#B8860B',
-   DarkViolet = '#9400D3',
-   Indigo = '#4B0082',
-   DarkRed = '#8B0000',
-   Firebrick = '#B22222',
-   MediumPurple = '#9370DB',
+   SeaGreen = '#2E8B57', // O
+   Chocolate = '#D2691E', // O
+   DarkGoldenrod = '#B8860B', // O
+   DarkViolet = '#9400D3', // A
+   Indigo = '#4B0082', // A
+   DarkRed = '#8B0000', // A
+   Firebrick = '#B22222', // C
+   MediumPurple = '#9370DB', // A
 }
 
 enum NoteLightColor {
@@ -63,8 +60,20 @@ enum NoteLightColor {
    PinkLace = '#FFDDF4',
 }
 
-// IF IT IS POSSIBLE SHOULD TRY TO TEST OUT AND CREATE ENUM FOR DARKENING COLOR
+let TextColorEnum = {
+   default: '#000000',
+   blue: '#0000FF',
+   green: '#008000',
+   red: '#FF0000',
+   darkRed: '#8b0000',
+   purple: '#800080',
+   orange: '#FFA500',
+   darkBlue: '#00008B',
+   lightBlue: '#ADD8E6',
+   teal: '#008080',
+} as const;
 
+// IF IT IS POSSIBLE SHOULD TRY TO TEST OUT AND CREATE ENUM FOR DARKENING COLOR
 const CONTENT = {
    DEFAULT_TITLE: 'Title',
 };
@@ -92,6 +101,36 @@ interface NoteModalParams extends NoteAppbarParams {
    onCloseModal: () => void;
 }
 
+// ---------- MODALS --------------
+type ModalName = 'url' | 'textColor' | 'textBgColor';
+interface ModalStateType {
+   name: ModalName;
+   isVisible: boolean;
+   shouldFocusAfter: boolean;
+   modalData: string | null | undefined;
+}
+
+const INITIAL_MODAL_STATE: ModalStateType[] = [
+   {
+      name: 'url',
+      isVisible: false,
+      shouldFocusAfter: true,
+      modalData: null,
+   },
+   {
+      name: 'textColor',
+      isVisible: false,
+      shouldFocusAfter: true,
+      modalData: null,
+   },
+   {
+      name: 'textBgColor',
+      isVisible: false,
+      shouldFocusAfter: true,
+      modalData: null,
+   },
+];
+
 export {
    Mode,
    PageParamKeys,
@@ -104,6 +143,10 @@ export {
    NoteAppbarParams,
    CONTENT,
    DARKEN_BY_DEFAULT,
+   INITIAL_MODAL_STATE,
    NotesHeightParams,
    NoteModalParams,
+   TextColorEnum,
+   ModalName,
+   ModalStateType,
 };

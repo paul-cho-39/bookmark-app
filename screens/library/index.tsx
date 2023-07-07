@@ -128,7 +128,7 @@ export const MainLibraryScreen = () => {
             onTouchMove={handleTouchStart}
             onTouchEnd={hanldeTouchEnd}
             onTouchCancel={handleCancelled}
-            onLoadStart={() => 'load started'}
+            onLoadStart={(event) => console.log('load started')}
             onMessage={(event) => {
                // Handle the message here
                const messageData = JSON.parse(event.nativeEvent.data);

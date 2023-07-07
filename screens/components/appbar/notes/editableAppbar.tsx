@@ -51,11 +51,11 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
    const getParams = (key: 'from' | 'to') =>
       key === 'from'
          ? {
-              keys: 'pageFrom' as PageParamKeys.FROM,
+              keys: 'pageFrom' as PageParamKeys,
               page: pageFrom,
            }
          : {
-              keys: 'pageTo' as PageParamKeys.TO,
+              keys: 'pageTo' as PageParamKeys,
               page: pageTo,
            };
 
@@ -113,7 +113,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   isFocused={isPageFromFocused}
                   setIsFocused={setIsPageFromFocused}
                   params={getParams('from')}
-                  setPage={setNotePage(PageParamKeys.FROM)}
+                  setPage={setNotePage('pageFrom')}
                />
                <PageInput
                   inputRef={pageToRef}
@@ -121,7 +121,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
                   isFocused={isPageToFocused}
                   setIsFocused={setIsPageToFocused}
                   params={getParams('to')}
-                  setPage={setNotePage(PageParamKeys.TO)}
+                  setPage={setNotePage('pageTo')}
                />
             </View>
          </View>

@@ -16,7 +16,7 @@ const AnimatedBackButton = ({ color, onPress, mode, size, style }: AnimatedBackB
 
    useEffect(() => {
       Animated.timing(rotation, {
-         toValue: mode === Mode.LARGE ? 1 : 0,
+         toValue: mode === 'large' ? 1 : 0,
          duration: 200,
          useNativeDriver: true,
       }).start();
