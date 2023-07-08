@@ -8,6 +8,7 @@ import {
    StyleSheet,
    TextStyle,
    AccessibilityInfo,
+   Insets,
 } from 'react-native';
 
 import useTouchResize from '../library/hooks/useTouchResize';
@@ -18,10 +19,13 @@ export interface ModalProps {
    visible: boolean;
    setVisible: (visible: boolean) => void;
    color?: string;
-   headerLeft?: React.ReactNode;
-   headerRight?: React.ReactNode;
+   backButtonName?: 'chevron-back' | 'md-close' | 'arrow-back';
+   backButtonSize?: number;
+   headerElement?: React.ReactNode;
    displayDivider?: boolean;
    displayGoBack?: boolean;
+   hitSlot?: number | Insets | null;
+   backButtonPosition?: 'left' | 'right';
    onGoBack?: () => void;
    titleStyle?: StyleProp<TextStyle>;
    containerStyle?: StyleProp<ViewStyle>;
@@ -33,10 +37,13 @@ const CustomModal = ({
    visible,
    setVisible,
    color,
-   headerLeft,
-   headerRight,
+   headerElement,
+   hitSlot,
+   backButtonName = 'chevron-back',
+   backButtonSize = 24,
    displayDivider = true,
    displayGoBack = false,
+   backButtonPosition = 'left',
    onGoBack,
    titleStyle,
    children,
@@ -51,71 +58,60 @@ const CustomModal = ({
 
    const handleLayout = (event: LayoutChangeEvent) => {
       const { width, height } = event.nativeEvent.layout;
-
       setModalLayout({ height, width });
    };
 
    const handleGoBack = () => {
-      if (onGoBack) {
-         onGoBack();
-      } else {
-         hideModal();
-      }
+      onGoBack ? onGoBack() : hideModal();
    };
 
-   const titleElement = (title: React.ReactNode | string) => {
-      return React.isValidElement(title) ? (
-         title
-      ) : (
-         <Text style={[styles.title, titleStyle]} variant='titleMedium'>
-            {title}
-         </Text>
-      );
-   };
+   const BackButtonComponent = (
+      <BackButton
+         name={backButtonName}
+         color={colors.onSurface}
+         size={backButtonSize}
+         style={[styles.backButton, isPressedIn ? scaleStyle : {}]}
+         activeOpacity={0.8}
+         hitSlop={hitSlot}
+         onPress={handleGoBack}
+         onPressIn={eventHandlers.onPressIn}
+         onPressOut={eventHandlers.onPressEnd}
+      />
+   );
 
    useEffect(() => {
-      const message = visible ? 'Modal is open' : 'Modal is closed';
+      const message = visible ? `${title} is open` : `${title} is closed`;
       AccessibilityInfo.announceForAccessibility(message);
    }, [visible]);
 
    return (
-      <>
-         <Portal>
-            <Modal
-               visible={visible}
-               onDismiss={hideModal}
-               contentContainerStyle={[containerStyle, { backgroundColor: backgroundColor }]}
-               theme={{
-                  ...theme,
-                  colors: {
-                     ...colors,
-                     background: 'none',
-                     surface: 'none',
-                  },
-               }}
-            >
-               <View style={[styles.titleContainer]}>
-                  {headerLeft}
-                  {displayGoBack && (
-                     <BackButton
-                        name='chevron-back'
-                        color={colors.onSurface}
-                        size={24}
-                        style={[styles.backButton, isPressedIn ? scaleStyle : {}]}
-                        activeOpacity={0.8}
-                        onPress={handleGoBack}
-                        onPressIn={eventHandlers.onPressIn}
-                        onPressOut={eventHandlers.onPressEnd}
-                     />
-                  )}
-                  {titleElement(title)}
-                  {headerRight}
-               </View>
-               {displayDivider && <Divider />}
-               <View onLayout={handleLayout}>{children}</View>
-            </Modal>
-         </Portal>
-      </>
+      <Portal>
+         <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={[containerStyle, { backgroundColor }]}
+            theme={{
+               ...theme,
+               colors: {
+                  ...colors,
+                  background: 'none',
+                  surface: 'none',
+               },
+            }}
+         >
+            <View style={[styles.titleContainer]}>
+               {backButtonPosition === 'left' && displayGoBack && BackButtonComponent}
+               {headerElement || (
+                  <Text style={[styles.title, titleStyle]} variant='titleMedium'>
+                     {title}
+                  </Text>
+               )}
+               {backButtonPosition === 'right' && displayGoBack && BackButtonComponent}
+            </View>
+            {displayDivider && <Divider />}
+            <View onLayout={handleLayout}>{children}</View>
+         </Modal>
+      </Portal>
    );
 };
 
@@ -124,7 +120,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
    },
    backButton: {
-      padding: 5,
+      paddingHorizontal: 5,
    },
    title: {
       flex: 1,

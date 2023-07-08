@@ -1,4 +1,5 @@
 import { Animated, PanResponder, SafeAreaView, Text, View } from 'react-native';
+import SkeletonLoader from '../../components/loader/skeletonLoader';
 
 const StatsScreen = () => {
    const position = new Animated.ValueXY();
@@ -22,14 +23,9 @@ const StatsScreen = () => {
       },
    });
    return (
-      <Animated.View
-         {...panResponder.panHandlers}
-         style={[position.getLayout(), { backgroundColor: 'black', flex: 1 }]}
-      >
-         <View>
-            <Text>Hello</Text>
-         </View>
-      </Animated.View>
+      <View>
+         <SkeletonLoader width={150} height={150} />
+      </View>
    );
 };
 

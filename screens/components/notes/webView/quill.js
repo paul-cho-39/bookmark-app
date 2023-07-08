@@ -119,6 +119,7 @@ const html = `
           <img id="headers-button-icon" class="custom-icon headers-button" src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iNDgiPjxwYXRoIGQ9Ik01NzAtMTYwdi01NDBIMzYwdi0xMDBoNTIwdjEwMEg2NzB2NTQwSDU3MFptLTM2MCAwdi0zNDBIODB2LTEwMGgzNjB2MTAwSDMxMHYzNDBIMjEwWiIvPjwvc3ZnPg==' alt="header change" />
           <sub class="headers-indicator"></sub>
         </button>
+        <button class='custom__editor' id='custom-editor'>E</button>
         <button class="ql-list" value='ordered'></button>
         <button class="ql-list" value='bullet'></button>
         <button class="ql-indent" value="+1"></button>
@@ -201,7 +202,7 @@ const html = `
                     this.quill.deleteText(textIndex, reference.length);
                     this.quill.format('align', false);
                   }
-                  
+
                   return true;
                 }
               }
@@ -418,6 +419,7 @@ const html = `
   let customLink = document.getElementById('custom-link');
   let customColor = document.getElementById('custom-color');
   let customBgTextColor = document.getElementById('custom-bg-color');
+  let customEditor = document.getElementById('custom-editor');
 
   quoteButton.addEventListener('click', function() {
     let range = quill.getSelection();
@@ -491,7 +493,6 @@ const html = `
     };
     const body = { name: 'linkModal' };
     _sendMessage("modal", body);
-    // _sendMessage("linkModal");
   });
 
   undoButton.addEventListener('click', function () {
@@ -532,6 +533,13 @@ const html = `
   customBgTextColor.addEventListener('click', function() {
     handleColorOnClick('background');
   });
+
+  customEditor.addEventListener('click', function() {
+    const body = { name: 'extraEditor' }
+    _sendMessage('modal', body)
+
+    quill.focus();
+  })
 
   </script>
 </body>

@@ -1,5 +1,6 @@
 import { TextColors, setDefaultColor } from '../../../../library/helper/setDefaultColor';
 import { ModalTypes } from '../../../../library/hooks/useModalManager';
+import ExtraEditorModal from './extraEditorModal';
 import LinkModal from './linkModal';
 import SelectColorModal from './selectColorModal';
 
@@ -16,7 +17,7 @@ const ModalManager: React.FC<ModalManagerProps> = ({
    keyboardHeight,
    isDarkMode,
 }) => {
-   const { linkModal, textBgColorModal, textColorModal } = modals;
+   const { linkModal, textBgColorModal, textColorModal, extraEditorModal } = modals;
    return (
       <>
          <LinkModal
@@ -45,6 +46,12 @@ const ModalManager: React.FC<ModalManagerProps> = ({
             setColor={textBgColorModal.setData}
             keyboardHeight={keyboardHeight}
             sendMessage={sendMessage}
+         />
+         <ExtraEditorModal
+            visible={extraEditorModal.getModalData()?.isVisible as boolean}
+            setVisible={extraEditorModal.setVisibility}
+            sendMessage={sendMessage}
+            keyboardHeight={keyboardHeight}
          />
       </>
    );

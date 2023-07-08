@@ -1,6 +1,9 @@
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-import React from 'react';
+import React, { useState } from 'react';
 import 'expo-dev-client';
+
+import Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 import { Provider as PaperProvider, useTheme, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -18,6 +21,9 @@ import { setUserTimeZone } from './library/zustand/logic/timer-store-logic';
 import * as Localization from 'expo-localization';
 import RealmContext from './library/realm/';
 import useNetworkStatus from './library/hooks/useNetworkStatus';
+import { shallow } from 'zustand/shallow';
+
+SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
    defaultOptions: {
@@ -36,17 +42,14 @@ function App() {
    const isDarkPreferred = colorScheme === 'dark';
    const getTheme = !isDarkPreferred ? LightTheme : DarkTheme;
 
-   // useEffect(() => {
-   //    console.log('deleted');
-   //    Realm.deleteFile(RealmConfig);
-   // }, []);
-   const { RealmProvider } = RealmContext;
-   // since this is async have to set this here
+   const [appIsReady, setAppIsReady] = useState(false);
    const [hasHydrated, timeZone] = useSettingsStore((state) => [
       state._hasHydrated,
       state.userPreference.userGeneralSettings.preference.timeZone,
+      shallow,
    ]);
 
+   // combine the two together
    useEffect(() => {
       const fetchTimeZone = () => {
          const calendars = Localization.getCalendars();
@@ -58,11 +61,38 @@ function App() {
       fetchTimeZone();
    }, []);
 
-   if (!hasHydrated) {
-      <>
-         {/* TODO: display splash screen here */}
-         <Text>Loading...</Text>
-      </>;
+   useEffect(() => {
+      async function loadResources() {
+         try {
+            await Font.loadAsync({
+               MaterialIcons: require('./assets/fonts/MaterialIcons.ttf'),
+               // add more fonts here...
+            });
+         } catch (error) {
+            console.warn('Failed to load the fonts: ', error);
+         } finally {
+            setAppIsReady(true);
+         }
+      }
+
+      loadResources();
+   }, []);
+
+   const onLayoutRootView = useCallback(async () => {
+      if (appIsReady) {
+         await SplashScreen.hideAsync();
+      }
+   }, [appIsReady]);
+
+   // useEffect(() => {
+   //    console.log('deleted');
+   //    Realm.deleteFile(RealmConfig);
+   // }, []);
+   // since this is async have to set this here
+   const { RealmProvider } = RealmContext;
+
+   if (!hasHydrated || !appIsReady) {
+      return null;
    }
 
    return (
@@ -88,7 +118,7 @@ function App() {
                         isDarkPreferred ? LightTheme.colors.surface : DarkTheme.colors.surface
                      }
                   />
-                  <SafeAreaProvider>
+                  <SafeAreaProvider onLayout={onLayoutRootView}>
                      <MainNavigation />
                   </SafeAreaProvider>
                </PaperProvider>

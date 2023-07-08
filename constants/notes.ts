@@ -82,7 +82,7 @@ enum NoteMargins {
    TagHeader = 0.05,
 }
 
-// THIS ONE IS NOT WORKING?
+// TODO: convert this to an object
 enum NotesHeightParams {
    _ScrollView = 0.45,
    QuillEditorHeight = 80,
@@ -102,7 +102,7 @@ interface NoteModalParams extends NoteAppbarParams {
 }
 
 // ---------- MODALS --------------
-type ModalName = 'url' | 'textColor' | 'textBgColor';
+type ModalName = 'url' | 'textColor' | 'textBgColor' | 'extraEditor';
 interface ModalStateType {
    name: ModalName;
    isVisible: boolean;
@@ -129,7 +129,56 @@ const INITIAL_MODAL_STATE: ModalStateType[] = [
       shouldFocusAfter: true,
       modalData: null,
    },
+   {
+      name: 'extraEditor',
+      isVisible: false,
+      shouldFocusAfter: true,
+      modalData: null,
+   },
 ];
+
+// ------------Notes Editor Icons ------------
+type ExtraEditorInlineToolsIcon =
+   | 'format-bold'
+   | 'format-italic'
+   | 'format-underline'
+   | 'format-strikethrough';
+type ExtraEditorIndentsIcon = 'format-indent-decrease' | 'format-indent-increase';
+type ExtraEditorAlignmentsIcon = 'format-align-left' | 'format-align-center' | 'format-align-right';
+
+type ExtraEditorButtonBase = {
+   onPress: <T>(type: string, value: T) => void | undefined;
+};
+
+type ExtraEditorInlineToolParams = ExtraEditorButtonBase & {
+   name: ExtraEditorInlineToolsIcon;
+   selected: boolean;
+};
+
+type ExtraEditorIndentParams = ExtraEditorButtonBase & {
+   name: ExtraEditorIndentsIcon;
+   selected: false;
+};
+
+type ExtraEditorAlignmentParams = ExtraEditorButtonBase & {
+   name: ExtraEditorAlignmentsIcon;
+   selected: boolean;
+};
+
+type ExtraEditorIconType =
+   | ExtraEditorInlineToolsIcon
+   | ExtraEditorIndentsIcon
+   | ExtraEditorAlignmentsIcon;
+type ExtraEditorButtonParams =
+   | ExtraEditorInlineToolParams
+   | ExtraEditorIndentParams
+   | ExtraEditorAlignmentParams;
+
+const EDITOR_HEIGHT = 55;
+const MODAL_STYLES = {
+   MODAL_HEIGHT: 120,
+   BORDER_RADIUS: 25,
+} as const;
 
 export {
    Mode,
@@ -149,4 +198,8 @@ export {
    TextColorEnum,
    ModalName,
    ModalStateType,
+   ExtraEditorIconType,
+   ExtraEditorButtonParams,
+   EDITOR_HEIGHT,
+   MODAL_STYLES,
 };

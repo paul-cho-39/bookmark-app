@@ -27,6 +27,7 @@ function useModalManager(isDarkMode: boolean) {
    const linkModal = setModal('url');
    const textColorModal = setModal('textColor');
    const textBgColorModal = setModal('textBgColor');
+   const extraEditorModal = setModal('extraEditor');
 
    const modalMessageHandlers: Record<string, (selected?: string) => void> = {
       colorModal: (selected?: string) => {
@@ -42,6 +43,7 @@ function useModalManager(isDarkMode: boolean) {
          }
       },
       linkModal: () => linkModal.setVisibility(true),
+      extraEditor: () => extraEditorModal.setVisibility(true),
       toggleModals: () => {
          linkModal.getModalData()?.isVisible && linkModal.setVisibility(false);
          textColorModal.getModalData()?.isVisible && textColorModal.setVisibility(false);
@@ -50,7 +52,7 @@ function useModalManager(isDarkMode: boolean) {
    };
 
    return {
-      modals: { linkModal, textColorModal, textBgColorModal },
+      modals: { linkModal, textColorModal, textBgColorModal, extraEditorModal },
       modalIncomingMessageHandlers: modalMessageHandlers,
    };
 }
