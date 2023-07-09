@@ -1,11 +1,19 @@
 import { useState } from 'react';
-import { INITIAL_MODAL_STATE, ModalName, ModalStateType } from '../../constants/notes';
+import {
+   FormatTypeParams,
+   INITIAL_MODAL_STATE,
+   ModalName,
+   ModalStateType,
+} from '../../constants/notes';
 import { setDefault } from '../helper/setDefaultColor';
 
 function useModalManager(isDarkMode: boolean) {
    const [modalState, setModalState] = useState(INITIAL_MODAL_STATE);
 
-   const updateModal = (name: ModalName, updater: (modal: ModalStateType) => ModalStateType) => {
+   const updateModal = (
+      name: ModalName,
+      updater: (modal: ModalStateType<ModalName, any>) => ModalStateType<ModalName, any>
+   ) => {
       setModalState((prevState) =>
          prevState.map((modal) => (modal.name === name ? updater(modal) : modal))
       );
@@ -18,7 +26,10 @@ function useModalManager(isDarkMode: boolean) {
       setData: (data: string) => {
          updateModal(name, (modal) => ({ ...modal, modalData: data }));
       },
-      setAll: (isVisible: boolean, data?: string | null) => {
+      setAll: <TData extends null | string | FormatTypeParams>(
+         isVisible: boolean,
+         data?: TData
+      ) => {
          updateModal(name, (modal) => ({ ...modal, isVisible, modalData: data }));
       },
       getModalData: () => modalState.find((modal) => modal.name === name),
@@ -29,7 +40,7 @@ function useModalManager(isDarkMode: boolean) {
    const textBgColorModal = setModal('textBgColor');
    const extraEditorModal = setModal('extraEditor');
 
-   const modalMessageHandlers: Record<string, (selected?: string) => void> = {
+   const modalMessageHandlers: Record<string, (selected?: any) => void> = {
       colorModal: (selected?: string) => {
          if (selected) {
             const fontColor = handleColorModal(isDarkMode, selected);
@@ -42,8 +53,12 @@ function useModalManager(isDarkMode: boolean) {
             textBgColorModal.setAll(true, textBgColor);
          }
       },
+      extraEditorModal: (selected?: Record<string, string | boolean>) => {
+         if (selected) {
+            extraEditorModal.setAll(true, processSelection(selected));
+         }
+      },
       linkModal: () => linkModal.setVisibility(true),
-      extraEditor: () => extraEditorModal.setVisibility(true),
       toggleModals: () => {
          linkModal.getModalData()?.isVisible && linkModal.setVisibility(false);
          textColorModal.getModalData()?.isVisible && textColorModal.setVisibility(false);
@@ -57,9 +72,32 @@ function useModalManager(isDarkMode: boolean) {
    };
 }
 
-// helper function
+// helper functions
 function handleColorModal(isDarkMode: boolean, selected?: string) {
    return selected === 'none' ? setDefault(isDarkMode) : selected;
+}
+
+function processSelection(data: Record<string, string | boolean>): FormatTypeParams {
+   const alignKeys = ['align'];
+   const inlineKeys = ['bold', 'strikethrough', 'italic', 'underline'];
+
+   let output: FormatTypeParams = { align: 'left' };
+
+   for (const key in data) {
+      // Make sure the value is truthy
+      if (alignKeys.some((alignKey) => key.includes(alignKey))) {
+         output.align = data[key] as string;
+      }
+
+      if (inlineKeys.some((inlineKey) => key.includes(inlineKey))) {
+         if (output.inline) {
+            output.inline.push(key);
+         } else {
+            output.inline = [key];
+         }
+      }
+   }
+   return output;
 }
 
 type ModalTypes = Omit<

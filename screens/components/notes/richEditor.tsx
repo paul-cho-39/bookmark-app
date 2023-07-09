@@ -52,10 +52,9 @@ const RichTextEditor = forwardRef<WebView, RichTextEditorProps>((props, ref) => 
    > = {
       modal: (message) => {
          console.log('message:', message);
-         console.log('DELTA: ', message.body.delta);
-
          const modalHandler = modalIncomingMessageHandlers[message.body?.name as string];
          if (modalHandler && message.body?.selected) {
+            console.log('selected is:', message.body?.selected);
             modalHandler(message.body?.selected);
          } else modalHandler();
       },

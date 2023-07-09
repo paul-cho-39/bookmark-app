@@ -55,6 +55,7 @@ const ModalManager: React.FC<ModalManagerProps> = ({
          <ExtraEditorModal
             visible={extraEditorModal.getModalData()?.isVisible as boolean}
             setVisible={extraEditorModal.setVisibility}
+            formatType={extraEditorModal.getModalData()?.modalData}
             sendMessage={sendMessage}
             keyboardHeight={keyboardHeight}
             colors={colors}
@@ -64,3 +65,11 @@ const ModalManager: React.FC<ModalManagerProps> = ({
 };
 
 export default ModalManager;
+
+// 1) change the layout (make it look more crisp)
+// 2) closing-button a bit more toward the left
+// 3) more responsive to different mobile
+// 4) see how it can be used so it DOES NOT re-render again
+// 5) when highlighter color is "white" then it should just cancel the format;
+// 6) an optional name for 'link'
+// 7) checkbutton should have better animation

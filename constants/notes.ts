@@ -103,14 +103,17 @@ interface NoteModalParams extends NoteAppbarParams {
 
 // ---------- MODALS --------------
 type ModalName = 'url' | 'textColor' | 'textBgColor' | 'extraEditor';
-interface ModalStateType {
-   name: ModalName;
+
+interface ModalStateType<
+   TName extends ModalName,
+   TData = null | string | Record<string, string | boolean>
+> {
+   name: TName;
    isVisible: boolean;
    shouldFocusAfter: boolean;
-   modalData: string | null | undefined;
+   modalData: TData;
 }
-
-const INITIAL_MODAL_STATE: ModalStateType[] = [
+const INITIAL_MODAL_STATE: ModalStateType<ModalName, any>[] = [
    {
       name: 'url',
       isVisible: false,
@@ -121,19 +124,19 @@ const INITIAL_MODAL_STATE: ModalStateType[] = [
       name: 'textColor',
       isVisible: false,
       shouldFocusAfter: true,
-      modalData: null,
+      modalData: '',
    },
    {
       name: 'textBgColor',
       isVisible: false,
       shouldFocusAfter: true,
-      modalData: null,
+      modalData: '',
    },
    {
       name: 'extraEditor',
       isVisible: false,
       shouldFocusAfter: true,
-      modalData: null,
+      modalData: {},
    },
 ];
 
@@ -151,7 +154,8 @@ const ExtraEditorAlignmentsIconEnum = [
    'format-align-right',
 ] as const;
 
-type FormatTypeKeys = 'alignment' | 'inline';
+type FormatTypeKeys = 'align' | 'inline';
+type FormatTypeParams = Record<FormatTypeKeys, string | string[]>;
 type ExtraEditorInlineToolsIcon =
    | 'format-bold'
    | 'format-italic'
@@ -202,6 +206,7 @@ export {
    ModalName,
    ModalStateType,
    FormatTypeKeys,
+   FormatTypeParams,
    ExtraEditorIconType,
    ExtraEditorButtonParams,
    ExtraEditorButton,

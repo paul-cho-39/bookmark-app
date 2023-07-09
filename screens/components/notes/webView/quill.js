@@ -121,7 +121,7 @@ const html = `
         </button>
         <button class="ql-list" value='ordered'></button>
         <button class="ql-list" value='bullet'></button>
-        <button class='custom-element' data-modal-name="extraEditor">E</button>
+        <button class='custom-element' data-modal-name="extraEditorModal">E</button>
         <button class='custom-element' data-color-type="color" data-modal-name="colorModal">C</button>
         <button class='custom-element' data-color-type="background" data-modal-name="textBackgroundModal">H</button>
         <button class="ql-blockquote"></button>

@@ -14,11 +14,12 @@ import {
    FormatTypeKeys,
    ExtraEditorInlineToolsIconEnum,
    ExtraEditorAlignmentsIconEnum,
+   FormatTypeParams,
 } from '../../../../constants/notes';
 
 interface ExtraEditorModalProps extends ModalEditorType {
    keyboardHeight: number;
-   formatType?: Record<FormatTypeKeys, string | string[]>;
+   formatType?: FormatTypeParams;
 }
 // 1) change the typescript
 // 2) when formatting there are some glitches when enter and backspace
@@ -29,6 +30,7 @@ interface ExtraEditorModalProps extends ModalEditorType {
 // 4) if selected is not needed, extend it from makeIndentButton otherwise select toolsButtons
 const ExtraEditorModal = (props: ExtraEditorModalProps) => {
    console.log('extra editor');
+   console.log('format type is:*******', props.formatType);
    const { visible, setVisible, sendMessage, keyboardHeight, ...rest } = props;
 
    const [alignmentButtons, setAlignmentButtons] = useState<ExtraEditorButtonParams[]>([]);
@@ -66,14 +68,13 @@ const ExtraEditorModal = (props: ExtraEditorModalProps) => {
    const isSelected = useCallback(
       (typeKey: FormatTypeKeys, name: string) => {
          if (!props.formatType) return false;
-
          const formatData = props.formatType[typeKey];
          if (typeKey === 'inline' && Array.isArray(formatData)) {
             return formatData.includes(formatName(name));
          }
          return formatName(name) === formatData;
       },
-      [props.formatType]
+      [visible]
    );
 
    const createMultipleSelectableButton = (name: ExtraEditorInlineToolsIcon) => ({
@@ -82,14 +83,12 @@ const ExtraEditorModal = (props: ExtraEditorModalProps) => {
       selected: isSelected('inline', name),
    });
 
-   const createSingleSelectableButton = useCallback(
-      (name: ExtraEditorAlignmentsIcon, selected: boolean = false) => ({
-         name,
-         onPress: () => handleSingleSelectPress(name),
-         selected,
-      }),
-      [handleSingleSelectPress]
-   );
+   const createSingleSelectableButton = (name: ExtraEditorAlignmentsIcon) => ({
+      name,
+      onPress: () => handleSingleSelectPress(name),
+      selected: isSelected('align', name),
+   });
+
    const createStaticButton = (name: ExtraEditorIndentsIcon) => ({
       name,
       onPress: () => sendMessage('extraFormat', { format: 'indent', type: formatName(name) }),
@@ -104,12 +103,7 @@ const ExtraEditorModal = (props: ExtraEditorModalProps) => {
    useEffect(() => {
       if (visible) {
          setAlignmentButtons(
-            ExtraEditorAlignmentsIconEnum.map((name) =>
-               createSingleSelectableButton(
-                  name,
-                  !props.formatType?.alignment && name === 'format-align-left'
-               )
-            )
+            ExtraEditorAlignmentsIconEnum.map((name) => createSingleSelectableButton(name))
          );
          setToolsButtons(
             ExtraEditorInlineToolsIconEnum.map((name) => createMultipleSelectableButton(name))
