@@ -46,6 +46,7 @@ const ExtraEditorIcons = ({
          accessibilityLabel={iconName}
          onPressIn={() => handleHighlight('on')}
          onPressOut={() => handleHighlight('off')}
+         hitSlop={{ top: 2, bottom: 2, left: 1, right: 1 }}
          {...props}
       >
          <View

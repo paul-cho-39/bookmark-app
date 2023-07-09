@@ -1,10 +1,9 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 
 import CustomModal from '../../../../components/modal';
-import { Text, useTheme } from 'react-native-paper';
 import { ModalEditorType } from './linkModal';
 import { StyleSheet, View } from 'react-native';
-import ExtraEditorAlignment from './extraEditorAlignment';
+import ExtraEditorMapper from './extraEditorMapper';
 import {
    EDITOR_HEIGHT,
    MODAL_STYLES,
@@ -12,54 +11,111 @@ import {
    ExtraEditorInlineToolsIcon,
    ExtraEditorAlignmentsIcon,
    ExtraEditorIndentsIcon,
+   FormatTypeKeys,
+   ExtraEditorInlineToolsIconEnum,
+   ExtraEditorAlignmentsIconEnum,
 } from '../../../../constants/notes';
 
 interface ExtraEditorModalProps extends ModalEditorType {
    keyboardHeight: number;
-   formatType?: Record<string, string>;
+   formatType?: Record<FormatTypeKeys, string | string[]>;
 }
+// 1) change the typescript
+// 2) when formatting there are some glitches when enter and backspace
 
-// to add extra editor:
+// DOCUMENTINNG: to add extra editor:
 // 1) add inside quill 2) add to one of alignment/indent/tools at ./constants/notes
 // 3) add ExtraEditorModal, if the name is different from 'format- ' it may have to add extra function
 // 4) if selected is not needed, extend it from makeIndentButton otherwise select toolsButtons
 const ExtraEditorModal = (props: ExtraEditorModalProps) => {
-   const { colors } = useTheme();
+   console.log('extra editor');
    const { visible, setVisible, sendMessage, keyboardHeight, ...rest } = props;
 
-   const formatName = (name: string) => name.replace('format-', '');
+   const [alignmentButtons, setAlignmentButtons] = useState<ExtraEditorButtonParams[]>([]);
+   const [toolsButtons, setToolsButtons] = useState<ExtraEditorButtonParams[]>([]);
 
-   const makeSelectableButton = (
-      name: ExtraEditorInlineToolsIcon | ExtraEditorAlignmentsIcon,
-      selected: boolean
-   ) => ({
+   const formatName = (name: string) => {
+      const index = name.lastIndexOf('-');
+      return name.substring(index + 1);
+   };
+
+   const handleSingleSelectPress = useCallback(
+      (name: ExtraEditorAlignmentsIcon) => {
+         setAlignmentButtons((prevState) =>
+            prevState.map((button) =>
+               button.name === name ? { ...button, selected: true } : { ...button, selected: false }
+            )
+         );
+         sendMessage('extraFormat', { format: 'align', type: formatName(name) });
+      },
+      [sendMessage]
+   );
+
+   const handleMultiSelectPress = useCallback(
+      (name: ExtraEditorInlineToolsIcon) => {
+         setToolsButtons((prevState) =>
+            prevState.map((button) =>
+               button.name === name ? { ...button, selected: !button.selected } : button
+            )
+         );
+         sendMessage('extraFormat', { format: 'inline', type: formatName(name) });
+      },
+      [sendMessage]
+   );
+
+   const isSelected = useCallback(
+      (typeKey: FormatTypeKeys, name: string) => {
+         if (!props.formatType) return false;
+
+         const formatData = props.formatType[typeKey];
+         if (typeKey === 'inline' && Array.isArray(formatData)) {
+            return formatData.includes(formatName(name));
+         }
+         return formatName(name) === formatData;
+      },
+      [props.formatType]
+   );
+
+   const createMultipleSelectableButton = (name: ExtraEditorInlineToolsIcon) => ({
       name,
-      onPress: () => sendMessage('extraFormat', { format: formatName(name) }),
-      selected,
+      onPress: () => handleMultiSelectPress(name),
+      selected: isSelected('inline', name),
    });
 
-   const makeIndentButton = (name: ExtraEditorIndentsIcon) => ({
+   const createSingleSelectableButton = useCallback(
+      (name: ExtraEditorAlignmentsIcon, selected: boolean = false) => ({
+         name,
+         onPress: () => handleSingleSelectPress(name),
+         selected,
+      }),
+      [handleSingleSelectPress]
+   );
+   const createStaticButton = (name: ExtraEditorIndentsIcon) => ({
       name,
-      onPress: () => sendMessage('extraFormat', { format: formatName(name) }),
+      onPress: () => sendMessage('extraFormat', { format: 'indent', type: formatName(name) }),
    });
 
-   const alignmentButtons: ExtraEditorButtonParams[] = [
-      makeSelectableButton('format-align-left', true),
-      makeSelectableButton('format-align-center', false),
-      makeSelectableButton('format-align-right', false),
-   ];
-
-   const toolsButtons: ExtraEditorButtonParams[] = [
-      makeSelectableButton('format-bold', false),
-      makeSelectableButton('format-italic', false),
-      makeSelectableButton('format-underline', false),
-      makeSelectableButton('format-strikethrough', false),
-   ];
-
+   // no need to store inside the state since this wont react to any changes
    const indentButtons: ExtraEditorButtonParams[] = [
-      makeIndentButton('format-indent-decrease'),
-      makeIndentButton('format-indent-increase'),
+      createStaticButton('format-indent-decrease'),
+      createStaticButton('format-indent-increase'),
    ];
+
+   useEffect(() => {
+      if (visible) {
+         setAlignmentButtons(
+            ExtraEditorAlignmentsIconEnum.map((name) =>
+               createSingleSelectableButton(
+                  name,
+                  !props.formatType?.alignment && name === 'format-align-left'
+               )
+            )
+         );
+         setToolsButtons(
+            ExtraEditorInlineToolsIconEnum.map((name) => createMultipleSelectableButton(name))
+         );
+      }
+   }, [props.visible, props.formatType]);
 
    return (
       <CustomModal
@@ -68,7 +124,7 @@ const ExtraEditorModal = (props: ExtraEditorModalProps) => {
          backButtonPosition='right'
          backButtonName='md-close'
          hitSlot={{ top: 5, left: 5, right: 5 }}
-         color={colors.primaryContainer}
+         color={props.colors.primaryContainer}
          visible={visible}
          setVisible={setVisible}
          containerStyle={[
@@ -83,15 +139,19 @@ const ExtraEditorModal = (props: ExtraEditorModalProps) => {
       >
          <View style={styles.iconsContainer}>
             <View style={styles.iconsTopWrapper}>
-               <ExtraEditorAlignment
-                  colors={colors}
+               <ExtraEditorMapper
+                  colors={props.colors}
                   iconParams={alignmentButtons}
                   style={styles.alignmentContainer}
                />
-               <ExtraEditorAlignment colors={colors} iconParams={indentButtons} />
+               <ExtraEditorMapper
+                  colors={props.colors}
+                  iconParams={indentButtons}
+                  style={styles.indentContainer}
+               />
             </View>
-            <ExtraEditorAlignment
-               colors={colors}
+            <ExtraEditorMapper
+               colors={props.colors}
                iconParams={toolsButtons}
                style={styles.toolsContainer}
             />
@@ -114,7 +174,7 @@ const styles = StyleSheet.create({
    modalTitle: {
       marginBottom: 5,
       paddingBottom: 5,
-      paddingLeft: 5,
+      paddingLeft: '10%',
       textAlign: 'left',
    },
    iconsContainer: {
@@ -124,21 +184,21 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignContent: 'flex-start',
-      marginHorizontal: '5%',
+      marginHorizontal: '6%',
    },
    alignmentContainer: {
       flexGrow: 1,
+      marginHorizontal: '2%',
       alignSelf: 'flex-start',
-      justifyContent: 'center',
-      paddingVertical: 1,
-      rowGap: 2,
+      justifyContent: 'space-evenly',
+   },
+   indentContainer: {
+      justifyContent: 'space-evenly',
    },
    toolsContainer: {
-      justifyContent: 'center',
+      justifyContent: 'space-around',
+      marginHorizontal: '20%',
    },
 });
 
 export default ExtraEditorModal;
-
-// So adding another layer, it will receive a "formatType" data that consists of type: "Record<string, string>;"
-// This will contain something like

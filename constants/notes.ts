@@ -138,41 +138,44 @@ const INITIAL_MODAL_STATE: ModalStateType[] = [
 ];
 
 // ------------Notes Editor Icons ------------
+const ExtraEditorInlineToolsIconEnum = [
+   'format-bold',
+   'format-italic',
+   'format-underline',
+   'format-strikethrough',
+] as const;
+
+const ExtraEditorAlignmentsIconEnum = [
+   'format-align-left',
+   'format-align-center',
+   'format-align-right',
+] as const;
+
+type FormatTypeKeys = 'alignment' | 'inline';
 type ExtraEditorInlineToolsIcon =
    | 'format-bold'
    | 'format-italic'
    | 'format-underline'
    | 'format-strikethrough';
-type ExtraEditorIndentsIcon = 'format-indent-decrease' | 'format-indent-increase';
+type ExtraEditorIndentsIcon = 'format-indent-increase' | 'format-indent-decrease';
 type ExtraEditorAlignmentsIcon = 'format-align-left' | 'format-align-center' | 'format-align-right';
-
-type ExtraEditorButtonBase = {
-   onPress: <T>(type: string, value: T) => void | undefined;
-};
-
-type ExtraEditorInlineToolParams = ExtraEditorButtonBase & {
-   name: ExtraEditorInlineToolsIcon;
-   selected: boolean;
-};
-
-type ExtraEditorIndentParams = ExtraEditorButtonBase & {
-   name: ExtraEditorIndentsIcon;
-   selected: false;
-};
-
-type ExtraEditorAlignmentParams = ExtraEditorButtonBase & {
-   name: ExtraEditorAlignmentsIcon;
-   selected: boolean;
-};
 
 type ExtraEditorIconType =
    | ExtraEditorInlineToolsIcon
    | ExtraEditorIndentsIcon
    | ExtraEditorAlignmentsIcon;
-type ExtraEditorButtonParams =
-   | ExtraEditorInlineToolParams
-   | ExtraEditorIndentParams
-   | ExtraEditorAlignmentParams;
+
+type ExtraEditorButton<T extends ExtraEditorIconType> = {
+   name: T;
+   onPress: () => void | undefined;
+};
+
+type SelectableButton = ExtraEditorButton<
+   ExtraEditorInlineToolsIcon | ExtraEditorAlignmentsIcon
+> & { selected: boolean };
+type IndentButton = ExtraEditorButton<ExtraEditorIndentsIcon>;
+
+type ExtraEditorButtonParams = SelectableButton | IndentButton;
 
 const EDITOR_HEIGHT = 55;
 const MODAL_STYLES = {
@@ -198,8 +201,15 @@ export {
    TextColorEnum,
    ModalName,
    ModalStateType,
+   FormatTypeKeys,
    ExtraEditorIconType,
    ExtraEditorButtonParams,
+   ExtraEditorButton,
+   ExtraEditorInlineToolsIcon,
+   ExtraEditorIndentsIcon,
+   ExtraEditorAlignmentsIcon,
+   ExtraEditorInlineToolsIconEnum,
+   ExtraEditorAlignmentsIconEnum,
    EDITOR_HEIGHT,
    MODAL_STYLES,
 };

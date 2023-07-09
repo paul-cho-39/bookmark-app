@@ -4,6 +4,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 
 import { useEffect, useRef, useState } from 'react';
 import { width as WIDTH, height as HEIGHT } from '../../../../library/helper';
+import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 
 type OmittedTypes = 'title' | 'cocontainerStyle' | 'visible' | 'setVisible';
 
@@ -11,9 +12,10 @@ export interface ModalEditorType extends Omit<ModalProps, OmittedTypes> {
    sendMessage: (type: string, value: unknown) => void | undefined;
    visible: boolean;
    setVisible: (visible: boolean) => void;
+   colors: MD3Colors;
 }
 
-const LinkModal = ({ visible, setVisible, sendMessage, ...props }: ModalEditorType) => {
+const LinkModal = ({ visible, setVisible, sendMessage, colors, ...props }: ModalEditorType) => {
    // provide logic for sending the input from here
    const [domain, setDomain] = useState('');
    const inputRef = useRef<InputRef | null>(null);

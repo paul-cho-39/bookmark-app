@@ -119,12 +119,11 @@ const html = `
           <img id="headers-button-icon" class="custom-icon headers-button" src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iNDgiPjxwYXRoIGQ9Ik01NzAtMTYwdi01NDBIMzYwdi0xMDBoNTIwdjEwMEg2NzB2NTQwSDU3MFptLTM2MCAwdi0zNDBIODB2LTEwMGgzNjB2MTAwSDMxMHYzNDBIMjEwWiIvPjwvc3ZnPg==' alt="header change" />
           <sub class="headers-indicator"></sub>
         </button>
-        <button class='custom__editor' id='custom-editor'>E</button>
         <button class="ql-list" value='ordered'></button>
         <button class="ql-list" value='bullet'></button>
-        <button class="ql-indent" value="+1"></button>
-        <button class='custom__color' id='custom-color'>C</button>
-        <button class='custom__color' id='custom-bg-color'>H</button>
+        <button class='custom-element' data-modal-name="extraEditor">E</button>
+        <button class='custom-element' data-color-type="color" data-modal-name="colorModal">C</button>
+        <button class='custom-element' data-color-type="background" data-modal-name="textBackgroundModal">H</button>
         <button class="ql-blockquote"></button>
         <button id="reference-button">
           <img class="custom-icon" src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iNDgiPjxwYXRoIGQ9Ik04MjAtODB2LTgwMGg2MHY4MDBoLTYwWk0zMjAtMjkwdi0xMDBoNDAwdjEwMEgzMjBaTTgwLTU3MHYtMTAwaDY0MHYxMDBIODBaIi8+PC9zdmc+') alt="reference" />
@@ -155,7 +154,8 @@ const html = `
     let _lastKnownRange = null;
     let _tempDelta = null;
     let _isModalVisible = false;
-
+    let _hasFormatChanged = false;
+    
     var quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
@@ -175,8 +175,15 @@ const html = `
                     this.quill.format('align', false);
                   }
                   // this is a workaround from quill TEST whether there is a bug
-                  if (formats['color'] || formats['background']) {
-                    const currentColor = formats.color;
+                  if (
+                     formats['color'] 
+                  || formats['background'] 
+                  || formats['strikethrough'] 
+                  || formats['bold'] 
+                  || formats['italic'] 
+                  || formats['underline']
+                  ) {
+                    // const currentColor = formats.color;
                     this.quill.insertText(context.offset, '', color, currentColor);
                   }
                   return true;
@@ -232,6 +239,31 @@ const html = `
       _isReady = true
     });
 
+    var _insertFormat = function(range, type, bool) {
+      range.length > 0 
+        ? quill.formatText(range.index, range.length, type, bool)
+        : quill.insertText(range.index, '\u200B', type, bool);
+    }
+
+    var _checkModalVisible = function() {
+      if (_isModalVisible) _sendMessage('modal', { name: "toggleModals" });
+    }
+
+    var _getSelectedFormats = function(range, formatType) {
+      let selected;
+      if (range) {
+        const formats = quill.getFormat(range);
+        if (formats && !formatType) {
+          // if formats part of align, bold, underline, strikethrough, or italic
+          selected = formats;
+        }
+        if (formats && formatType) {
+          selected = formats[formatType];
+        }
+      }
+      return typeof selected === "undefined" ? "none" : selected;
+    }
+
     window.document.addEventListener('message', function(event) {
       const message = JSON.parse(event.data);
       switch(message.type) {
@@ -250,6 +282,8 @@ const html = `
         case 'textColor': 
           changeTextColor(message.value);
           break;
+        case 'extraFormat':
+          changeFormat(message.value);
         // case 'pressed':
         //   _sendMessage('noteData', _tempDelta);
         //   break;
@@ -258,15 +292,38 @@ const html = `
        }
     });
 
+    var changeFormat = function(data) {
+      const { type, format } = data;
+      var range = quill.getSelection();
+      switch (format) {
+        case 'indent':
+          const indentValue = quill.getFormat(range.index).indent || 0;
+          const value = type === "increase" ? indentValue + 1 : indentValue - 1;
+          quill.formatLine(range.index, range.length, format, value);
+          break;
+        case 'align':
+          if (type === 'left') {
+            quill.removeFormat(range.index, range.length)
+          }
+          quill.formatLine(range.index, range.length, format, type);
+          break;
+        case 'inline':
+          const currentFormat = quill.getFormat(range.index, range.length);
+          currentFormat[type] 
+            ? _insertFormat(range, type, false)
+            : _insertFormat(range, type, true)
+          break;
+        default: 
+          break;
+      }
+    }
+
     var changeTextColor = function(data) {
       const { color, colorType } = data;
       var range = quill.getSelection();
-      if (range.length > 0) {
-        quill.formatText(range.index, range.length, colorType, color);
-      } else {
-        // quill.insertText(range.index, '', colorType, color);
-        quill.format(colorType, color);
-      }
+      colorType === "background" && color === '#FFFFFF'
+        ? _insertFormat(range, colorType, 'black')
+        : _insertFormat(range, colorType, color);
     }
 
     var toggleToolbar = function(shouldHide) {
@@ -360,10 +417,17 @@ const html = `
 // // <------------------- Quill handler ------------------->
 
 // TODO: check the condition and this is likely usable so find a better means to maintain code
+  let _textChange = 0; 
+
   quill.on('text-change', function(delta, oldDelta, source) {
     if (_isModalVisible) {
-      _sendMessage('modal', { name: "toggleModals" })
-      _isModalVisible = false;
+      _textChange++;
+
+      if (_textChange > 1) {
+        _sendMessage('modal', { name: "toggleModals" })
+        _isModalVisible = false;
+        _textChange = 0;
+      }
     }
   }); 
 
@@ -504,42 +568,26 @@ const html = `
   });
 
 // <------------------- modal logic ------------------->
-  function handleColorOnClick(colorType) {
-    let selectedColor;
-    const modalName = colorType === 'color' ? 'colorModal' : 'textBackgroundModal';
-
-    if (_isModalVisible) _sendMessage('modal', { name: "toggleModals" });
-
-    var range = quill.getSelection();
-    if (range) {
-      const formats = quill.getFormat(range);
-      if (typeof formats[colorType] === 'undefined') {
-        selectedColor = "none";
-      } else {
-        selectedColor = formats[colorType];
-      }
-    }
-    quill.focus();
+  function handleClick(colorType, modalName) {
+    _checkModalVisible();
     _isModalVisible = true;
 
-    const body = { name: modalName, selected: selectedColor }
-    _sendMessage('modal', body );
-  };
-
-  customColor.addEventListener('click', function() {
-    handleColorOnClick('color');
-  });
-
-  customBgTextColor.addEventListener('click', function() {
-    handleColorOnClick('background');
-  });
-
-  customEditor.addEventListener('click', function() {
-    const body = { name: 'extraEditor' }
-    _sendMessage('modal', body)
+    var range = quill.getSelection();
+    const selected = _getSelectedFormats(range, colorType);
+    const body = { name: modalName, selected: selected };
+    _sendMessage('modal', body);
 
     quill.focus();
-  })
+  }
+
+  let customElements = document.querySelectorAll('.custom-element');
+  customElements.forEach((el) => {
+    el.addEventListener('click', () => {
+      let colorType = el.dataset.colorType;
+      let modalName = el.dataset.modalName || colorType + 'Modal';
+      handleClick(colorType, modalName);
+    });
+  });
 
   </script>
 </body>

@@ -57,14 +57,12 @@ const SelectColorModal = ({
       </>
    );
 
-   const { colors } = useTheme();
-
    return (
       <CustomModal
          visible={visible}
          setVisible={setVisible}
          title={header}
-         color={colors.primaryContainer}
+         color={props.colors.primaryContainer}
          displayGoBack
          backButtonPosition='right'
          backButtonName='md-close'
