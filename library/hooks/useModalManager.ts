@@ -63,6 +63,7 @@ function useModalManager(isDarkMode: boolean) {
          linkModal.getModalData()?.isVisible && linkModal.setVisibility(false);
          textColorModal.getModalData()?.isVisible && textColorModal.setVisibility(false);
          textBgColorModal.getModalData()?.isVisible && textBgColorModal.setVisibility(false);
+         extraEditorModal.getModalData()?.isVisible && extraEditorModal.setVisibility(false);
       },
    };
 
@@ -79,7 +80,7 @@ function handleColorModal(isDarkMode: boolean, selected?: string) {
 
 function processSelection(data: Record<string, string | boolean>): FormatTypeParams {
    const alignKeys = ['align'];
-   const inlineKeys = ['bold', 'strikethrough', 'italic', 'underline'];
+   const inlineKeys = ['bold', 'strike', 'italic', 'underline'];
 
    let output: FormatTypeParams = { align: 'left' };
 
@@ -91,12 +92,17 @@ function processSelection(data: Record<string, string | boolean>): FormatTypePar
 
       if (inlineKeys.some((inlineKey) => key.includes(inlineKey))) {
          if (output.inline) {
-            output.inline.push(key);
+            output.inline.push(parseStrikeThrough(key));
          } else {
-            output.inline = [key];
+            output.inline = [parseStrikeThrough(key)];
          }
       }
    }
+
+   function parseStrikeThrough(key: (typeof inlineKeys)[number]) {
+      return key === 'strike' ? 'strikethrough' : key;
+   }
+
    return output;
 }
 

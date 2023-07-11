@@ -21,7 +21,13 @@ const EdiableContentsWrapper = (props: EdiableContentsWrapper) => {
       );
    }
 
-   return <EditableAppbar params={props.params} onBlur={handleTitlePress} colors={colors} />;
+   return (
+      <>
+         {mode === 'large' && (
+            <EditableAppbar params={props.params} onBlur={handleTitlePress} colors={colors} />
+         )}
+      </>
+   );
 };
 
 export default EdiableContentsWrapper;

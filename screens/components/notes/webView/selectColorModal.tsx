@@ -1,12 +1,13 @@
-import { Text, useTheme } from 'react-native-paper';
+import { StyleSheet, View, Text } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+
 import CustomModal from '../../../../components/modal';
 import { ModalEditorType } from './linkModal';
-import { StyleSheet, View } from 'react-native';
 
-import { useState } from 'react';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { TextColors } from '../../../../library/helper/setDefaultColor';
 import { EDITOR_HEIGHT, MODAL_STYLES } from '../../../../constants/notes';
+import { useEffect, useMemo, useRef } from 'react';
+import { getColorByContrast } from '../../../../library/helper';
 
 interface SelectColorModalProps extends ModalEditorType {
    header: string;
@@ -26,15 +27,22 @@ const SelectColorModal = ({
    setColor,
    sendMessage,
    selectedColor,
+   colors,
    keyboardHeight,
    ...props
 }: SelectColorModalProps) => {
+   const flatListRef = useRef<FlatList>(null);
    const noteTextColors = Object.values(textColors);
 
    const checkEqual = (first: string, second: string) =>
       first.toLocaleLowerCase() === second.toLocaleLowerCase();
 
-   const renderCheckText = () => <Text style={styles.checkmark}>✓</Text>;
+   const getIndex = () =>
+      noteTextColors.map((color) => color.toLowerCase()).indexOf(selectedColor.toLowerCase());
+
+   const checkedColor = useMemo(() => getColorByContrast(selectedColor), [selectedColor]);
+
+   const renderCheckText = () => <Text style={[styles.checkmark, { color: checkedColor }]}>✔</Text>;
 
    const renderItem = ({ item }: { item: string }) => (
       <>
@@ -42,6 +50,7 @@ const SelectColorModal = ({
             activeOpacity={1}
             accessibilityRole='button'
             accessibilityHint={`Change ${colorType}`}
+            accessibilityLabel={item}
             style={[
                styles.circle,
                { backgroundColor: item },
@@ -57,12 +66,22 @@ const SelectColorModal = ({
       </>
    );
 
+   useEffect(() => {
+      if (flatListRef && flatListRef.current) {
+         flatListRef.current.scrollToIndex({
+            animated: true,
+            index: getIndex(),
+            viewOffset: COLOR_HEIGHT / 2,
+         });
+      }
+   }, [selectedColor]);
+
    return (
       <CustomModal
          visible={visible}
          setVisible={setVisible}
          title={header}
-         color={props.colors.primaryContainer}
+         color={colors.primaryContainer}
          displayGoBack
          backButtonPosition='right'
          backButtonName='md-close'
@@ -81,56 +100,60 @@ const SelectColorModal = ({
             <FlatList
                bounces
                horizontal
-               automaticallyAdjustContentInsets
+               scrollEnabled
                accessibilityRole='list'
+               ref={flatListRef}
                data={noteTextColors}
                keyExtractor={(item) => item}
                renderItem={renderItem}
+               // initialScrollIndex={getIndex()}
                style={styles.itemContainer}
+               getItemLayout={(data, index) => ({
+                  length: COLOR_HEIGHT + 1,
+                  offset: (COLOR_HEIGHT + 1) * index,
+                  index,
+               })}
             />
          </View>
       </CustomModal>
    );
 };
 
-const MODAL_WIDTH = 75;
+const MODAL_WIDTH = 65;
 const MODAL_MARGIN = (100 - MODAL_WIDTH) / 2;
 const COLOR_HEIGHT = 35;
-const COLOR_WIDTH = 35;
 
 const styles = StyleSheet.create({
    modalContainer: {
       width: `${MODAL_WIDTH}%`,
       marginHorizontal: `${MODAL_MARGIN}%`,
-      height: MODAL_STYLES.MODAL_HEIGHT,
+      height: MODAL_STYLES.MODAL_HEIGHT - 20,
       borderRadius: MODAL_STYLES.BORDER_RADIUS,
       position: 'absolute',
    },
    modalTitle: {
       textAlign: 'center',
-      fontSize: 16,
-      fontWeight: 'bold',
-      marginBottom: 20,
+      paddingBottom: 5,
+      marginBottom: 10,
    },
    innerContainer: {
-      justifyContent: 'center',
-      alignContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: 10,
+      paddingHorizontal: 12,
    },
-   backButton: {},
    itemContainer: {
       flexDirection: 'row',
    },
    selected: {
       height: COLOR_HEIGHT * 1.3,
-      width: COLOR_WIDTH * 1.15,
+      width: COLOR_HEIGHT * 1.3,
+      borderRadius: 50,
    },
-   checkmark: {},
+   checkmark: {
+      fontSize: 17,
+   },
    circle: {
-      width: COLOR_WIDTH,
+      width: COLOR_HEIGHT,
       height: COLOR_HEIGHT,
-      borderRadius: 20,
+      borderRadius: 50,
       marginHorizontal: 1,
       justifyContent: 'center',
       alignItems: 'center',
@@ -138,11 +161,3 @@ const styles = StyleSheet.create({
 });
 
 export default SelectColorModal;
-
-// 1) change the layout (make it look more crisp)
-// 2) closing-button
-// 3) more responsive to different mobile
-// 4) see how it can be used so it DOES NOT re-render again
-// 5) when highlighter color is "white" then it should just cancel the format;
-// 6) an optional name for 'link'
-// 7) checkbutton should have better animation

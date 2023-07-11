@@ -27,13 +27,13 @@ const html = `
       }
       #toolbar  {
         position: absolute;
-        overflow-x: scroll;
         width: 100%;
+        right: 1px;
         border-width: 0 0 0;
         border-top: 1.3px solid;
         box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
         background-color: white;
-        z-index: 5000;
+        overflow: hidden
       }
       .toolbar___container {
         display: none; 
@@ -54,7 +54,6 @@ const html = `
         background-repeat: no-repeat;
       }
       .ql-snow.ql-toolbar button {
-        width: 24px;
         height: 30px;
       }
       .headers-indicator {
@@ -152,16 +151,15 @@ const html = `
     const _absoluteHeight = document.body.scrollHeight;
     let _isReady = false;
     let _lastKnownRange = null;
-    let _tempDelta = null;
+    let _textChange = 0; 
     let _isModalVisible = false;
-    let _hasFormatChanged = false;
     
     var quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
           toolbar: '#toolbar', 
           history: {
-            delay: 1000,
+            delay: 900,
             maxStack: 100,
             userOnly: true
           }, 
@@ -178,7 +176,7 @@ const html = `
                   if (
                      formats['color'] 
                   || formats['background'] 
-                  || formats['strikethrough'] 
+                  || formats['strike'] 
                   || formats['bold'] 
                   || formats['italic'] 
                   || formats['underline']
@@ -230,10 +228,6 @@ const html = `
       return document.getElementById(id);
     }
 
-    var _getToolbar = function(id) {
-      return document.getElementById("toolbar");
-    }
-
     document.addEventListener('DOMContentLoaded', function() {
       _sendMessage('ready');
       _isReady = true
@@ -252,6 +246,7 @@ const html = `
     var _getSelectedFormats = function(range, formatType) {
       let selected;
       if (range) {
+        
         const formats = quill.getFormat(range);
         if (formats && !formatType) {
           // if formats part of align, bold, underline, strikethrough, or italic
@@ -268,7 +263,7 @@ const html = `
       const message = JSON.parse(event.data);
       switch(message.type) {
         case 'keyboardHeight':
-          changeToolbarHeight(message.value, 50);
+          changeToolbarHeight(message.value, 80);
           break;
         case 'theme':
           changeThemeMode(message.value);
@@ -284,17 +279,16 @@ const html = `
           break;
         case 'extraFormat':
           changeFormat(message.value);
-        // case 'pressed':
-        //   _sendMessage('noteData', _tempDelta);
-        //   break;
         default:
           break;
        }
     });
 
     var changeFormat = function(data) {
+      _textChange = 0; // defaults to 0
       const { type, format } = data;
       var range = quill.getSelection();
+
       switch (format) {
         case 'indent':
           const indentValue = quill.getFormat(range.index).indent || 0;
@@ -319,6 +313,7 @@ const html = `
     }
 
     var changeTextColor = function(data) {
+      _textChange = 0; // defaults to 0 every switch
       const { color, colorType } = data;
       var range = quill.getSelection();
       colorType === "background" && color === '#FFFFFF'
@@ -332,7 +327,7 @@ const html = `
         toolbar.style.display = 'none';      
       }
       if (!shouldHide.visible) {
-        toolbar.style.display = 'flex'
+        setTimeout(() => toolbar.style.display = 'flex', 250);
       }
     }
 
@@ -350,7 +345,7 @@ const html = `
     }
 
 
-    var changeToolbarHeight = function(height, offsetHeight=30) {
+    var changeToolbarHeight = function(height, offsetHeight) {
       const toolbar = _getDocument('toolbar');
       const editor = _getDocument('editor');
       const _absoluteHeight = document.body.scrollHeight;
@@ -417,11 +412,10 @@ const html = `
 // // <------------------- Quill handler ------------------->
 
 // TODO: check the condition and this is likely usable so find a better means to maintain code
-  let _textChange = 0; 
 
   quill.on('text-change', function(delta, oldDelta, source) {
     if (_isModalVisible) {
-      _textChange++;
+      _textChange++; // only when text is entered
 
       if (_textChange > 1) {
         _sendMessage('modal', { name: "toggleModals" })
@@ -568,6 +562,7 @@ const html = `
   });
 
 // <------------------- modal logic ------------------->
+
   function handleClick(colorType, modalName) {
     _checkModalVisible();
     _isModalVisible = true;

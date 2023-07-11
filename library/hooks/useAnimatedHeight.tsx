@@ -4,6 +4,8 @@ import Animated, {
    useAnimatedStyle,
    withTiming,
    interpolate,
+   withSpring,
+   withDelay,
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { HEADERS, Mode } from '../../constants';
@@ -13,26 +15,26 @@ function useAnimatedHeight<T extends Mode>(value: T) {
 
    useEffect(() => {
       modeAnim.value = withTiming(value === 'small' ? 0 : 1, {
-         duration: 200,
-         easing: Easing.out(Easing.ease),
+         duration: 150,
+         easing: Easing.in(Easing.ease),
       });
    }, [value]);
 
    const headerStyle = useAnimatedStyle(() => {
       return {
-         height: interpolate(modeAnim.value, [0, 1], [HEADERS.DEFAULT, HEADERS.EDITABLE]),
+         height: interpolate(modeAnim.value, [0, 0.95], [HEADERS.DEFAULT, HEADERS.EDITABLE]),
       };
    });
 
    const titleStyle = useAnimatedStyle(() => {
       const fontSize = interpolate(modeAnim.value, [0, 1], [24, 30]);
-      const lineHeight = interpolate(modeAnim.value, [0, 1], [24, 34]);
-      const translateY = interpolate(modeAnim.value, [0, 1], [0, 22]);
+      // const lineHeight = interpolate(modeAnim.value, [0, 1], [24, 34]);
+      const translateY = interpolate(modeAnim.value, [0, 1], [0, 20]);
       const translateX = interpolate(modeAnim.value, [0, 1], [0, -20]);
 
       return {
          fontSize,
-         lineHeight,
+         // lineHeight,
          transform: [{ translateY }, { translateX }],
       };
    });

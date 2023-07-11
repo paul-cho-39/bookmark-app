@@ -1,13 +1,12 @@
-import { ColorValue, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
+import React, { Suspense, useCallback } from 'react';
+import { Text, ColorValue, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
 
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { NotesNavigationProp } from '../../../../library/@types/navigation';
 import useBoundedStore from '../../../../library/zustand/store';
 import NoteIconContents from './noteIconContents';
 import StatusBarHeight from '../../../../library/helper/getStatusbarHeight';
-import AnimatedContent from './animatedContent';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 
 interface NoteAppbarProps extends NotesNavigationProp {
    colors: MD3Colors;
@@ -30,15 +29,19 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
       }, [meta?.headerColor])
    );
 
+   const AnimatedContent = React.lazy(() => import('./animatedContent'));
+
    return (
       <SafeAreaView>
          <View style={[styles.container, background]}>
-            <AnimatedContent
-               params={params}
-               colors={colors}
-               style={[styles.headerContainer, background]}
-               goBack={() => navigation.goBack()}
-            />
+            <Suspense fallback={<Text style={{ color: colors.onBackground }}>Title</Text>}>
+               <AnimatedContent
+                  params={params}
+                  colors={colors}
+                  style={[styles.headerContainer, background]}
+                  goBack={() => navigation.goBack()}
+               />
+            </Suspense>
             <NoteIconContents
                params={params}
                colors={colors}

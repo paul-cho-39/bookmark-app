@@ -4,7 +4,6 @@ import { Keyboard, StyleSheet, View } from 'react-native';
 import IconButton from '../../../../components/buttons/icons/iconButton';
 import { AntDesign } from '@expo/vector-icons';
 import RealmContext from '../../../../library/realm';
-import useRenderCount from '../../../../library/hooks/useRenderCount';
 import NoteTagsDrawer from './noteTagsDrawer';
 import { ICONS, NoteAppbarParams } from '../../../../constants';
 import NoteTheme from './noteTheme';
@@ -18,8 +17,6 @@ const NoteIconContents = ({ params, colors, style }: NoteAppbarParams) => {
 
    const tagModalRef = useRef<Modalize>(null);
    const themeModalRef = useRef<Modalize>(null);
-
-   // useRenderCount('CONTENTS');
 
    const openModal = (ref: React.RefObject<Modalize>) => {
       Keyboard.dismiss();

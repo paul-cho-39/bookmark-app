@@ -155,7 +155,10 @@ const ExtraEditorAlignmentsIconEnum = [
 ] as const;
 
 type FormatTypeKeys = 'align' | 'inline';
-type FormatTypeParams = Record<FormatTypeKeys, string | string[]>;
+type FormatTypeParams = {
+   align?: string;
+   inline?: string[];
+};
 type ExtraEditorInlineToolsIcon =
    | 'format-bold'
    | 'format-italic'
@@ -183,7 +186,7 @@ type ExtraEditorButtonParams = SelectableButton | IndentButton;
 
 const EDITOR_HEIGHT = 55;
 const MODAL_STYLES = {
-   MODAL_HEIGHT: 120,
+   MODAL_HEIGHT: 130,
    BORDER_RADIUS: 25,
 } as const;
 

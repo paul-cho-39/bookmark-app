@@ -13,11 +13,13 @@ import {
 
 import useTouchResize from '../library/hooks/useTouchResize';
 import BackButton from './buttons/backButton';
+import { VariantProp } from 'react-native-paper/lib/typescript/src/components/Typography/types';
 
 export interface ModalProps {
    title: React.ReactNode | string;
    visible: boolean;
    setVisible: (visible: boolean) => void;
+   variant?: VariantProp<string>;
    color?: string;
    backButtonName?: 'chevron-back' | 'md-close' | 'arrow-back';
    backButtonSize?: number;
@@ -37,6 +39,7 @@ const CustomModal = ({
    visible,
    setVisible,
    color,
+   variant = 'titleMedium',
    headerElement,
    hitSlot,
    backButtonName = 'chevron-back',
@@ -53,7 +56,6 @@ const CustomModal = ({
    const { colors } = theme;
    const backgroundColor = !color ? colors.surface : color;
    const [_modalLayout, setModalLayout] = useState({ height: 0, width: 0 });
-   const { style: scaleStyle, eventHandlers, isPressedIn } = useTouchResize(0.8);
    const hideModal = () => setVisible(false);
 
    const handleLayout = (event: LayoutChangeEvent) => {
@@ -70,12 +72,10 @@ const CustomModal = ({
          name={backButtonName}
          color={colors.onSurface}
          size={backButtonSize}
-         style={[styles.backButton, isPressedIn ? scaleStyle : {}]}
+         style={[styles.backButton]}
          activeOpacity={0.8}
          hitSlop={hitSlot}
          onPress={handleGoBack}
-         onPressIn={eventHandlers.onPressIn}
-         onPressOut={eventHandlers.onPressEnd}
       />
    );
 
@@ -102,7 +102,7 @@ const CustomModal = ({
             <View style={[styles.titleContainer]}>
                {backButtonPosition === 'left' && displayGoBack && BackButtonComponent}
                {headerElement || (
-                  <Text style={[styles.title, titleStyle]} variant='titleMedium'>
+                  <Text style={[styles.title, titleStyle]} variant={variant}>
                      {title}
                   </Text>
                )}
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
    },
    backButton: {
       paddingHorizontal: 5,
+      paddingRight: 10,
    },
    title: {
       flex: 1,

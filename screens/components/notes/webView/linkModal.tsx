@@ -43,6 +43,7 @@ const LinkModal = ({ visible, setVisible, sendMessage, colors, ...props }: Modal
          setVisible={setVisible}
          title='Add a link'
          displayDivider={false}
+         color={colors.primaryContainer}
          containerStyle={styles.modalContainer}
          titleStyle={styles.modalTitle}
          {...props}

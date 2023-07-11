@@ -43,7 +43,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
          if (!isTitleFocused && !isSubtitleFocused && !isPageFromFocused && !isPageToFocused) {
             onBlur();
          }
-      }, 50);
+      }, 150);
 
       return () => clearTimeout(timerId);
    }, [isTitleFocused, isSubtitleFocused, isPageFromFocused, isPageToFocused]);
@@ -73,7 +73,7 @@ const EditableAppbar = ({ params, colors, onBlur, style }: EditableAppbarProps) 
    // use global state to control this part
    return (
       <View style={styles.container}>
-         <View style={styles.contentWrapper}>
+         <View collapsable style={styles.contentWrapper}>
             <View style={[style, styles.titleContainer]}>
                <TitleInput
                   inputRef={titleRef}
@@ -134,14 +134,14 @@ const SUBTITLE_WIDTH = width * 0.55;
 
 const styles = StyleSheet.create({
    container: {
-      width: width,
+      width: '100%',
       overflow: 'hidden',
    },
    contentWrapper: {
       flexDirection: 'row',
    },
    titleContainer: {
-      width: '70%',
+      width: '65%',
       paddingHorizontal: `${HORIZONTAL}%`,
    },
    dateContainer: {
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
       paddingHorizontal: `${HORIZONTAL}%`,
    },
    subtitleContainer: {
-      width: SUBTITLE_WIDTH,
+      width: '55%',
    },
 });
 

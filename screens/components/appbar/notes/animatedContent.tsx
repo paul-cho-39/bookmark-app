@@ -1,16 +1,15 @@
+import React from 'react';
 import Animated from 'react-native-reanimated';
 import { View, StyleSheet } from 'react-native';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 
 import AnimatedBackButton from './animatedBackButton';
-import EdiableContentsWrapper from './editableContentsWrapper';
 
 import { ICONS, Mode, NoteAppbarParams } from '../../../../constants';
 import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 
 import useAnimatedHeight from '../../../../library/hooks/useAnimatedHeight';
 import useCustomBackHandler from '../../../../library/hooks/useCustomBackHandler';
-import React from 'react';
 
 interface AnimatedContentProps extends NoteAppbarParams {
    goBack: () => void;
@@ -18,7 +17,6 @@ interface AnimatedContentProps extends NoteAppbarParams {
 
 const AnimatedContent = ({ colors, goBack, params, style }: AnimatedContentProps) => {
    const [mode, setMode] = useState<Mode>('small');
-   const { headerStyle, titleStyle } = useAnimatedHeight(mode);
 
    const toggleOrGoBack = () => {
       if (mode === 'large') {
@@ -30,14 +28,12 @@ const AnimatedContent = ({ colors, goBack, params, style }: AnimatedContentProps
    };
 
    const handleTitlePress = () => {
-      const isOpened = toggleOrGoBack();
-      if (!isOpened) {
-         setNoteModalVisible('opened', false);
-         setMode('large');
-      }
+      setNoteModalVisible('opened', false);
+      setMode((prev) => (prev === 'large' ? 'small' : 'large'));
    };
 
    useCustomBackHandler(toggleOrGoBack, [mode]);
+   const { headerStyle, titleStyle } = useAnimatedHeight(mode);
 
    const onPressBack = () => {
       if (!toggleOrGoBack()) {
@@ -45,27 +41,7 @@ const AnimatedContent = ({ colors, goBack, params, style }: AnimatedContentProps
       }
    };
 
-   //    return (
-   //       <View style={[style]}>
-   //          <AnimatedBackButton
-   //             mode={mode}
-   //             color={colors.onSurface}
-   //             size={ICONS.LARGE}
-   //             onPress={onPressBack}
-   //             style={styles.backButton}
-   //          />
-   //          <View style={[styles.contentContainer]}>
-   //             <Animated.View style={[titleStyle]}>
-   //                <EdiableContentsWrapper
-   //                   params={params}
-   //                   mode={mode}
-   //                   handleTitlePress={handleTitlePress}
-   //                   colors={colors}
-   //                />
-   //             </Animated.View>
-   //          </View>
-   //       </View>
-   //    );
+   const EdiableContentsWrapper = React.lazy(() => import('./editableContentsWrapper'));
 
    return (
       <Animated.View style={[style, headerStyle]}>

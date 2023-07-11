@@ -30,7 +30,6 @@ interface ExtraEditorModalProps extends ModalEditorType {
 // 4) if selected is not needed, extend it from makeIndentButton otherwise select toolsButtons
 const ExtraEditorModal = (props: ExtraEditorModalProps) => {
    console.log('extra editor');
-   console.log('format type is:*******', props.formatType);
    const { visible, setVisible, sendMessage, keyboardHeight, ...rest } = props;
 
    const [alignmentButtons, setAlignmentButtons] = useState<ExtraEditorButtonParams[]>([]);
@@ -40,6 +39,9 @@ const ExtraEditorModal = (props: ExtraEditorModalProps) => {
       const index = name.lastIndexOf('-');
       return name.substring(index + 1);
    };
+
+   const formatNameWithStrike = (name: ExtraEditorInlineToolsIcon) =>
+      formatName(name) === 'strikethrough' ? 'strike' : formatName(name);
 
    const handleSingleSelectPress = useCallback(
       (name: ExtraEditorAlignmentsIcon) => {
@@ -60,7 +62,7 @@ const ExtraEditorModal = (props: ExtraEditorModalProps) => {
                button.name === name ? { ...button, selected: !button.selected } : button
             )
          );
-         sendMessage('extraFormat', { format: 'inline', type: formatName(name) });
+         sendMessage('extraFormat', { format: 'inline', type: formatNameWithStrike(name) });
       },
       [sendMessage]
    );
@@ -168,8 +170,7 @@ const styles = StyleSheet.create({
    modalTitle: {
       marginBottom: 5,
       paddingBottom: 5,
-      paddingLeft: '10%',
-      textAlign: 'left',
+      textAlign: 'center',
    },
    iconsContainer: {
       rowGap: 10,

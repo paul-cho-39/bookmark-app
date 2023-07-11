@@ -15,6 +15,7 @@ import {
    PADDING_NUM,
    getMiddleValue,
 } from './getMiddleValue';
+import { getColorByContrast } from './getColorByContrast';
 
 export {
    checkBookInLibrary,
@@ -32,4 +33,5 @@ export {
    width,
    height,
    SCREEN_HEIGHT,
+   getColorByContrast,
 };

@@ -54,7 +54,6 @@ const RichTextEditor = forwardRef<WebView, RichTextEditorProps>((props, ref) => 
          console.log('message:', message);
          const modalHandler = modalIncomingMessageHandlers[message.body?.name as string];
          if (modalHandler && message.body?.selected) {
-            console.log('selected is:', message.body?.selected);
             modalHandler(message.body?.selected);
          } else modalHandler();
       },
@@ -101,6 +100,17 @@ const RichTextEditor = forwardRef<WebView, RichTextEditorProps>((props, ref) => 
    // }, [isLinkModalVisible]);
 
    useEffect(() => {
+      // if (isAnyNoteModalVisible.visible) {
+      //    console.log('visible');
+      //    injectJS(
+      //       `
+      //    var toolbarContainer = quill.getModule('toolbar').container;
+      //    toolbarContainer.style.display = 'none';
+      //    alert(toolbarContainer);
+      //    `
+      //    );
+      // }
+
       if (
          isAnyNoteModalVisible.visible &&
          isAnyNoteModalVisible.dismissKeyboard &&

@@ -7,7 +7,7 @@ import {
    NativeScrollEvent,
    NativeSyntheticEvent,
 } from 'react-native';
-import { CurrentBookData } from '../../../library/@types/googleBooks';
+import { CurrentRealmBookData } from '../../../library/@types/googleBooks';
 import { CONTAINER_HEIGHT, getMiddleValue, MODAL_WIDTH, getUser } from '../../../library/helper';
 import ChevronArrowButton from '../../../components/buttons/icons/chevronArrowButton';
 import BookInfoInsideModal from '../books/bookInfoModal';
@@ -16,7 +16,7 @@ import { getUrl, postFetch } from '../../../library/helper/react-query';
 import { setHasMutated } from '../../../library/zustand/logic/connector-logic';
 
 interface BookCarouselProps {
-   data: CurrentBookData[];
+   data: CurrentRealmBookData[];
    goBack: (value: boolean) => void;
    // changePrimary: () => void;
 }
