@@ -11,6 +11,7 @@ export interface ConnectorStoreProps {
       email: string;
       query: string;
       search: string;
+      noteSearch: string;
    };
    data: {
       library: {
@@ -36,6 +37,10 @@ export interface ConnectorStoreProps {
       };
       note: {
          isUploadNotesVisible: boolean;
+         isTrashVisible: boolean;
+         isExportVisible: boolean;
+         isTagsVisible: boolean;
+         isInfoVisible: boolean;
          isModalVisible: {
             visible: boolean;
             dismissKeyboard: boolean;

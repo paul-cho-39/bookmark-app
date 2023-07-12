@@ -1,15 +1,31 @@
 import { Menu, useTheme, MenuProps } from 'react-native-paper';
-import { TouchableOpacity, Animated, StyleSheet, ViewStyle, StyleProp } from 'react-native';
-import Entypo from '@expo/vector-icons/Entypo';
+import {
+   TouchableOpacity,
+   Animated,
+   StyleSheet,
+   ViewStyle,
+   StyleProp,
+   Easing,
+   View,
+} from 'react-native';
+import { Entypo, FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useRef, useState } from 'react';
+import {
+   FontAwesomeIconMenu,
+   IconMenuItem,
+   MaterialCommunityIconMenu,
+   MaterialIconMenu,
+} from '../../library/@types/params';
 
+type MenuItems = IconMenuItem | string;
 export interface HeaderMenuIconProps {
-   menuItems: string[];
-   onMenuPress: (menuItem?: HeaderMenuIconProps['menuItems'][number]) => void;
+   menuItems: MenuItems[];
+   onMenuPress: (menuItem: IconMenuItem | string) => void;
    headerIcon: 'dots-three-vertical' | 'plus';
    iconSize?: number;
    color?: string;
    iconStyle?: StyleProp<ViewStyle>;
+   menuStyle?: StyleProp<ViewStyle>;
    contentStyle?: MenuProps['contentStyle'];
 }
 
@@ -21,26 +37,23 @@ const HeaderMenuIcon = ({
    color,
    iconStyle,
    contentStyle,
+   menuStyle,
 }: HeaderMenuIconProps) => {
    const { colors } = useTheme();
    const [visible, setVisible] = useState(false);
    const [isPressed, setIsPressed] = useState(false);
    const [_menuSize, setMenuSize] = useState({ width: 0, height: 0 });
    const opacity = useRef(new Animated.Value(0)).current;
+
    const layoutRef = useRef<TouchableOpacity | null>(null);
    const getColor = !color ? colors.onSurface : color;
 
-   // if animation needed to be changed
-   // use a hook for animation effect that returns a different animation
-   // and pass the props to which animation effect will be returned
-   // but generally, there is no need for animation when opening a menu
    const openMenu = () => {
       setVisible(true);
       Animated.timing(opacity, {
          toValue: 1,
-         easing: () => 500,
-         delay: 50,
-         duration: 400,
+         easing: Easing.inOut(Easing.linear),
+         duration: 100,
          useNativeDriver: true,
       }).start();
       setIsPressed(true);
@@ -63,17 +76,49 @@ const HeaderMenuIcon = ({
       });
    };
 
-   const handleMenuPressItem = (menuItem?: (typeof menuItems)[number]) => {
-      if (!menuItem) {
-         onMenuPress();
-      }
+   const handleMenuPressItem = (menuItem: IconMenuItem | string) => {
       onMenuPress(menuItem);
 
       setTimeout(() => {
          closeMenu();
       }, 100);
+   };
 
-      // clearTimeout(timerId);
+   const renderMenuItem = (item: MenuItems, _index: number) => {
+      if (typeof item === 'string') {
+         return <Menu.Item key={item} onPress={() => handleMenuPressItem(item)} title={item} />;
+      } else {
+         return (
+            <View style={[menuStyle, { flexDirection: 'row', alignItems: 'center' }]}>
+               {item.library === 'FontAwesome' && (
+                  <FontAwesome
+                     name={item.icon as FontAwesomeIconMenu}
+                     size={iconSize}
+                     color={getColor}
+                  />
+               )}
+               {item.library === 'MaterialCommunityIcons' && (
+                  <MaterialCommunityIcons
+                     name={item.icon as MaterialCommunityIconMenu}
+                     size={iconSize}
+                     color={getColor}
+                  />
+               )}
+               {item.library === 'MaterialIcons' && (
+                  <MaterialIcons
+                     name={item.icon as MaterialIconMenu}
+                     size={iconSize}
+                     color={getColor}
+                  />
+               )}
+               <Menu.Item
+                  key={item.title}
+                  onPress={() => handleMenuPressItem(item)}
+                  title={item.title}
+               />
+            </View>
+         );
+      }
    };
 
    return (
@@ -104,9 +149,7 @@ const HeaderMenuIcon = ({
                      opacity,
                   }}
                >
-                  {menuItems.map((item) => (
-                     <Menu.Item key={item} onPress={() => handleMenuPressItem(item)} title={item} />
-                  ))}
+                  {menuItems.map(renderMenuItem)}
                </Animated.View>
             )}
          </Menu>
@@ -115,8 +158,6 @@ const HeaderMenuIcon = ({
 };
 
 const styles = StyleSheet.create({
-   // creates border to notify that it has been pressed
-   // dont think this is necessary(?)
    pressed: {
       // borderColor: 'black',
       //   borderRadius: 10,

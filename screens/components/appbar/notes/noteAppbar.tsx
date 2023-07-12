@@ -1,5 +1,5 @@
-import React, { Suspense, useCallback } from 'react';
-import { Text, ColorValue, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
 
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
 import { NotesNavigationProp } from '../../../../library/@types/navigation';
@@ -7,6 +7,7 @@ import useBoundedStore from '../../../../library/zustand/store';
 import NoteIconContents from './noteIconContents';
 import StatusBarHeight from '../../../../library/helper/getStatusbarHeight';
 import { useFocusEffect } from '@react-navigation/native';
+import BackButton from '../../../../components/buttons/backButton';
 
 interface NoteAppbarProps extends NotesNavigationProp {
    colors: MD3Colors;
@@ -21,6 +22,7 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
 
    useFocusEffect(
       useCallback(() => {
+         // set up search back screen
          StatusBar.setBackgroundColor(meta?.headerColor as string);
 
          return () => {
@@ -29,19 +31,17 @@ const NoteAppbar = ({ navigation, route, colors }: NoteAppbarProps) => {
       }, [meta?.headerColor])
    );
 
-   const AnimatedContent = React.lazy(() => import('./animatedContent'));
-
    return (
       <SafeAreaView>
-         <View style={[styles.container, background]}>
-            <Suspense fallback={<Text style={{ color: colors.onBackground }}>Title</Text>}>
-               <AnimatedContent
-                  params={params}
-                  colors={colors}
-                  style={[styles.headerContainer, background]}
-                  goBack={() => navigation.goBack()}
-               />
-            </Suspense>
+         <View collapsable style={[styles.container, background]}>
+            <BackButton
+               name='arrow-back'
+               onPress={() => navigation.goBack()}
+               style={styles.backButton}
+               color={colors.onSurface}
+            />
+            {/* if search then the back button and search component */}
+
             <NoteIconContents
                params={params}
                colors={colors}
@@ -56,18 +56,16 @@ const styles = StyleSheet.create({
    container: {
       flexDirection: 'row',
       marginBottom: -2,
-   },
-   headerContainer: {
       top: StatusBarHeight,
-      justifyContent: 'center',
-      overflow: 'hidden',
+      height: 68,
    },
    noteIconContent: {
-      width: '100%',
-      top: StatusBarHeight,
       flexDirection: 'row',
-      justifyContent: 'flex-start',
+      justifyContent: 'space-evenly',
       alignItems: 'center',
+   },
+   backButton: {
+      alignSelf: 'center',
    },
 });
 

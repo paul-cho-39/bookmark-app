@@ -2,21 +2,21 @@ import React, { useRef, useState } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
 
 import IconButton from '../../../../components/buttons/icons/iconButton';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import RealmContext from '../../../../library/realm';
-import NoteTagsDrawer from './noteTagsDrawer';
 import { ICONS, NoteAppbarParams } from '../../../../constants';
 import NoteTheme from './noteTheme';
 import { Modalize } from 'react-native-modalize';
 import { Portal } from 'react-native-paper';
 import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
+import NoteMenuItems from './noteMenu';
 
 const NoteIconContents = ({ params, colors, style }: NoteAppbarParams) => {
    // so this would be called at SEPARATE BACKBUTTON COMPONENT and WHEREEVER IT IS NEEDED
    const { useRealm, useObject, useQuery } = RealmContext;
 
-   const tagModalRef = useRef<Modalize>(null);
    const themeModalRef = useRef<Modalize>(null);
+   const menuModalRef = useRef<Modalize>(null);
 
    const openModal = (ref: React.RefObject<Modalize>) => {
       Keyboard.dismiss();
@@ -37,30 +37,16 @@ const NoteIconContents = ({ params, colors, style }: NoteAppbarParams) => {
          <View style={[styles.iconContainer, style]}>
             {/* add more icons here */}
             <IconButton
-               onPress={() => openModal(tagModalRef)}
-               style={{}}
-               renderIcon={() => (
-                  <AntDesign name='tagso' color={colors.onSurface} size={ICONS.LARGE} />
-               )}
-            />
-            <IconButton
-               // onPress={() => setThemeModalVisible(true)}
+               accessibilityLabel='Theme Button'
                onPress={() => openModal(themeModalRef)}
                style={[]}
                renderIcon={() => (
-                  <AntDesign name='appstore-o' color={colors.onSurface} size={ICONS.LARGE} />
+                  <AntDesign name='appstore-o' color={colors.onSurface} size={ICONS.MEDIUM} />
                )}
             />
+            <NoteMenuItems colors={colors} size={ICONS.MEDIUM} />
          </View>
 
-         <Portal>
-            <NoteTagsDrawer
-               ref={tagModalRef}
-               colors={colors}
-               params={params}
-               onCloseModal={closeModal}
-            />
-         </Portal>
          <Portal>
             <NoteTheme
                ref={themeModalRef}

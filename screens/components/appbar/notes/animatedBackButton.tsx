@@ -2,25 +2,26 @@ import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleProp, ViewStyle, StyleSheet, StatusBar } from 'react-native';
 import BackButton from '../../../../components/buttons/backButton';
 import { Mode } from '../../../../constants';
+import { SharedValue } from 'react-native-reanimated';
 
 interface AnimatedBackButtonProps {
-   mode: Mode;
+   dep: SharedValue<number>;
    onPress: () => void;
    color: string;
    size: number;
    style?: StyleProp<ViewStyle>;
 }
 
-const AnimatedBackButton = ({ color, onPress, mode, size, style }: AnimatedBackButtonProps) => {
+const AnimatedBackButton = ({ color, onPress, dep, size, style }: AnimatedBackButtonProps) => {
    const rotation = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
    useEffect(() => {
       Animated.timing(rotation, {
-         toValue: mode === 'large' ? 1 : 0,
+         toValue: dep.value === 0 ? 0 : 1,
          duration: 200,
          useNativeDriver: true,
       }).start();
-   }, [mode]);
+   }, [dep.value]);
 
    const rotationInterpolate = rotation.interpolate({
       inputRange: [0, 1],
@@ -38,10 +39,10 @@ const AnimatedBackButton = ({ color, onPress, mode, size, style }: AnimatedBackB
 
 const styles = StyleSheet.create({
    container: {
-      position: 'absolute',
-      top: StatusBar.currentHeight && StatusBar.currentHeight / 2,
-      left: 0,
-      zIndex: 50,
+      // position: 'absolute',
+      // top: StatusBar.currentHeight && StatusBar.currentHeight / 2,
+      // left: 0,
+      // zIndex: 50,
    },
 });
 

@@ -5,7 +5,6 @@ import { FONT_SIZE, ICONS, NoteAppbarParams, NotesHeightParams } from '../../../
 import IconButton from '../../../../components/buttons/icons/iconButton';
 import { AntDesign } from '@expo/vector-icons';
 import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
-import { height as HEIGHT } from '../../../../library/helper';
 
 interface AddTagsProps extends NoteAppbarParams {
    tagsData: string[] | undefined;

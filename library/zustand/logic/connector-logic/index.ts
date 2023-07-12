@@ -83,9 +83,21 @@ const setStopModalVisible = (value: boolean) => {
    if (!value) {
       resumeTimer();
    }
-   _setModalVisibility('timer', 'isStopTimeVisible');
+   _setModalVisibility('timer', 'isStopTimeVisible', value);
 };
 
+type NoteMenuProps<T extends keyof Omit<ConnectorStoreProps['modal']['note'], 'isModalVisible'>> =
+   ConnectorStoreProps['modal']['note'][T];
+const setNoteMenuModals = <
+   T extends keyof Omit<ConnectorStoreProps['modal']['note'], 'isModalVisible'>
+>(
+   name: T,
+   value: boolean
+) => {
+   _setModalVisibility('note', name, value);
+};
+
+// TODO: maybe rename this function?
 const setNoteModalVisible = (type: 'opened' | 'closed', accessKeyboard?: boolean) => {
    const modalState =
       type === 'opened'
@@ -113,4 +125,5 @@ export {
    setSubmittedQuery,
    setSearchIsLoading,
    setNoteModalVisible,
+   setNoteMenuModals,
 };

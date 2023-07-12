@@ -2,13 +2,13 @@ import React, { forwardRef, useState } from 'react';
 import useGetKeyboardHeight from '../../../../library/hooks/useGetKeyboardHeight';
 import { StyleSheet, View } from 'react-native';
 
-import NoteTagHeader from './noteTagHeader';
 import Tags from './noteTags';
 import useBoundedStore from '../../../../library/zustand/store';
 import { NoteModalParams, NotesHeightParams } from '../../../../constants';
 import { Modalize } from 'react-native-modalize';
 import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 import { shallow } from 'zustand/shallow';
+import NoteTagHeader from '../../appbar/notes/noteTagHeader';
 
 const NoteTagsDrawer = forwardRef<Modalize, NoteModalParams>((props, ref) => {
    const { params, colors } = props;

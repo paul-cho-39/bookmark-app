@@ -7,6 +7,7 @@ const initialState: ConnectorStoreProps = {
       email: '',
       query: '',
       search: '',
+      noteSearch: '',
    },
    data: {
       library: {
@@ -32,6 +33,10 @@ const initialState: ConnectorStoreProps = {
       },
       note: {
          isUploadNotesVisible: false,
+         isTrashVisible: false,
+         isExportVisible: false,
+         isTagsVisible: false,
+         isInfoVisible: false,
          isModalVisible: {
             visible: false,
             dismissKeyboard: false,
