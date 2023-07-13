@@ -1,6 +1,6 @@
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { EditableHeaderParams } from '../../../../library/zustand/utils/notes/retriever';
-import TitleInput, { TitleInputProps } from './titleInput';
+import TitleInput, { TitleInputProps } from './_titleInput';
 import { convertPage } from '../../../../library/zustand/utils/notes/converter';
 import { Text } from 'react-native-paper';
 import { PageParamKeys } from '../../../../constants';

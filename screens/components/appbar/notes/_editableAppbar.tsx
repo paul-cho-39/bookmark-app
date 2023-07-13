@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle, TextInput } from 'react-native';
 
-import TitleInput from './titleInput';
-import PageInput from './pageInput';
-import NoteDates from './noteDates';
+import TitleInput from './_titleInput';
+import PageInput from './_pageInput';
+import NoteDates from './_noteDates';
 
 import { NoteAppbarParams, PageParamKeys } from '../../../../constants';
 import { width } from '../../../../library/helper';

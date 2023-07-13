@@ -4,6 +4,7 @@ import { height as HEIGHT, height } from '../library/helper';
 import { StyleProp, ViewStyle } from 'react-native';
 
 const DARKEN_BY_DEFAULT = -8;
+const DURATION = 200;
 
 const ModeEnum = {
    small: 'small',
@@ -192,6 +193,7 @@ const MODAL_STYLES = {
 
 export {
    Mode,
+   DURATION,
    PageParamKeys,
    NoteThemeParamKeys,
    NoteHeaderIconTypes,

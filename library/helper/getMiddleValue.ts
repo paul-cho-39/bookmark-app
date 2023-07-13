@@ -1,7 +1,8 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import Config from '../config';
 
 const { width, height } = Dimensions.get('window');
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
 const IMAGE_HEIGHT = Config.HOME_IMAGE_HEIGHT;

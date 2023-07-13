@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Animated, {
@@ -73,8 +72,6 @@ const StatsScreen = () => {
          opacity: opacity.value,
       };
    });
-
-   useRenderCount('ANIMATION');
 
    return (
       <Animated.View style={[animatedHeight, { backgroundColor: 'gray' }]}>

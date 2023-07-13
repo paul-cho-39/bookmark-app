@@ -7,7 +7,7 @@ const initialState: ConnectorStoreProps = {
       email: '',
       query: '',
       search: '',
-      noteSearch: '',
+      noteQuery: '',
    },
    data: {
       library: {
@@ -16,6 +16,11 @@ const initialState: ConnectorStoreProps = {
       notes: {
          isDataAvailable: false,
          shouldSave: false,
+         // the params will be set whenever the modals are set.
+         params: {
+            id: '',
+            logIndex: '',
+         },
       },
       network: {
          isConnected: null,
@@ -37,6 +42,7 @@ const initialState: ConnectorStoreProps = {
          isExportVisible: false,
          isTagsVisible: false,
          isInfoVisible: false,
+         isSearchVisible: false,
          isModalVisible: {
             visible: false,
             dismissKeyboard: false,

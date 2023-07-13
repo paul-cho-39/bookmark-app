@@ -13,6 +13,9 @@ import {
 export interface IconButtonProps extends TouchableOpacityProps {
    renderIcon: () => React.ReactNode;
    backgroundColor?: string;
+   isHighlighted?: boolean;
+   highlighterColor?: string;
+   style?: StyleProp<ViewStyle>;
    children?: React.ReactNode;
 }
 
@@ -23,14 +26,16 @@ const IconButton: React.FC<IconButtonProps> = ({
    ...rest
 }) => {
    return (
-      <TouchableOpacity
-         accessibilityRole='button'
-         style={[{ backgroundColor: backgroundColor }, rest.style]}
-         {...rest}
-      >
-         {renderIcon()}
-         {children}
-      </TouchableOpacity>
+      <View>
+         <TouchableOpacity
+            accessibilityRole='button'
+            style={[{ backgroundColor: backgroundColor }, rest.style]}
+            {...rest}
+         >
+            {renderIcon()}
+            {children}
+         </TouchableOpacity>
+      </View>
    );
 };
 

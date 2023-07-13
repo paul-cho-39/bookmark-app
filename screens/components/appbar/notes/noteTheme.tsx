@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { SegmentedButtons, Text, useTheme } from 'react-native-paper';
+import { Portal, SegmentedButtons, Text, useTheme } from 'react-native-paper';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import {
    DARKEN_BY_DEFAULT,
@@ -126,25 +126,27 @@ const NoteTheme = forwardRef<Modalize, NoteModalParams>((props, ref) => {
    );
 
    return (
-      <Modalize
-         closeOnOverlayTap
-         avoidKeyboardLikeIOS={true}
-         disableScrollIfPossible={true}
-         panGestureEnabled={isPanGestureEnabled}
-         withHandle={false}
-         ref={ref}
-         modalHeight={300}
-         onClosed={props.onCloseModal}
-         HeaderComponent={renderTitle()}
-         modalStyle={{ backgroundColor: colorObj?.headerColor }}
-         flatListProps={{
-            data: noteThemeColors,
-            keyExtractor: (item) => item,
-            horizontal: true,
-            showsHorizontalScrollIndicator: true,
-            renderItem: renderItem,
-         }}
-      />
+      <Portal>
+         <Modalize
+            closeOnOverlayTap
+            avoidKeyboardLikeIOS={true}
+            disableScrollIfPossible={true}
+            panGestureEnabled={isPanGestureEnabled}
+            withHandle={false}
+            ref={ref}
+            modalHeight={300}
+            onClosed={props.onCloseModal}
+            HeaderComponent={renderTitle()}
+            modalStyle={{ backgroundColor: colorObj?.headerColor }}
+            flatListProps={{
+               data: noteThemeColors,
+               keyExtractor: (item) => item,
+               horizontal: true,
+               showsHorizontalScrollIndicator: true,
+               renderItem: renderItem,
+            }}
+         />
+      </Portal>
    );
 });
 

@@ -19,6 +19,10 @@ export interface IconMenuItem {
    title: string;
    icon: FontAwesomeIconMenu | MaterialCommunityIconMenu | MaterialIconMenu;
    library: 'FontAwesome' | 'MaterialCommunityIcons' | 'MaterialIcons';
+   handler: {
+      type: 'modal' | 'toggle' | 'modalize';
+      name: string;
+   };
 }
 
 export const MenuItemTypes = {
@@ -36,8 +40,8 @@ export const MenuItemTypes = {
       icon: 'magnify',
       library: 'MaterialCommunityIcons',
       handler: {
-         type: 'toggle',
-         name: 'not defined',
+         type: 'modal', // though this is not a modal its a simple way to display search
+         name: 'isSearchVisible',
       },
    },
    tags: {
@@ -45,8 +49,8 @@ export const MenuItemTypes = {
       icon: 'tag-outline',
       library: 'MaterialCommunityIcons',
       handler: {
-         type: 'modal',
-         name: 'isTagsVisible',
+         type: 'modalize',
+         name: 'tagModal',
       },
    },
    info: {
@@ -54,8 +58,8 @@ export const MenuItemTypes = {
       icon: 'info-outline',
       library: 'MaterialIcons',
       handler: {
-         type: 'modal',
-         name: 'isInfoVisible',
+         type: 'modalize',
+         name: 'infoModal',
       },
    },
    save: {
@@ -73,11 +77,11 @@ export const MenuItemTypes = {
       library: 'FontAwesome',
       handler: {
          type: 'toggle',
-         name: 'not defined',
+         name: 'favorite',
       },
    },
    trash: {
-      title: 'Trash',
+      title: 'Delete',
       icon: 'trash-o',
       library: 'FontAwesome',
       handler: {
@@ -86,5 +90,3 @@ export const MenuItemTypes = {
       },
    },
 } as const;
-
-export type MenuItems = string | IconMenuItem;

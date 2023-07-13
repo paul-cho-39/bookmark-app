@@ -20,10 +20,10 @@ const setHasMutated = (value: boolean) => {
    );
 };
 
-const setQuery = (text: string) => {
+const setQuery = <T extends keyof ConnectorStoreProps['inputs']>(queryType: T, text: string) => {
    useConnectStore.setState(
       produce((draft: ConnectorStoreProps) => {
-         draft.inputs.query = text;
+         draft.inputs[queryType] = text;
       })
    );
 };
@@ -86,8 +86,6 @@ const setStopModalVisible = (value: boolean) => {
    _setModalVisibility('timer', 'isStopTimeVisible', value);
 };
 
-type NoteMenuProps<T extends keyof Omit<ConnectorStoreProps['modal']['note'], 'isModalVisible'>> =
-   ConnectorStoreProps['modal']['note'][T];
 const setNoteMenuModals = <
    T extends keyof Omit<ConnectorStoreProps['modal']['note'], 'isModalVisible'>
 >(
@@ -98,12 +96,12 @@ const setNoteMenuModals = <
 };
 
 // TODO: maybe rename this function?
-const setNoteModalVisible = (type: 'opened' | 'closed', accessKeyboard?: boolean) => {
+const setNoteModalVisible = (type: 'opened' | 'closed', accessKeyboard: boolean = true) => {
    const modalState =
       type === 'opened'
          ? {
               visible: true,
-              dismissKeyboard: typeof accessKeyboard === 'undefined' ? true : accessKeyboard,
+              dismissKeyboard: accessKeyboard,
            }
          : { visible: false, dismissKeyboard: false };
    useConnectStore.setState(

@@ -6,6 +6,9 @@ import { _getInitialNoteData, _isNoteIdNull, _noteExists } from './helperLogic';
 import { NotesNavigationProp } from '../../../@types/navigation';
 import useConnectStore from '../../connectStore';
 
+// CONSIDER: likely have to change logIndex to string and have to think how
+// that will work out
+
 // first initiated in the Timer screen where the note will have logIndex
 // this will also be called whenever the user creates another note
 function setInitiateNote(id: string, logIndex: number) {
@@ -93,6 +96,12 @@ function setNoteAttributes(id: string, logIndex: number) {
          }
       }
    };
+}
+
+function toggleFavorite(id: string, logIndex: number) {
+   const prev = useBoundedStore((state) => state.notes[id][logIndex].attr.favorite);
+   const toggle = setNoteAttributes(id, logIndex);
+   toggle('favorite', !prev);
 }
 
 // RESETTING HISTORY

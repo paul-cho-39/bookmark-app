@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput as NativeInput, Keyboard } from 'react-native';
 import { Text, Button, Chip, TextInput, IconButton as PaperIconButton } from 'react-native-paper';
-import { FONT_SIZE, ICONS, NoteAppbarParams, NotesHeightParams } from '../../../../constants';
-import IconButton from '../../../../components/buttons/icons/iconButton';
+import { FONT_SIZE, ICONS, NoteAppbarParams, NotesHeightParams } from '../../../../../constants';
+import IconButton from '../../../../../components/buttons/icons/iconButton';
 import { AntDesign } from '@expo/vector-icons';
-import { handleTags } from '../../../../library/zustand/logic/bounded-logic/noteLogic';
+import { handleTags } from '../../../../../library/zustand/logic/bounded-logic/noteLogic';
 
 interface AddTagsProps extends NoteAppbarParams {
    tagsData: string[] | undefined;

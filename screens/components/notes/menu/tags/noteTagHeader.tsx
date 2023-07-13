@@ -1,7 +1,7 @@
 import { Text, View } from 'react-native';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
-import BackButton from '../../../../components/buttons/backButton';
-import { FONT_SIZE, ICONS } from '../../../../constants';
+import BackButton from '../../../../../components/buttons/backButton';
+import { FONT_SIZE, ICONS } from '../../../../../constants';
 
 interface NoteTagHeaderParams {
    colors: MD3Colors;

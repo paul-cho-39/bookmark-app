@@ -32,7 +32,7 @@ const ControlledTextInput = ({ displayCloseIcon, disabled = false }: TextInputPr
    const handleButtonPress = () => {
       setTimeout(() => {
          navigation.navigate('Search');
-      }, 100);
+      }, 50);
    };
 
    // 03/28/23 - keyboard pops up and deleting the addListener
@@ -71,7 +71,7 @@ const ControlledTextInput = ({ displayCloseIcon, disabled = false }: TextInputPr
             placeholder='Title, authors, or ISBN...'
             placeholderTextColor={colors.outline}
             value={query}
-            onChangeText={(text) => setQuery(text)}
+            onChangeText={(text) => setQuery('query', text)}
             style={[styles.inputs, shouldFocus && styles.focusedInput, { color: colors.secondary }]}
             disabled={disabled}
             right={

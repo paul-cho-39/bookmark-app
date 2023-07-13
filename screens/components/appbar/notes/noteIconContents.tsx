@@ -1,70 +1,75 @@
 import React, { useRef, useState } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
 
-import IconButton from '../../../../components/buttons/icons/iconButton';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import RealmContext from '../../../../library/realm';
 import { ICONS, NoteAppbarParams } from '../../../../constants';
 import NoteTheme from './noteTheme';
 import { Modalize } from 'react-native-modalize';
-import { Portal } from 'react-native-paper';
-import { setNoteModalVisible } from '../../../../library/zustand/logic/connector-logic';
 import NoteMenuItems from './noteMenu';
+import NoteMenuManager from '../../notes/menu/noteMenuManager';
+import useModalizeRef from '../../../../library/hooks/useModalizeRef';
+import HighlightableIconButton from '../../../../components/buttons/icons/highlightableIconButton';
 
 const NoteIconContents = ({ params, colors, style }: NoteAppbarParams) => {
    // so this would be called at SEPARATE BACKBUTTON COMPONENT and WHEREEVER IT IS NEEDED
    const { useRealm, useObject, useQuery } = RealmContext;
 
    const themeModalRef = useRef<Modalize>(null);
-   const menuModalRef = useRef<Modalize>(null);
+   const tagModalRef = useRef<Modalize>(null);
+   const infoModalRef = useRef<Modalize>(null);
 
-   const openModal = (ref: React.RefObject<Modalize>) => {
-      Keyboard.dismiss();
-
-      if (ref && ref.current) ref.current.open();
-
-      setNoteModalVisible('opened');
+   const refManager = {
+      tagModal: tagModalRef,
+      infoModal: infoModalRef,
    };
 
-   const closeModal = () => {
-      setTimeout(() => {
-         setNoteModalVisible('closed');
-      }, 100);
-   };
+   const { closeModal, openModal } = useModalizeRef();
 
    return (
       <>
-         <View style={[styles.iconContainer, style]}>
+         <View style={[style]}>
             {/* add more icons here */}
-            <IconButton
+            <HighlightableIconButton
+               isHighlighted
                accessibilityLabel='Theme Button'
                onPress={() => openModal(themeModalRef)}
-               style={[]}
+               size={ICONS.LARGE + 10}
+               highlighterColor={colors.outline}
                renderIcon={() => (
                   <AntDesign name='appstore-o' color={colors.onSurface} size={ICONS.MEDIUM} />
                )}
             />
-            <NoteMenuItems colors={colors} size={ICONS.MEDIUM} />
+            <NoteMenuItems
+               params={params}
+               refManager={refManager}
+               openModal={openModal}
+               colors={colors}
+               size={ICONS.MEDIUM}
+               style={styles.menuItems}
+            />
          </View>
 
-         <Portal>
+         <>
             <NoteTheme
                ref={themeModalRef}
                params={params}
                onCloseModal={closeModal}
                colors={colors}
             />
-         </Portal>
+            <NoteMenuManager
+               params={params}
+               colors={colors}
+               refManager={refManager}
+               closeModal={closeModal}
+            />
+         </>
       </>
    );
 };
 
 const styles = StyleSheet.create({
-   iconContainer: {
-      // width: '50%', // width should be subtracted from the title
-      // flexDirection: 'row',
-      // justifyContent: 'space-evenly',
-   },
+   menuItems: {},
 });
 
 export default NoteIconContents;

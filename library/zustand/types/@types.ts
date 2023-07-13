@@ -11,7 +11,7 @@ export interface ConnectorStoreProps {
       email: string;
       query: string;
       search: string;
-      noteSearch: string;
+      noteQuery: string;
    };
    data: {
       library: {
@@ -20,6 +20,10 @@ export interface ConnectorStoreProps {
       notes: {
          isDataAvailable: boolean;
          shouldSave: boolean;
+         params: {
+            id: string;
+            logIndex: number | string;
+         };
       };
       network: {
          isConnected: null | boolean;
@@ -41,6 +45,7 @@ export interface ConnectorStoreProps {
          isExportVisible: boolean;
          isTagsVisible: boolean;
          isInfoVisible: boolean;
+         isSearchVisible: boolean;
          isModalVisible: {
             visible: boolean;
             dismissKeyboard: boolean;
@@ -126,6 +131,7 @@ export interface NoteAttributesType {
    title?: string;
    chapter?: string;
    isPrivate: boolean;
+   favorite: boolean;
 }
 
 // NoteProps keys which are saved for recording the history

@@ -15,6 +15,7 @@ const useBoundedStore = create(
                   pageFrom: null,
                   pageTo: null,
                   isPrivate: false, // default is public notes
+                  favorite: false,
                },
                tags: [],
                note: [],

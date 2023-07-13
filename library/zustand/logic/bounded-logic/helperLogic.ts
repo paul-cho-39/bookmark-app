@@ -19,6 +19,7 @@ function _getInitialNoteData(createdOn: string) {
          pageFrom: null,
          pageTo: null,
          isPrivate: false,
+         favorite: false,
       },
       dates: {
          start: createdOn,
