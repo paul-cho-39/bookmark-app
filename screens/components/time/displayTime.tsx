@@ -8,15 +8,16 @@ import { width as WIDTH, height as HEIGHT, width } from '../../../library/helper
 import CircularProgressBar from './circularProgressBar';
 import SaveTimeButton, { SaveTimeButtonProps } from './timerButtonIcon';
 import { MD3Colors } from 'react-native-paper/lib/typescript/src/types';
+import useBoundedStore from '../../../library/zustand/store';
 
 interface DisplayTimeProps extends SaveTimeButtonProps {
-   timer: TimerType;
    colors: MD3Colors;
 }
 
 const CIRCLE_HEIGHT = WIDTH * 0.9;
 
-const DisplayTime = ({ timer, colors, isPaused, ...rest }: DisplayTimeProps) => {
+const DisplayTime = ({ colors, isPaused, ...rest }: DisplayTimeProps) => {
+   const timer = useBoundedStore((state) => state.timer);
    const formatTimeUnit = (value: number, symbol: string) => {
       const formattedValue = value.toString().padStart(2, '0');
       return (

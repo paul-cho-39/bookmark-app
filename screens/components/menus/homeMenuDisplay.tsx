@@ -1,5 +1,5 @@
 import HeaderMenuIcon from '../../../components/menu/headerMenuIcon';
-import settings from './../../../assets/paper-themes/settings.json';
+import settings from '../../../assets/paper-themes/settings.json';
 
 interface HomeMenuDisplayProps {
    showModalDate: (value: boolean) => void;

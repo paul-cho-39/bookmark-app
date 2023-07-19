@@ -7,9 +7,9 @@ import { ICONS, NoteAppbarParams } from '../../../../constants';
 import NoteTheme from './noteTheme';
 import { Modalize } from 'react-native-modalize';
 import NoteMenuItems from './noteMenu';
-import NoteMenuManager from '../../notes/menu/noteMenuManager';
 import useModalizeRef from '../../../../library/hooks/useModalizeRef';
 import HighlightableIconButton from '../../../../components/buttons/icons/highlightableIconButton';
+// import NoteMenuManager from '../../notes/noteMenuManager';
 
 const NoteIconContents = ({ params, colors, style }: NoteAppbarParams) => {
    // so this would be called at SEPARATE BACKBUTTON COMPONENT and WHEREEVER IT IS NEEDED
@@ -25,6 +25,8 @@ const NoteIconContents = ({ params, colors, style }: NoteAppbarParams) => {
    };
 
    const { closeModal, openModal } = useModalizeRef();
+
+   const NoteMenuManager = React.lazy(() => import('./../../notes/menu/noteMenuManager'));
 
    return (
       <>

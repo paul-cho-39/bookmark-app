@@ -6,14 +6,29 @@ import { setNoteMenuModals } from '../../../../../library/zustand/logic/connecto
 import { height, width } from '../../../../../library/helper';
 import { FontAwesome } from '@expo/vector-icons';
 import { ICONS, NoteAppbarParams } from '../../../../../constants';
+import useBoundedStore from '../../../../../library/zustand/store';
+import { resetNote } from '../../../../../library/zustand/logic/bounded-logic/noteLogic';
+import { useNavigation } from '@react-navigation/native';
 
 const AddNoteToFavorite = (props: NoteAppbarParams) => {
-   const { colors } = props;
+   const {
+      colors,
+      params: { logIndex, id },
+   } = props;
+   const navigation = useNavigation();
    const isKeyboardVisible = Keyboard.isVisible();
+   useBoundedStore((state) => state.notes[id][logIndex].note);
    const isTrashVisible = useConnectStore((state) => state.modal.note.isTrashVisible);
 
    const setNoteVisible = (visible: boolean) => {
       setNoteMenuModals('isTrashVisible', visible);
+   };
+
+   // CONSIDER: if the note is successfully deleted should display Toast
+   const deleteCurrentNote = () => {
+      resetNote(id, logIndex, () => {
+         navigation.goBack();
+      });
    };
 
    const renderTitle = () => (
@@ -58,11 +73,7 @@ const AddNoteToFavorite = (props: NoteAppbarParams) => {
                         Cancel
                      </Button>
 
-                     <Button
-                        style={styles.button}
-                        mode='outlined'
-                        onPress={() => setNoteVisible(false)}
-                     >
+                     <Button style={styles.button} mode='outlined' onPress={deleteCurrentNote}>
                         Delete
                      </Button>
                   </View>

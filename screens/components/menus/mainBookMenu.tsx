@@ -13,7 +13,7 @@ import BookCarousel from './carousel';
 import { Calendar } from './calendar';
 import Config from '../../../library/config';
 import React from 'react';
-import { setBookVisibility } from '../../../library/zustand/logic/connector-logic/';
+import { setBookVisibility } from '../../../library/zustand/logic/connector-logic';
 import useConnectStore from '../../../library/zustand/connectStore';
 import { RealmBook } from '../../../library/realm/schema';
 

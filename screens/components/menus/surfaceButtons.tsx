@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import CustomSurfaceButton from './surfaceButton';
 import { useNavigation } from '@react-navigation/native';
 import { MainNavigatorTimerNavgiationProp } from '../../../library/@types/navigation';
-import { setBookVisibility } from '../../../library/zustand/logic/connector-logic/';
+import { setBookVisibility } from '../../../library/zustand/logic/connector-logic';
 import { PrimaryData } from '../../../library/helper/parsePrimaryBooks';
 
 interface SurfaceButtonProps {

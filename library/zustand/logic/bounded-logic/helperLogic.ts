@@ -4,12 +4,12 @@ import useSettingsStore from '../../settingsStore';
 import useBoundedStore from '../../store';
 import { NoteAttributesType, NoteProps } from '../../types/@types';
 
-function _getInitialNoteData(createdOn: string) {
+function _getInitialNoteData(createdOn: string): NoteProps {
    const darkMode =
       useSettingsStore.getState().userPreference.userGeneralSettings.display.isDarkMode;
    const defaultColor = darkMode ? NoteDarkColor.Default : NoteLightColor.Default;
 
-   const indexObj: NoteProps = {
+   return {
       tags: [],
       note: [],
       history: [],
@@ -31,7 +31,6 @@ function _getInitialNoteData(createdOn: string) {
          bgColor: darkenColor(defaultColor, DARKEN_BY_DEFAULT),
       },
    };
-   return indexObj;
 }
 
 function _isNoteIdNull(id: string) {

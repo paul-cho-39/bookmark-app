@@ -1,11 +1,11 @@
 import { StyleSheet, View } from 'react-native';
 import { CONTAINER_HEIGHT, IMAGE_HEIGHT, parsePrimaryBooks, width } from '../../library/helper';
-import MainMenu from '../components/menu/mainBookMenu';
+import MainMenu from '../components/menus/mainBookMenu';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMutateLibrary } from '../../library/hooks/queryHooks/useMutateLibrary';
 import BookInfo from '../components/books/bookInfo';
 import { Button, Text } from 'react-native-paper';
-import SurfaceButtons from '../components/menu/surfaceButtons';
+import SurfaceButtons from '../components/menus/surfaceButtons';
 import queryKeys from '../../library/helper/react-query/queryKeys';
 import getUrl from '../../library/helper/react-query/getUrl';
 import { setHasMutated } from '../../library/zustand/logic/connector-logic';

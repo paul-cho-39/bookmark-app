@@ -28,6 +28,7 @@ import RealmContext from '../../library/realm';
 import { RealmBook, RealmLibrary, RealmLogs } from '../../library/realm/schema';
 import { getLogIndex } from '../../library/realm/transaction/controller';
 import useRenderCount from '../../library/hooks/useRenderCount';
+import { shallow } from 'zustand/shallow';
 
 const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
    const { colors } = useTheme();
@@ -36,12 +37,10 @@ const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
    // TODO: A BOOK WITH PRIMARY SHOULD BE THE 'ID' HERE
    const { id, ...info } = primaryBookInfo;
 
-   const [timer, timerWithDate, isPaused, noteObj] = useBoundedStore((state) => [
-      state.timer,
-      state.timerWithDate,
-      state.isPaused,
-      state.notes,
-   ]);
+   const [timer, timerWithDate, isPaused, noteObj] = useBoundedStore(
+      (state) => [state.timer, state.timerWithDate, state.isPaused, state.notes],
+      shallow
+   );
    const { startTime, endTime } = timerWithDate;
    const [rating, setRating] = useState(0);
    const realm = useRealm();
@@ -105,7 +104,6 @@ const TimerScreen = ({ navigation, route }: MainTimerNavigationProp) => {
             <TimerStatus isPaused={isPaused} />
             <DisplayTime
                colors={colors}
-               timer={timer}
                isPaused={isPaused}
                handlePause={pauseTimer}
                handleResume={resumeTimer}

@@ -1,5 +1,5 @@
 import { current, produce } from 'immer';
-import useBoundedStore from '../../store';
+import useBoundedStore, { noteObject } from '../../store';
 import { NoteProps, StoreProps, NoteAttributesType } from '../../types/@types';
 import getUsersLocalTime from '../../../helper/timer/getUsersLocalTime';
 import { _getInitialNoteData, _isNoteIdNull, _noteExists } from './helperLogic';
@@ -167,6 +167,22 @@ function handleUnsaveNote(
    setModal(true);
 }
 
+function resetNote(id: string, logIndex: number, callback?: () => void) {
+   if (!_noteExists(id, logIndex)) return;
+
+   useBoundedStore.setState(
+      produce((state: StoreProps) => {
+         if (state.notes[id] && state.notes[id][logIndex]) {
+            state.notes[id][logIndex] = { ...noteObject };
+         }
+      })
+   );
+
+   if (callback) {
+      callback();
+   }
+}
+
 export {
    setInitiateNote,
    setNoteObjWithIndex,
@@ -176,4 +192,5 @@ export {
    setNoteAttributes,
    handleUnsaveNote,
    handleTags,
+   resetNote,
 };

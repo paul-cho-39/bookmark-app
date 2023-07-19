@@ -6,7 +6,7 @@ import CustomModal from '../../../components/modal';
 import { isBookInLibrary, isBookInLibraryList } from '../../../library/helper/checkBookLibrary';
 import { Library } from '../../../library/@types/googleBooks';
 import { AddBookNavigationProp } from '../../../library/@types/navigation';
-import RemoveButtonInsideModal from '../menu/removeButtonModal';
+import RemoveButtonInsideModal from '../menus/removeButtonModal';
 import { RealmLibraryResult } from '../../../library/realm/transaction/@realmTypes';
 import RealmBookEditor from '../../../library/realm/transaction/class/write/editBook';
 
