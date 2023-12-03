@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Text } from 'react-native-paper';
 import CustomModal from '../../../components/modal';
-import AnimatedModal from '../../../components/animatedModal';
+import AnimatedModal from '../../../components/modals/animatedModal';
 
 // use the component that I made(?)
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';

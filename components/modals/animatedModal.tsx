@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleProp, ViewStyle, Animated, Modal, View, StyleSheet, ModalProps } from 'react-native';
 import { Divider, useTheme, Text } from 'react-native-paper';
-import { height } from '../library/helper';
+import { height } from '../../library/helper';
 
 interface AnimatedModalProps extends ModalProps {
    setVisible: (value: boolean) => void;
