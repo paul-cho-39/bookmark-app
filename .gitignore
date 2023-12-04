@@ -1,4 +1,4 @@
-node_modules/
+client/node_modules/
 .expo/
 dist/
 npm-debug.*
@@ -11,11 +11,12 @@ npm-debug.*
 web-build/
 
 # macOS
-.DS_Store
+client/.DS_Store
+server/.env
 
 # Temporary files created by Metro to check the health of the file watcher
-.metro-health-check*
+client/.metro-health-check*
 
-google-services.json
-GoogleService-Info.plist
-library/config.js
+client/google-services.json
+client/GoogleService-Info.plist
+client/library/config.js
