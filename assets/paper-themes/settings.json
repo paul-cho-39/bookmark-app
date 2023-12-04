@@ -1,0 +1,5 @@
+{
+    "homeMenuSettings": ["Change dates", "Edit primary", "Delete book"],
+    "timerMenuSettings": ["Save", "Cancel Session", "Timer Settings"],
+    "timerNoteSettings": ["Add note", "Add tags", "Upload notes"]
+  }
