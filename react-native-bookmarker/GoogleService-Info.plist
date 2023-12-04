@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>820364727873-ol1344p2qre3sv573ilq58brfrdad6ot.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.820364727873-ol1344p2qre3sv573ilq58brfrdad6ot</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>820364727873-cn5e9achpfji9ttpulgqa07daod9310q.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBbjE64_Zm-AGx5E2aWIMCEbBYt_MKEUkQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>820364727873</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.paulchooo.bookmarkmobileapp</string>
+	<key>PROJECT_ID</key>
+	<string>bookmarker-b901c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bookmarker-b901c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:820364727873:ios:df5df2453b7ea90f90d8c0</string>
+</dict>
+</plist>
